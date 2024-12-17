@@ -1,4 +1,4 @@
-from models.Matches import Match
+from models.Match import Match
 from database import db
 
 class MatchRepository:
@@ -9,7 +9,7 @@ class MatchRepository:
         db.session.commit()
 
     @staticmethod
-    def getAllMatches():
+    def getAllMatch():
         return Match.query.all()
 
     @staticmethod
