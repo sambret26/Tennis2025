@@ -2,18 +2,18 @@ from flask import Flask
 from config import Config
 from database import db
 from controllers.PlayerController import playerBp
-from controllers.AvailabilityController import availability_bp
-from controllers.CategoryController import category_bp
-from controllers.CourtController import court_bp
-from controllers.MatchController import match_bp
-from controllers.PlayerBalanceController import player_balance_bp
-from controllers.PlayerCategoriesController import player_categories_bp
-from controllers.RankingController import ranking_bp
-from controllers.ReductionController import reduction_bp
-from controllers.ReductionSettingsController import reduction_settings_bp
-from controllers.SettingController import setting_bp
-from controllers.TeamController import team_bp
-from controllers.TransactionController import transaction_bp
+from controllers.AvailabilityController import availabilityBp
+from controllers.CategoryController import categoryBp
+from controllers.CourtController import courtBp
+from controllers.MatchController import matchBp
+from controllers.PlayerBalanceController import player_balanceBp
+from controllers.PlayerCategoriesController import player_categoriesBp
+from controllers.RankingController import rankingBp
+from controllers.ReductionController import reductionBp
+from controllers.ReductionSettingsController import reduction_settingsBp
+from controllers.SettingController import settingBp
+from controllers.TeamController import teamBp
+from controllers.TransactionController import transactionBp
 
 from flask_cors import CORS
 
@@ -25,18 +25,18 @@ CORS(app)
 
 # Registering blueprints
 app.register_blueprint(playerBp)
-app.register_blueprint(availability_bp)
-app.register_blueprint(category_bp)
-app.register_blueprint(court_bp)
-app.register_blueprint(match_bp)
-app.register_blueprint(player_balance_bp)
-app.register_blueprint(player_categories_bp)
-app.register_blueprint(ranking_bp)
-app.register_blueprint(reduction_bp)
-app.register_blueprint(reduction_settings_bp)
-app.register_blueprint(setting_bp)
-app.register_blueprint(team_bp)
-app.register_blueprint(transaction_bp)
+app.register_blueprint(availabilityBp)
+app.register_blueprint(categoryBp)
+app.register_blueprint(courtBp)
+app.register_blueprint(matchBp)
+app.register_blueprint(player_balanceBp)
+app.register_blueprint(player_categoriesBp)
+app.register_blueprint(rankingBp)
+app.register_blueprint(reductionBp)
+app.register_blueprint(reduction_settingsBp)
+app.register_blueprint(settingBp)
+app.register_blueprint(teamBp)
+app.register_blueprint(transactionBp)
 
 # Création des tables
 with app.app_context():
