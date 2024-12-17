@@ -20,6 +20,5 @@ def addTeams():
     teams = []
     for data in request.json:
         teams.append(Team.fromJson(data))
-    for team in teams:
-        TeamRepository.addTeam(team)
+    TeamRepository.addTeams(teams)
     return jsonify({'message': 'Teams added successfully!'}), 201

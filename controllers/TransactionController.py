@@ -20,6 +20,5 @@ def addTransactions():
     transactions = []
     for data in request.json:
         transactions.append(Transaction.fromJson(data))
-    for transaction in transactions:
-        TransactionRepository.addTransaction(transaction)
+    TransactionRepository.addTransactions(transactions)
     return jsonify({'message': 'Transactions added successfully!'}), 201

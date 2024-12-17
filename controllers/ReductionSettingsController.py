@@ -20,6 +20,5 @@ def addreductionSettings():
     reductionSettings = []
     for data in request.json:
         reductionSettings.append(ReductionSettings.fromJson(data))
-    for reductionSetting in reductionSettings:
-        ReductionSettingsRepository.addreductionSetting(reductionSetting)
+    ReductionSettingsRepository.addreductionSettings(reductionSettings)
     return jsonify({'message': 'Reduction settings added successfully!'}), 201

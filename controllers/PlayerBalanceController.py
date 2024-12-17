@@ -20,6 +20,5 @@ def addplayerBalances():
     playerBalances = []
     for data in request.json:
         playerBalances.append(PlayerBalance.fromJson(data))
-    for playerBalance in playerBalances:
-        PlayerBalanceRepository.addplayerBalance(playerBalance)
+    PlayerBalanceRepository.addplayerBalances(playerBalances)
     return jsonify({'message': 'Player balances added successfully!'}), 201

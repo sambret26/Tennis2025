@@ -20,6 +20,5 @@ def addReductions():
     reductions = []
     for data in request.json:
         reductions.append(Reduction.fromJson(data))
-    for reduction in reductions:
-        ReductionRepository.addReduction(reduction)
+    ReductionRepository.addReductions(reductions)
     return jsonify({'message': 'Reductions added successfully!'}), 201

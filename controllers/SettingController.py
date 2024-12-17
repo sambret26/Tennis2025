@@ -20,6 +20,5 @@ def addSettings():
     settings = []
     for data in request.json:
         settings.append(Setting.fromJson(data))
-    for setting in settings:
-        SettingRepository.addSetting(setting)
+    SettingRepository.addSettings(settings)
     return jsonify({'message': 'Settings added successfully!'}), 201

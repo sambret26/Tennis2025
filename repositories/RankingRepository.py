@@ -9,6 +9,11 @@ class RankingRepository:
         db.session.commit()
 
     @staticmethod
+    def addRankings(rankings):
+        db.session.addAll(rankings)
+        db.session.commit()
+
+    @staticmethod
     def getAllRankings():
         return Ranking.query.all()
 

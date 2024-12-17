@@ -20,6 +20,5 @@ def addPlayerCategories():
     playerCategories = []
     for data in request.json:
         playerCategories.append(PlayerCategories.fromJson(data))
-    for playerCategory in playerCategories:
-        PlayerCategoriesRepository.addPlayerCategory(playerCategory)
+    PlayerCategoriesRepository.addPlayerCategories(playerCategories)
     return jsonify({'message': 'Player categories added successfully!'}), 201

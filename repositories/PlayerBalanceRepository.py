@@ -1,11 +1,17 @@
+import stat
 from models.PlayerBalance import PlayerBalance
 from database import db
 
 class PlayerBalanceRepository:
 
     @staticmethod
-    def addplayerBalance(playerBalance):
+    def addPlayerBalance(playerBalance):
         db.session.add(playerBalance)
+        db.session.commit()
+
+    @staticmethod
+    def addplayerBalances(playerBalances):
+        db.session.addAll(playerBalances)
         db.session.commit()
 
     @staticmethod

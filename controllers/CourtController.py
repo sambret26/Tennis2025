@@ -20,6 +20,5 @@ def addCourts():
     courts = []
     for data in request.json:
         courts.append(Court.fromJson(data))
-    for court in courts:
-        CourtRepository.addCourt(court)
+    CourtRepository.addCourts(courts)
     return jsonify({'message': 'Courts added successfully!'}), 201

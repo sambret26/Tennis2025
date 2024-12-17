@@ -1,3 +1,4 @@
+import stat
 from models.Setting import Setting
 from database import db
 
@@ -6,6 +7,11 @@ class SettingRepository:
     @staticmethod
     def addSetting(setting):
         db.session.add(setting)
+        db.session.commit()
+
+    @staticmethod
+    def addSettings(settings):
+        db.session.addAll(settings)
         db.session.commit()
 
     @staticmethod

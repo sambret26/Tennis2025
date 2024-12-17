@@ -20,6 +20,5 @@ def addAvailabilities():
     availabilities = []
     for data in request.json:
         availabilities.append(Availability.fromJson(data))
-    for availability in availabilities:
-        AvailabilityRepository.addAvailability(availability)
+    AvailabilityRepository.addAvailabilities(availabilities)
     return jsonify({'message': 'Availabilities added successfully!'}), 201

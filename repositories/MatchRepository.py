@@ -9,6 +9,11 @@ class MatchRepository:
         db.session.commit()
 
     @staticmethod
+    def addMatches(matches):
+        db.session.addAll(matches)
+        db.session.commit()
+
+    @staticmethod
     def getAllMatch():
         return Match.query.all()
 

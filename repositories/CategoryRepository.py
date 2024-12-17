@@ -1,3 +1,4 @@
+import stat
 from models.Category import Category
 from database import db
 
@@ -6,6 +7,11 @@ class CategoryRepository:
     @staticmethod
     def addCategory(category):
         db.session.add(category)
+        db.session.commit()
+
+    @staticmethod
+    def addCategories(categories):
+        db.session.addAll(categories)
         db.session.commit()
 
     @staticmethod

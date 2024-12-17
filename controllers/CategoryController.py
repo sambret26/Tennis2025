@@ -20,6 +20,5 @@ def addCategories():
     categories = []
     for data in request.json:
         categories.append(Category.fromJson(data))
-    for category in categories:
-        CategoryRepository.addCategory(category)
+    CategoryRepository.addCategories(categories)
     return jsonify({'message': 'Categories added successfully!'}), 201

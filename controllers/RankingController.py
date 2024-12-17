@@ -20,6 +20,5 @@ def addRankings():
     rankings = []
     for data in request.json:
         rankings.append(Ranking.fromJson(data))
-    for ranking in rankings:
-        RankingRepository.addRanking(ranking)
+    RankingRepository.addRankings(rankings)
     return jsonify({'message': 'Rankings added successfully!'}), 201
