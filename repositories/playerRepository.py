@@ -1,22 +1,27 @@
-from models.player import Player
+from models.Player import Player
 from database import db
 
 class PlayerRepository:
 
     @staticmethod
-    def get_all_players():
+    def getAllPlayers():
         return Player.query.all()
 
     @staticmethod
-    def get_player_by_id(id):
+    def getPlayerById(id):
         return Player.query.get(id)
 
     @staticmethod
-    def add_player(player):
+    def addPlayer(player):
         db.session.add(player)
         db.session.commit()
 
     @staticmethod
-    def delete_player(player):
+    def addPlayers(players):
+        db.session.addAll(players)
+        db.session.commit()
+
+    @staticmethod
+    def deletePlayer(player):
         db.session.delete(player)
         db.session.commit()

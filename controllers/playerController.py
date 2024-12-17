@@ -1,26 +1,24 @@
 from flask import Blueprint, jsonify, request
-from models.player import Player
-from repositories.playerRepository import PlayerRepository
+from models.Player import Player
+from repositories.PlayerRepository import PlayerRepository
 
-player_bp = Blueprint('player_bp', __name__, url_prefix='/players')
+playerBp = Blueprint('playerBp', __name__, url_prefix='/players')
 
-@player_bp.route('/', methods=['GET'])
-def get_players():
-    players = PlayerRepository.get_all_players()
-    return jsonify([player.to_dict() for player in players]), 200
+@playerBp.route('/', methods=['GET'])
+def getPlayers():
+    players = PlayerRepository.getAllPlayers()
+    return jsonify([player.toDict() for player in players]), 200
 
-@player_bp.route('/', methods=['POST'])
-def add_player():
-    data = request.json
-    player = Player(
-        fft_id=data['fft_id'],
-        inscription_id=data['inscription_id'],
-        first_name=data['first_name'],
-        last_name=data['last_name'],
-        ranking_id=data['ranking_id'],
-        club=data['club'],
-        state=data['state'],
-        is_active=data['is_active']
-    )
-    PlayerRepository.add_player(player)
+@playerBp.route('/', methods=['POST'])
+def addPlayer():
+    player = Player.fromJson(request.json)
+    PlayerRepository.addPlayer(player)
     return jsonify({"message": "Player added successfully!"}), 201
+
+@playerBp.route('/multiple', methods=['POST'])
+def addPlayers():
+    players = []
+    for player in request.json: 
+        players.append(Player.fromJson(player))
+    PlayerRepository.addPlayers(players)
+    return jsonify({"message": "Players added successfully!"}), 201
