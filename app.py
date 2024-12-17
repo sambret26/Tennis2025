@@ -6,11 +6,11 @@ from controllers.AvailabilityController import availabilityBp
 from controllers.CategoryController import categoryBp
 from controllers.CourtController import courtBp
 from controllers.MatchController import matchBp
-from controllers.PlayerBalanceController import player_balanceBp
-from controllers.PlayerCategoriesController import player_categoriesBp
+from controllers.PlayerBalanceController import playerBalanceBp
+from controllers.PlayerCategoriesController import playerCategoriesBp
 from controllers.RankingController import rankingBp
 from controllers.ReductionController import reductionBp
-from controllers.ReductionSettingsController import reduction_settingsBp
+from controllers.ReductionSettingsController import reductionSettingsBp
 from controllers.SettingController import settingBp
 from controllers.TeamController import teamBp
 from controllers.TransactionController import transactionBp
@@ -29,11 +29,11 @@ app.register_blueprint(availabilityBp)
 app.register_blueprint(categoryBp)
 app.register_blueprint(courtBp)
 app.register_blueprint(matchBp)
-app.register_blueprint(player_balanceBp)
-app.register_blueprint(player_categoriesBp)
+app.register_blueprint(playerBalanceBp)
+app.register_blueprint(playerCategoriesBp)
 app.register_blueprint(rankingBp)
 app.register_blueprint(reductionBp)
-app.register_blueprint(reduction_settingsBp)
+app.register_blueprint(reductionSettingsBp)
 app.register_blueprint(settingBp)
 app.register_blueprint(teamBp)
 app.register_blueprint(transactionBp)
