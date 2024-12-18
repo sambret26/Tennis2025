@@ -20,11 +20,11 @@ class Match(db.Model):
     panel = db.Column(db.String)
     nextRound = db.Column(db.String)
     calId = db.Column(db.String)
-    state = db.Column(db.Integer, nullable=False)
+    isActive = db.Column(db.Boolean, default=True)
     createdAt = db.Column(db.DateTime, default=datetime.utcnow)
     updatedAt = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
 
-    def __init__(self, fftId, categoryId, label, player1Id, player2Id, day, hour, courtId, finish, winnerId, notif, score, panel, nextRound, calId, state):
+    def __init__(self, fftId, categoryId, label, player1Id, player2Id, day, hour, courtId, finish, winnerId, notif, score, panel, nextRound, calId, isActive):
         self.fftId = fftId
         self.categoryId = categoryId
         self.label = label
@@ -40,7 +40,7 @@ class Match(db.Model):
         self.panel = panel
         self.nextRound = nextRound
         self.calId = calId
-        self.state = state
+        self.isActive = isActive
 
     def toDict(self):
         return {
@@ -60,7 +60,7 @@ class Match(db.Model):
             'panel': self.panel,
             'nextRound': self.nextRound,
             'calId': self.calId,
-            'state': self.state,
+            'isActive': self.isActive,
             'createdAt': self.createdAt,
             'updatedAt': self.updatedAt
         }
@@ -83,5 +83,5 @@ class Match(db.Model):
             panel=data['panel'],
             nextRound=data['nextRound'],
             calId=data['calId'],
-            state=data['state']
+            isActive=data['isActive']
         )

@@ -9,16 +9,16 @@ class Team(db.Model):
     player1Id = db.Column(db.Integer, db.ForeignKey('players.id'), nullable=False)  
     player2Id = db.Column(db.Integer, db.ForeignKey('players.id'), nullable=False)  
     rankingId = db.Column(db.Integer, db.ForeignKey('rankings.id'), nullable=False)  
-    state = db.Column(db.Integer, nullable=False)  
+    isActive = db.Column(db.Boolean, default=True)
     createdAt = db.Column(db.DateTime, default=datetime.utcnow)  
     updatedAt = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)  
 
-    def __init__(self, fftId, player1Id, player2Id, rankingId, state):
+    def __init__(self, fftId, player1Id, player2Id, rankingId, isActive):
         self.fftId = fftId
         self.player1Id = player1Id
         self.player2Id = player2Id
         self.rankingId = rankingId
-        self.state = state
+        self.isActive = isActive
 
     def toDict(self):
         return {
@@ -27,7 +27,7 @@ class Team(db.Model):
             'player1Id': self.player1Id,
             'player2Id': self.player2Id,
             'rankingId': self.rankingId,
-            'state': self.state,
+            'isActive': self.isActive,
             'createdAt': self.createdAt,
             'updatedAt': self.updatedAt
         }
@@ -39,5 +39,5 @@ class Team(db.Model):
             player1Id=data['player1Id'],
             player2Id=data['player2Id'],
             rankingId=data['rankingId'],
-            state=data['state']
+            isActive=data['isActive']
         )
