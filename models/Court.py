@@ -18,9 +18,7 @@ class Court(db.Model):
         return {
             'id': self.id,
             'fftId': self.fftId,
-            'name': self.name,
-            'createdAt': self.createdAt,
-            'updatedAt': self.updatedAt
+            'name': self.name
         }
 
     @classmethod

@@ -20,3 +20,7 @@ class MatchRepository:
     @staticmethod
     def getMatchById(matchId):
         return Match.query.get(matchId)
+
+    @staticmethod
+    def getMatchesForPlanning(date):
+        return Match.query.filter(Match.day == date).all()

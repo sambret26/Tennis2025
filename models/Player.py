@@ -1,5 +1,4 @@
 from datetime import datetime
-from sqlalchemy.orm import relationship
 from models.Availability import Availability
 
 from database import db
@@ -12,14 +11,14 @@ class Player(db.Model):
     inscriptionId = db.Column(db.String, unique=True, index=True)
     lastName = db.Column(db.String, nullable=False)
     firstName = db.Column(db.String, nullable=False)
-    rankingId = db.Column(db.Integer) #, db.ForeignKey("rankings.id"))
+    rankingId = db.Column(db.Integer, db.ForeignKey("rankings.id"))
     club = db.Column(db.String)
     isActive = db.Column(db.Boolean, default=True)
     createdAt = db.Column(db.DateTime, default=datetime.utcnow)
     updatedAt = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
     
     # Relations
-    # ranking = relationship("Ranking", back_populates="players")
+    ranking = db.relationship('Ranking', foreign_keys=[rankingId], backref='players')
     # matches_as_player1 = relationship("Match", foreign_keys="[Match.player1_id]", back_populates="player1")
     # matches_as_player2 = relationship("Match", foreign_keys="[Match.player2_id]", back_populates="player2")
     # matches_won = relationship("Match", foreign_keys="[Match.winner_id]", back_populates="winner")
@@ -46,7 +45,14 @@ class Player(db.Model):
             "firstName": self.firstName,
             "rankingId": self.rankingId,
             "club": self.club,
-            "isActive": self.isActive
+            "isActive": self.isActive,
+            "ranking": self.ranking.toDict()
+        }
+
+    def toMiniDict(self):
+        return {
+            "fullName": f"{self.lastName.upper()} {self.firstName.title()}",
+            "ranking": self.ranking.simple
         }
 
     @classmethod

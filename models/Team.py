@@ -27,9 +27,7 @@ class Team(db.Model):
             'player1Id': self.player1Id,
             'player2Id': self.player2Id,
             'rankingId': self.rankingId,
-            'isActive': self.isActive,
-            'createdAt': self.createdAt,
-            'updatedAt': self.updatedAt
+            'isActive': self.isActive
         }
 
     @classmethod

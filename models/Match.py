@@ -24,6 +24,12 @@ class Match(db.Model):
     createdAt = db.Column(db.DateTime, default=datetime.utcnow)
     updatedAt = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
 
+    #relashionship
+    player1 = db.relationship('Player', foreign_keys=[player1Id], backref='player1')
+    player2 = db.relationship('Player', foreign_keys=[player2Id], backref='player2')
+    court = db.relationship('Court', backref='court')
+    winner = db.relationship('Player', foreign_keys=[winnerId], backref='winner')
+
     def __init__(self, fftId, categoryId, label, player1Id, player2Id, day, hour, courtId, finish, winnerId, notif, score, panel, nextRound, calId, isActive):
         self.fftId = fftId
         self.categoryId = categoryId
@@ -61,8 +67,10 @@ class Match(db.Model):
             'nextRound': self.nextRound,
             'calId': self.calId,
             'isActive': self.isActive,
-            'createdAt': self.createdAt,
-            'updatedAt': self.updatedAt
+            'player1' : self.player1.toMiniDict() if self.player1 else None,
+            'player2' : self.player2.toMiniDict() if self.player2 else None,
+            'court' : self.court.toDict() if self.court else None,
+            'winner' : self.winner.toDict() if self.winner else None
         }
 
     @classmethod

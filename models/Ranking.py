@@ -21,9 +21,7 @@ class Ranking(db.Model):
             'id': self.id,
             'fftId': self.fftId,
             'simple': self.simple,
-            'double': self.double,
-            'createdAt': self.createdAt,
-            'updatedAt': self.updatedAt
+            'double': self.double
         }
 
     @classmethod

@@ -21,9 +21,7 @@ class Transaction(db.Model):
             'id': self.id,
             'type': self.type,
             'amount': self.amount,
-            'date': self.date,
-            'createdAt': self.createdAt,
-            'updatedAt': self.updatedAt
+            'date': self.date
         }
 
     @classmethod

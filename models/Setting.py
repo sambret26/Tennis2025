@@ -18,9 +18,7 @@ class Setting(db.Model):
         return {
             'id': self.id,
             'key': self.key,
-            'value': self.value,
-            'createdAt': self.createdAt,
-            'updatedAt': self.updatedAt
+            'value': self.value
         }
 
     @classmethod

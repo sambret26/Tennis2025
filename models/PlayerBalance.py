@@ -24,9 +24,7 @@ class PlayerBalance(db.Model):
             'playerId': self.playerId,
             'initialAmount': self.initialAmount,
             'finalAmount': self.finalAmount,
-            'remainingAmount': self.remainingAmount,
-            'createdAt': self.createdAt,
-            'updatedAt': self.updatedAt
+            'remainingAmount': self.remainingAmount
         }
 
     @classmethod

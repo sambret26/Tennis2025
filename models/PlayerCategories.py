@@ -18,9 +18,7 @@ class PlayerCategories(db.Model):
         return {
             'id': self.id,
             'playerId': self.playerId,
-            'categoryId': self.categoryId,
-            'createdAt': self.createdAt,
-            'updatedAt': self.updatedAt
+            'categoryId': self.categoryId
         }
 
     @classmethod

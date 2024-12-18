@@ -21,9 +21,7 @@ class Paiement(db.Model):
             'id': self.id,
             'playerId': self.playerId,
             'amount': self.amount,
-            'date': self.date,
-            'createdAt': self.createdAt,
-            'updatedAt': self.updatedAt
+            'date': self.date
         }
 
     @classmethod

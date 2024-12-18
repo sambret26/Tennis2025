@@ -18,9 +18,7 @@ class ReductionSettings(db.Model):
         return {
             'id': self.id,
             'reason': self.reason,
-            'amount': self.amount,
-            'createdAt': self.createdAt,
-            'updatedAt': self.updatedAt
+            'amount': self.amount
         }
 
     @classmethod

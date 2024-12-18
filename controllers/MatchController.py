@@ -9,6 +9,12 @@ def getMatch():
     matches = MatchRepository.getAllMatch()
     return jsonify([match.toDict() for match in matches]), 200
 
+@matchBp.route('/planning', methods=['GET'])
+def getMatchesForPlanning():
+    date = request.args.get('date')
+    matches = MatchRepository.getMatchesForPlanning(date)
+    return jsonify([match.toDict() for match in matches]), 200
+
 @matchBp.route('/', methods=['POST'])
 def addMatch():
     match = Match.fromJson(request.json)

@@ -21,9 +21,7 @@ class Category(db.Model):
             'id': self.id,
             'code': self.code,
             'label': self.label,
-            'amount': self.amount,
-            'createdAt': self.createdAt,
-            'updatedAt': self.updatedAt
+            'amount': self.amount
         }
 
     @classmethod
