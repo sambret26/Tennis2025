@@ -1,4 +1,3 @@
-from turtle import st
 from models.Availability import Availability
 from database import db
 
