@@ -21,3 +21,11 @@ class SettingRepository:
     @staticmethod
     def getSettingById(settingId):
         return Setting.query.get(settingId)
+
+    @staticmethod
+    def getStartDate():
+        return Setting.query.with_entities(Setting.value).filter_by(key='startDate').first()[0]
+
+    @staticmethod
+    def getEndDate():
+        return Setting.query.with_entities(Setting.value).filter_by(key='endDate').first()[0]

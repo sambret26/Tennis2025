@@ -28,3 +28,17 @@ def addMatches():
         matches.append(Match.fromJson(data))
     MatchRepository.addMatches(matches)
     return jsonify({'message': 'Matches added successfully!'}), 201
+
+@matchBp.route('/result', methods=['POST'])
+def updateMatchResult():
+    data = request.json
+    matchId = data['matchId']
+    winnerId = data['playerId']
+    score = data['score']
+    match = MatchRepository.getMatchById(matchId)
+    if not match:
+        return jsonify({'message': 'Match not found!'}), 404
+    match.winnerId = winnerId
+    match.score = score
+    MatchRepository.updateMatch(match)
+    return jsonify({'message': 'Match result updated successfully!'}), 200

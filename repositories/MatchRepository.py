@@ -14,6 +14,11 @@ class MatchRepository:
         db.session.commit()
 
     @staticmethod
+    def updateMatch(match):
+        db.session.merge(match)
+        db.session.commit()
+
+    @staticmethod
     def getAllMatch():
         return Match.query.all()
 
@@ -23,4 +28,4 @@ class MatchRepository:
 
     @staticmethod
     def getMatchesForPlanning(date):
-        return Match.query.filter(Match.day == date).all()
+        return Match.query.filter(Match.day == date).order_by(Match.hour).all()

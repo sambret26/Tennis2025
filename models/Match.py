@@ -70,7 +70,7 @@ class Match(db.Model):
             'player1' : self.player1.toMiniDict() if self.player1 else None,
             'player2' : self.player2.toMiniDict() if self.player2 else None,
             'court' : self.court.toDict() if self.court else None,
-            'winner' : self.winner.toDict() if self.winner else None
+            'winner' : self.winner.toMiniDict() if self.winner else None
         }
 
     @classmethod
