@@ -9,15 +9,10 @@ def getSettings():
     settings = SettingRepository.getAllSettings()
     return jsonify([setting.toDict() for setting in settings]), 200
 
-@settingBp.route('/startDate', methods=['GET'])
-def getStartDate():
-    startDate = SettingRepository.getStartDate()
-    return jsonify({'startDate': startDate}), 200
-
-@settingBp.route('/endDate', methods=['GET'])
-def getEndDate():
-    endDate = SettingRepository.getEndDate()
-    return jsonify({'endDate': endDate}), 200
+@settingBp.route('/dates', methods=['GET'])
+def getDates():
+    dates =  SettingRepository.getDates()
+    return jsonify({'startDate': dates['startDate'], 'endDate': dates['endDate']}), 200
 
 @settingBp.route('/', methods=['POST'])
 def addSetting():

@@ -23,9 +23,9 @@ class SettingRepository:
         return Setting.query.get(settingId)
 
     @staticmethod
-    def getStartDate():
-        return Setting.query.with_entities(Setting.value).filter_by(key='startDate').first()[0]
-
-    @staticmethod
-    def getEndDate():
-        return Setting.query.with_entities(Setting.value).filter_by(key='endDate').first()[0]
+    def getDates():
+        results = Setting.query.with_entities(
+            Setting.value.label('value'), Setting.key.label('key')
+        ).filter(Setting.key.in_(['startDate', 'endDate'])).all()
+        dates = {result.key: result.value for result in results}
+        return dates
