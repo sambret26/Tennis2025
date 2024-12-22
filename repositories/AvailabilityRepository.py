@@ -15,7 +15,7 @@ class AvailabilityRepository:
 
     @staticmethod
     def getAllAvailabilities():
-        return Availability.query.all()
+        return Availability.query.order_by(Availability.number).all()
 
     @staticmethod
     def getAvailabilityById(availabilityId):

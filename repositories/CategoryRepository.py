@@ -1,4 +1,3 @@
-import stat
 from models.Category import Category
 from database import db
 

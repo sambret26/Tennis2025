@@ -9,6 +9,11 @@ def getPlayers():
     players = PlayerRepository.getAllPlayers()
     return jsonify([player.toDict() for player in players]), 200
 
+@playerBp.route('/allNames', methods=['GET'])
+def getAllPlayerNames():
+    players = PlayerRepository.getAllPlayerNames()
+    return jsonify([player.toNameDict() for player in players]), 200
+
 @playerBp.route('/', methods=['POST'])
 def addPlayer():
     player = Player.fromJson(request.json)

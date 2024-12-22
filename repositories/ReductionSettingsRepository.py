@@ -1,4 +1,3 @@
-import stat
 from models.ReductionSettings import ReductionSettings
 from database import db
 

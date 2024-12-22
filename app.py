@@ -6,6 +6,7 @@ from controllers.AvailabilityController import availabilityBp
 from controllers.CategoryController import categoryBp
 from controllers.CourtController import courtBp
 from controllers.MatchController import matchBp
+from controllers.PlayerAvailabilityController import playerAvailabilityBp
 from controllers.PlayerBalanceController import playerBalanceBp
 from controllers.PlayerCategoriesController import playerCategoriesBp
 from controllers.RankingController import rankingBp
@@ -26,6 +27,7 @@ db.init_app(app)
 
 # Registering blueprints
 app.register_blueprint(playerBp)
+app.register_blueprint(playerAvailabilityBp)
 app.register_blueprint(availabilityBp)
 app.register_blueprint(categoryBp)
 app.register_blueprint(courtBp)

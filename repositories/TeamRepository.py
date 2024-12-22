@@ -1,4 +1,3 @@
-import stat
 from models.Team import Team
 from database import db
 

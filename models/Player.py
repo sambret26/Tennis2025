@@ -1,5 +1,5 @@
 from datetime import datetime
-from models.Availability import Availability
+from models.PlayerAvailability import PlayerAvailability
 
 from database import db
 
@@ -26,8 +26,9 @@ class Player(db.Model):
     # payments = relationship("Payment", back_populates="player")
     # balance = relationship("PlayerBalance", back_populates="player", uselist=False)
 
-    def __init__(self, fftId, inscriptionId, lastName, firstName, 
-            rankingId, club, isActive):
+    def __init__(self, id=None, fftId=None, inscriptionId=None, lastName=None,
+            firstName=None, rankingId=None, club=None, isActive=None):
+        self.id = id
         self.fftId = fftId
         self.inscriptionId = inscriptionId
         self.lastName = lastName
@@ -53,6 +54,14 @@ class Player(db.Model):
         return {
             "fullName": f"{self.lastName.upper()} {self.firstName.title()}",
             "ranking": self.ranking.simple
+        }
+
+    def toNameDict(self):
+        return {
+            "id": self.id,
+            "firstName": self.firstName,
+            "lastName": self.lastName,
+            "fullName": f"{self.lastName.upper()} {self.firstName.title()}"
         }
 
     @classmethod

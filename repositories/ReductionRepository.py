@@ -1,4 +1,3 @@
-import stat
 from models.Reduction import Reduction
 from database import db
 

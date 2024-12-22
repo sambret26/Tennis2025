@@ -1,4 +1,3 @@
-import stat
 from models.PlayerCategories import PlayerCategories
 from database import db
 

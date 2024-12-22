@@ -1,4 +1,3 @@
-import stat
 from models.Setting import Setting
 from database import db
 

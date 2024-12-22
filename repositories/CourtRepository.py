@@ -1,4 +1,3 @@
-import stat
 from models.Court import Court
 from database import db
 
