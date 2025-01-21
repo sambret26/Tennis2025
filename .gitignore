@@ -1,6 +1,8 @@
 # Environnement virtuel
 venv/
 .env/
+.env
+.env.local
 .env.*.local
 
 # Fichiers compilés Python

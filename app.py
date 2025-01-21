@@ -15,6 +15,7 @@ from controllers.ReductionSettingsController import reductionSettingsBp
 from controllers.SettingController import settingBp
 from controllers.TeamController import teamBp
 from controllers.TransactionController import transactionBp
+from controllers.PlayerAvailabilityCommentController import playerAvailabilityCommentBp
 
 from flask_cors import CORS
 
@@ -40,6 +41,7 @@ app.register_blueprint(reductionSettingsBp)
 app.register_blueprint(settingBp)
 app.register_blueprint(teamBp)
 app.register_blueprint(transactionBp)
+app.register_blueprint(playerAvailabilityCommentBp)
 
 # Création des tables
 with app.app_context():
