@@ -20,3 +20,17 @@ class ReductionRepository:
     @staticmethod
     def getReductionById(reductionId):
         return Reduction.query.get(reductionId)
+
+    @staticmethod
+    def updateReductions(playerId, reductions_data):
+        # Récupérer les réductions existantes pour le joueur
+        reductions = Reduction.query.filter_by(playerId=playerId).all()
+        
+        # Mettre à jour les réductions
+        for reduction in reductions:
+            # Ici, vous pouvez mettre à jour les propriétés de la réduction selon les données reçues
+            # Par exemple, si vous avez un champ 'amount' dans le modèle Reduction
+            reduction.amount = reductions_data.get('amount', reduction.amount)
+        
+        db.session.commit()
+        return True

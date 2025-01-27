@@ -6,7 +6,7 @@ reductionSettingsBp = Blueprint('reductionSettingsBp', __name__, url_prefix='/re
 
 @reductionSettingsBp.route('/', methods=['GET'])
 def getreductionSettings():
-    reductionSettings = ReductionSettingsRepository.getAllreductionSettings()
+    reductionSettings = ReductionSettingsRepository.getAllReductionSettings()
     return jsonify([reductionSetting.toDict() for reductionSetting in reductionSettings]), 200
 
 @reductionSettingsBp.route('/', methods=['POST'])

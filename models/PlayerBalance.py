@@ -27,6 +27,13 @@ class PlayerBalance(db.Model):
             'remainingAmount': self.remainingAmount
         }
 
+    def toDictForPlayer(self):
+        return {
+            'initialAmount': self.initialAmount,
+            'finalAmount': self.finalAmount,
+            'remainingAmount': self.remainingAmount
+        }
+
     @classmethod
     def fromJson(cls, data):
         return cls(

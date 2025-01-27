@@ -1,5 +1,6 @@
 from datetime import datetime
 from models.PlayerAvailability import PlayerAvailability
+from models.Payment import Payment
 
 from database import db
 
@@ -22,9 +23,13 @@ class Player(db.Model):
     # matches_as_player1 = relationship("Match", foreign_keys="[Match.player1_id]", back_populates="player1")
     # matches_as_player2 = relationship("Match", foreign_keys="[Match.player2_id]", back_populates="player2")
     # matches_won = relationship("Match", foreign_keys="[Match.winner_id]", back_populates="winner")
-    # categories = relationship("Category", secondary="player_categories", back_populates="players")
-    # payments = relationship("Payment", back_populates="player")
-    # balance = relationship("PlayerBalance", back_populates="player", uselist=False)
+    categories = db.relationship("Category", 
+                               secondary="player_categories",
+                               backref=db.backref("players", lazy="dynamic"),
+                               lazy="joined")
+    payments = db.relationship("Payment", backref="player", lazy="joined")
+    reductions = db.relationship("Reduction", backref="player", lazy="joined")
+    balance = db.relationship("PlayerBalance", backref="player", uselist=False)
 
     def __init__(self, id=None, fftId=None, inscriptionId=None, lastName=None,
             firstName=None, rankingId=None, club=None, isActive=None):
@@ -40,14 +45,19 @@ class Player(db.Model):
     def toDict(self):
         return {
             "id": self.id,
-            "fftId": self.fftId,
-            "inscriptionId": self.inscriptionId,
             "lastName": self.lastName,
             "firstName": self.firstName,
+            "fftId": self.fftId,
+            "inscriptionId": self.inscriptionId,
             "rankingId": self.rankingId,
             "club": self.club,
             "isActive": self.isActive,
-            "ranking": self.ranking.toDict()
+            "ranking": self.ranking.toDict(),
+            "categories": [category.code for category in self.categories],
+            "balance": self.balance.toDictForPlayer(),
+            "payments": [payment.toDictForPlayer() for payment in self.payments],
+            "reductions": [reduction.toDictForPlayer() for reduction in self.reductions],
+            "fullName": f"{self.lastName.upper()} {self.firstName.title()}"
         }
 
     def toMiniDict(self):

@@ -4,11 +4,11 @@ from database import db
 
 playerAvailabilityCommentBp = Blueprint('playerAvailabilityComment', __name__)
 
-@playerAvailabilityCommentBp.route('/player-availability-comment/<int:player_id>/<string:day>', methods=['GET'])
-def get_player_comment(player_id, day):
+@playerAvailabilityCommentBp.route('/player-availability-comment/<int:playerId>/<string:day>', methods=['GET'])
+def get_player_comment(playerId, day):
     """Récupère le commentaire d'un joueur pour un jour donné"""
     comment = PlayerAvailabilityComment.query.filter_by(
-        playerId=player_id,
+        playerId=playerId,
         day=day
     ).first()
     
@@ -45,11 +45,11 @@ def get_all_comments_for_day(day):
     comments = PlayerAvailabilityComment.query.filter_by(day=day).all()
     return jsonify([comment.toDict() for comment in comments])
 
-@playerAvailabilityCommentBp.route('/player-availability-comment/<int:player_id>/<string:day>', methods=['DELETE'])
-def delete_comment(player_id, day):
+@playerAvailabilityCommentBp.route('/player-availability-comment/<int:playerId>/<string:day>', methods=['DELETE'])
+def delete_comment(playerId, day):
     """Supprime le commentaire d'un joueur pour un jour donné"""
     comment = PlayerAvailabilityComment.query.filter_by(
-        playerId=player_id,
+        playerId=playerId,
         day=day
     ).first()
     

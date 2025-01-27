@@ -1,8 +1,8 @@
 from datetime import datetime
 from database import db
 
-class Paiement(db.Model):
-    __tablename__ = 'paiements'
+class Payment(db.Model):
+    __tablename__ = 'payments'
 
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)  
     playerId = db.Column(db.Integer, db.ForeignKey('players.id'), nullable=False)  
@@ -20,6 +20,12 @@ class Paiement(db.Model):
         return {
             'id': self.id,
             'playerId': self.playerId,
+            'amount': self.amount,
+            'date': self.date
+        }
+
+    def toDictForPlayer(self):
+        return {
             'amount': self.amount,
             'date': self.date
         }
