@@ -27,7 +27,7 @@ class Player(db.Model):
                                secondary="player_categories",
                                backref=db.backref("players", lazy="dynamic"),
                                lazy="joined")
-    payments = db.relationship("Payment", backref="player", lazy="joined")
+    payments = db.relationship("Payment", lazy="joined", back_populates="player")
     reductions = db.relationship("Reduction", backref="player", lazy="joined")
     balance = db.relationship("PlayerBalance", backref="player", uselist=False)
 
@@ -57,12 +57,12 @@ class Player(db.Model):
             "balance": self.balance.toDictForPlayer(),
             "payments": [payment.toDictForPlayer() for payment in self.payments],
             "reductions": [reduction.toDictForPlayer() for reduction in self.reductions],
-            "fullName": f"{self.lastName.upper()} {self.firstName.title()}"
+            "fullName": self.getFullName()
         }
 
     def toMiniDict(self):
         return {
-            "fullName": f"{self.lastName.upper()} {self.firstName.title()}",
+            "fullName": self.getFullName(),
             "ranking": self.ranking.simple
         }
 
@@ -71,8 +71,11 @@ class Player(db.Model):
             "id": self.id,
             "firstName": self.firstName,
             "lastName": self.lastName,
-            "fullName": f"{self.lastName.upper()} {self.firstName.title()}"
+            "fullName": self.getFullName()
         }
+    
+    def getFullName(self):
+        return f"{self.lastName.upper()} {self.firstName.title()}"
 
     @classmethod
     def fromJson(cls, data):

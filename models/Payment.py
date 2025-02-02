@@ -11,6 +11,11 @@ class Payment(db.Model):
     createdAt = db.Column(db.DateTime, default=datetime.utcnow)  
     updatedAt = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)  
 
+    player = db.relationship('Player', foreign_keys=[playerId], back_populates='payments')
+    # categories = db.relationship("Category", 
+    #                            secondary="player_categories",
+    #                            backref=db.backref("players", lazy="dynamic"),
+    #                            lazy="joined")
     def __init__(self, playerId, amount, date):
         self.playerId = playerId
         self.amount = amount
@@ -28,6 +33,12 @@ class Payment(db.Model):
         return {
             'amount': self.amount,
             'date': self.date
+        }
+
+    def toDictForList(self):
+        return {
+            'playerFullName': self.player.toNameDict().get('fullName'),
+            'amount': self.amount,
         }
 
     @classmethod

@@ -18,7 +18,6 @@ class Transaction(db.Model):
 
     def toDict(self):
         return {
-            'id': self.id,
             'type': self.type,
             'amount': self.amount,
             'date': self.date

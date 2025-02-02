@@ -15,8 +15,16 @@ class TransactionRepository:
 
     @staticmethod
     def getAllTransactions():
-        return Transaction.query.all()
+        return Transaction.query.order_by(Transaction.date).all()
 
     @staticmethod
     def getTransactionById(transactionId):
         return Transaction.query.get(transactionId)
+
+    @staticmethod
+    def getAllTransactionBeforeDay(day):
+        return Transaction.query.filter(Transaction.date<day).all()
+
+    @staticmethod
+    def getAllWithdrawalForDay(day):
+        return Transaction.query.filter_by(date=day, type=0).all()

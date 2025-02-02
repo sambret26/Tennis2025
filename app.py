@@ -1,22 +1,23 @@
 from flask import Flask
 from config import Config
 from database import db
-from controllers.PlayerController import playerBp
-from controllers.AvailabilityController import availabilityBp
-from controllers.CategoryController import categoryBp
-from controllers.CourtController import courtBp
-from controllers.MatchController import matchBp
-from controllers.PlayerAvailabilityController import playerAvailabilityBp
-from controllers.PlayerBalanceController import playerBalanceBp
-from controllers.PlayerCategoriesController import playerCategoriesBp
-from controllers.RankingController import rankingBp
-from controllers.ReductionController import reductionBp
-from controllers.ReductionSettingsController import reductionSettingsBp
-from controllers.SettingController import settingBp
-from controllers.TeamController import teamBp
-from controllers.TransactionController import transactionBp
-from controllers.PlayerAvailabilityCommentController import playerAvailabilityCommentBp
-from controllers.PaymentController import paymentBp
+from services.controllers.PlayerController import playerBp
+from services.controllers.AccountController import accountBp
+from services.controllers.AvailabilityController import availabilityBp
+from services.controllers.CategoryController import categoryBp
+from services.controllers.CourtController import courtBp
+from services.controllers.MatchController import matchBp
+from services.controllers.PlayerAvailabilityController import playerAvailabilityBp
+from services.controllers.PlayerBalanceController import playerBalanceBp
+from services.controllers.PlayerCategoriesController import playerCategoriesBp
+from services.controllers.RankingController import rankingBp
+from services.controllers.ReductionController import reductionBp
+from services.controllers.ReductionSettingsController import reductionSettingsBp
+from services.controllers.SettingController import settingBp
+from services.controllers.TeamController import teamBp
+from services.controllers.TransactionController import transactionBp
+from services.controllers.PlayerAvailabilityCommentController import playerAvailabilityCommentBp
+from services.controllers.PaymentController import paymentBp
 
 from flask_cors import CORS
 
@@ -31,6 +32,7 @@ db.init_app(app)
 app.register_blueprint(playerBp)
 app.register_blueprint(playerAvailabilityBp)
 app.register_blueprint(availabilityBp)
+app.register_blueprint(accountBp)
 app.register_blueprint(categoryBp)
 app.register_blueprint(courtBp)
 app.register_blueprint(matchBp)
