@@ -25,7 +25,7 @@ def addTransactions():
     return jsonify({'message': 'Transactions added successfully!'}), 201
 
 
-@transactionBp.route('/a', methods=['PUT'])
+@transactionBp.route('/', methods=['PUT'])
 def updateTransaction():
     try:
         data = request.json
