@@ -18,6 +18,8 @@ from services.controllers.TeamController import teamBp
 from services.controllers.TransactionController import transactionBp
 from services.controllers.PlayerAvailabilityCommentController import playerAvailabilityCommentBp
 from services.controllers.PaymentController import paymentBp
+from services.controllers.ProfilController import profilBp
+from services.controllers.UserController import userBp
 
 from flask_cors import CORS
 
@@ -46,6 +48,8 @@ app.register_blueprint(teamBp)
 app.register_blueprint(transactionBp)
 app.register_blueprint(playerAvailabilityCommentBp)
 app.register_blueprint(paymentBp)
+app.register_blueprint(profilBp)
+app.register_blueprint(userBp)
 
 # Création des tables
 with app.app_context():
