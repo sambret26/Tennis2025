@@ -14,6 +14,8 @@ class Player(db.Model):
     firstName = db.Column(db.String, nullable=False)
     rankingId = db.Column(db.Integer, db.ForeignKey("rankings.id"))
     club = db.Column(db.String)
+    phoneNumber = db.Column(db.String)
+    email = db.Column(db.String)
     isActive = db.Column(db.Boolean, default=True)
     createdAt = db.Column(db.DateTime, default=datetime.utcnow)
     updatedAt = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
@@ -32,7 +34,7 @@ class Player(db.Model):
     balance = db.relationship("PlayerBalance", backref="player", uselist=False)
 
     def __init__(self, id=None, fftId=None, inscriptionId=None, lastName=None,
-            firstName=None, rankingId=None, club=None, isActive=None):
+            firstName=None, rankingId=None, club=None, phoneNumber=None, email=None, isActive=None):
         self.id = id
         self.fftId = fftId
         self.inscriptionId = inscriptionId
@@ -40,6 +42,8 @@ class Player(db.Model):
         self.firstName = firstName
         self.rankingId = rankingId
         self.club = club
+        self.phoneNumber = phoneNumber
+        self.email = email
         self.isActive = isActive
 
     def toDict(self):
@@ -51,6 +55,8 @@ class Player(db.Model):
             "inscriptionId": self.inscriptionId,
             "rankingId": self.rankingId,
             "club": self.club,
+            "phoneNumber": self.phoneNumber,
+            "email": self.email,
             "isActive": self.isActive,
             "ranking": self.ranking.toDict(),
             "categories": [category.code for category in self.categories],
@@ -63,7 +69,9 @@ class Player(db.Model):
     def toMiniDict(self):
         return {
             "fullName": self.getFullName(),
-            "ranking": self.ranking.simple
+            "ranking": self.ranking.simple,
+            "phoneNumber": self.phoneNumber,
+            "email": self.email
         }
 
     def toNameDict(self):
@@ -86,5 +94,7 @@ class Player(db.Model):
             firstName=data['firstName'],        
             rankingId=data['rankingId'],        
             club=data['club'],        
+            phoneNumber=data['phoneNumber'],
+            email=data['email'],
             isActive=data['isActive']
         )
