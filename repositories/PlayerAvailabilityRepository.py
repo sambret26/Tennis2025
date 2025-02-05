@@ -23,6 +23,10 @@ class PlayerAvailabilityRepository:
         return PlayerAvailability.query.all()
 
     @staticmethod
+    def getPlayerAvailabilityByDay(day):
+        return PlayerAvailability.query.filter_by(day=day).all()
+
+    @staticmethod
     def getPlayerAvailabilityIdByPlayerIdDayTimeSlot(playerId, day, timeSlot):
         return PlayerAvailability.query.with_entities(PlayerAvailability.id).filter_by(playerId=playerId, day=day, timeSlot=timeSlot).first()
 

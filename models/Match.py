@@ -10,6 +10,8 @@ class Match(db.Model):
     label = db.Column(db.String, nullable=False)
     player1Id = db.Column(db.Integer, db.ForeignKey('players.id'))
     player2Id = db.Column(db.Integer, db.ForeignKey('players.id'))
+    player1Availability = db.Column(db.Integer)
+    player2Availability = db.Column(db.Integer)
     day = db.Column(db.String)
     hour = db.Column(db.String)
     courtId = db.Column(db.Integer, db.ForeignKey('courts.id'))
@@ -30,12 +32,14 @@ class Match(db.Model):
     court = db.relationship('Court', backref='court')
     winner = db.relationship('Player', foreign_keys=[winnerId], backref='winner')
 
-    def __init__(self, fftId, categoryId, label, player1Id, player2Id, day, hour, courtId, finish, winnerId, notif, score, panel, nextRound, calId, isActive):
+    def __init__(self, fftId, categoryId, label, player1Id, player2Id, player1Availability, player2Availability, day, hour, courtId, finish, winnerId, notif, score, panel, nextRound, calId, isActive):
         self.fftId = fftId
         self.categoryId = categoryId
         self.label = label
         self.player1Id = player1Id
         self.player2Id = player2Id
+        self.player1Availability = player1Availability
+        self.player2Availability = player2Availability
         self.day = day
         self.hour = hour
         self.courtId = courtId
@@ -56,6 +60,8 @@ class Match(db.Model):
             'label': self.label,
             'player1Id': self.player1Id,
             'player2Id': self.player2Id,
+            'player1Availability': self.player1Availability,
+            'player2Availability': self.player2Availability,
             'day': self.day,
             'hour': self.hour,
             'courtId': self.courtId,
@@ -81,6 +87,8 @@ class Match(db.Model):
             label=data['label'],
             player1Id=data['player1Id'],
             player2Id=data['player2Id'],
+            player1Availability=data['player1Availability'],
+            player2Availability=data['player2Availability'],
             day=data['day'],
             hour=data['hour'],
             courtId=data['courtId'],

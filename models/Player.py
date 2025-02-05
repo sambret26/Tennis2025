@@ -68,6 +68,7 @@ class Player(db.Model):
 
     def toMiniDict(self):
         return {
+            "id": self.id,
             "fullName": self.getFullName(),
             "ranking": self.ranking.simple,
             "phoneNumber": self.phoneNumber,

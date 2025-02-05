@@ -15,6 +15,12 @@ def getPlayerAvailabilitiesByPlayerId(playerId):
     playerAvailabilities = PlayerAvailabilityRepository.getPlayerAvailabilityByPlayerId(playerId)
     return jsonify([playerAvailability.toDict() for playerAvailability in playerAvailabilities]), 200
 
+@playerAvailabilityBp.route('/date', methods=['GET'])
+def getAvailabilitiesForDay():
+    date = request.args.get('date')
+    playerAvailabilities = PlayerAvailabilityRepository.getPlayerAvailabilityByDay(date)
+    return jsonify([playerAvailability.toDict() for playerAvailability in playerAvailabilities]), 200
+
 @playerAvailabilityBp.route('/', methods=['POST'])
 def addPlayerAvailability():
     playerAvailability = PlayerAvailability.fromJson(request.json)

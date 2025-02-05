@@ -35,10 +35,28 @@ def updateMatchResult():
     matchId = data['matchId']
     winnerId = data['playerId']
     score = data['score']
+    finish = data['finish']
     match = MatchRepository.getMatchById(matchId)
     if not match:
         return jsonify({'message': 'Match not found!'}), 404
     match.winnerId = winnerId
     match.score = score
+    match.finish = finish
     MatchRepository.updateMatch(match)
     return jsonify({'message': 'Match result updated successfully!'}), 200
+
+@matchBp.route('/playerAvailability', methods=['POST'])
+def updateMatchAvailability():
+    data = request.json
+    matchId = data['matchId']
+    playerNumber = data['playerNumber']
+    available = data['available']
+    match = MatchRepository.getMatchById(matchId)
+    if not match:
+        return jsonify({'message': 'Match not found!'}), 404
+    if(playerNumber == 1):
+        match.player1Availability = available
+    elif(playerNumber == 2):
+        match.player2Availability = available
+    MatchRepository.updateMatch(match)
+    return jsonify({'message': 'Match availability updated successfully!'}), 200
