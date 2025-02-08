@@ -54,17 +54,15 @@ app.register_blueprint(profilBp)
 app.register_blueprint(userBp)
 
 # Création des tables
-# with app.app_context():
-#     db.create_all()
+with app.app_context():
+    db.create_all()
 
 def runDiscordBot():
     discordBot.main()
 
-def main():
+if __name__ == '__main__':
     with app.app_context():
         db.create_all()
     discordThread = threading.Thread(target=runDiscordBot)
     discordThread.start()
     app.run()
-
-main()
