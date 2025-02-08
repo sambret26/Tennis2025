@@ -1,3 +1,3 @@
 #!/bin/bash
 #gunicorn app:app --daemon
-python discordBot.py
+#python discordBot.py
