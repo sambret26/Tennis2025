@@ -28,5 +28,4 @@ async def on_message(message):
 def main():
     bot.run(Config.DISCORD_TOKEN)
 
-if __name__ == '__main__':
-    main()
+main()
