@@ -1,4 +1,6 @@
 from flask import Flask
+import threading
+import discordBot
 from config import Config
 from database import db
 from services.controllers.PlayerController import playerBp
@@ -55,7 +57,12 @@ app.register_blueprint(userBp)
 with app.app_context():
     db.create_all()
 
+def runDiscordBot():
+    discordBot.main()
+
 if __name__ == '__main__':
     with app.app_context():
         db.create_all()
-    app.run(debug=True)
+    discordThread = threading.Thread(target=runDiscordBot)
+    discordThread.start()
+    app.run()
