@@ -60,9 +60,10 @@ with app.app_context():
 def runDiscordBot():
     discordBot.main()
 
+discordThread = threading.Thread(target=runDiscordBot)
+discordThread.start()
+
 if __name__ == '__main__':
     with app.app_context():
         db.create_all()
-    discordThread = threading.Thread(target=runDiscordBot)
-    discordThread.start()
     app.run()

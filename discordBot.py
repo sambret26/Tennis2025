@@ -27,5 +27,3 @@ async def on_message(message):
 
 def main():
     bot.run(Config.DISCORD_TOKEN)
-
-main()
