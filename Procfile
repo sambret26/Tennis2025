@@ -1,2 +1,1 @@
-worker: python discordBot.py
-web: gunicorn app:app
+web: sh start.sh
