@@ -1,4 +1,5 @@
 from models.Player import Player
+from models.PlayerCategories import PlayerCategories
 from database import db
 
 class PlayerRepository:
@@ -31,3 +32,17 @@ class PlayerRepository:
     def deletePlayer(player):
         db.session.delete(player)
         db.session.commit()
+
+    @staticmethod
+    def getNumberPlayers():
+        return Player.query.count()
+
+    @staticmethod
+    def getRankingIds():
+        results = Player.query.with_entities(Player.rankingId).all()
+        return [result[0] for result in results]
+
+    @staticmethod
+    def getRankingIdsByCategoryId(categoryId):
+        results = db.session.query(Player.rankingId).select_from(Player).join(PlayerCategories, Player.id == PlayerCategories.playerId).filter(PlayerCategories.categoryId == categoryId).all()
+        return [result[0] for result in results]

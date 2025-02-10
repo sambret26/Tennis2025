@@ -86,6 +86,9 @@ class Player(db.Model):
     def getFullName(self):
         return f"{self.lastName.upper()} {self.firstName.title()}"
 
+    def getFullNameWithRanking(self):
+        return f"{self.getFullName()} ({self.ranking.simple})"
+
     @classmethod
     def fromJson(cls, data):
         return cls(

@@ -1,6 +1,6 @@
 from flask import Flask
 import threading
-import discordBot
+from discord import discordController
 from config import Config
 from database import db
 from services.controllers.PlayerController import playerBp
@@ -22,6 +22,8 @@ from services.controllers.PlayerAvailabilityCommentController import playerAvail
 from services.controllers.PaymentController import paymentBp
 from services.controllers.ProfilController import profilBp
 from services.controllers.UserController import userBp
+
+from models.Channel import Channel # Pour créer la table sans bp
 
 from flask_cors import CORS
 
@@ -53,17 +55,17 @@ app.register_blueprint(paymentBp)
 app.register_blueprint(profilBp)
 app.register_blueprint(userBp)
 
+
+def runDiscordBot():
+    with app.app_context():
+        discordController.main()
+
 # Création des tables
 with app.app_context():
     db.create_all()
-
-def runDiscordBot():
-    discordBot.main()
 
 discordThread = threading.Thread(target=runDiscordBot)
 discordThread.start()
 
 if __name__ == '__main__':
-    with app.app_context():
-        db.create_all()
     app.run()

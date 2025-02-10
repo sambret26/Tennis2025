@@ -29,3 +29,7 @@ class MatchRepository:
     @staticmethod
     def getMatchesForPlanning(date):
         return Match.query.filter(Match.day == date).order_by(Match.hour).all()
+
+    @staticmethod
+    def getMatchByLabel(matchLabel):
+        return Match.query.filter(Match.label == matchLabel).first()

@@ -20,3 +20,7 @@ class CategoryRepository:
     @staticmethod
     def getCategoryById(categoryId):
         return Category.query.get(categoryId)
+
+    @staticmethod
+    def getCategoryByCode(code):
+        return Category.query.filter_by(code=code).first()

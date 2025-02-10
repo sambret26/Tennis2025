@@ -20,3 +20,7 @@ class PlayerCategoriesRepository:
     @staticmethod
     def getPlayerCategoryById(playerCategoryId):
         return PlayerCategories.query.get(playerCategoryId)
+
+    @staticmethod
+    def getNumberPlayersByCategory(categoryId):
+        return PlayerCategories.query.filter_by(categoryId=categoryId).count()
