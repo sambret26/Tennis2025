@@ -1,4 +1,4 @@
-from flask import Blueprint, jsonify, request
+from flask import Blueprint, jsonify
 from services.business import AccountBusiness
 
 accountBp = Blueprint('accountBp', __name__, url_prefix='/accounts')

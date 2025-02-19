@@ -18,8 +18,12 @@ class PaymentRepository:
         return Payment.query.all()
 
     @staticmethod
-    def getPaymentById(Payment_id):
-        return Payment.query.get(Payment_id)
+    def getAllPaymentsForPlayer(playerId):
+        return Payment.query.filter_by(playerId=playerId).all()
+
+    @staticmethod
+    def getPaymentById(paymentId):
+        return Payment.query.get(paymentId)
 
     @staticmethod
     def getAllPaymentsForDay(day):
@@ -28,3 +32,17 @@ class PaymentRepository:
     @staticmethod
     def getAllPaymentsBeforeDay(day):
         return Payment.query.filter(Payment.date < day).all()
+
+    @staticmethod
+    def deletePayment(payment):
+        db.session.delete(payment)
+        db.session.commit()
+
+    @staticmethod
+    def deleteAllPayments():
+        Payment.query.delete()
+        db.session.commit()
+
+    @staticmethod
+    def deleteAllPaymentsByPlayerId(playerId):
+        Payment.query.filter_by(playerId=playerId).delete()

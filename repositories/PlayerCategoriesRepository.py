@@ -10,7 +10,7 @@ class PlayerCategoriesRepository:
 
     @staticmethod
     def addPlayerCategories(playerCategories):
-        db.session.addAll(playerCategories)
+        db.session.add_all(playerCategories)
         db.session.commit()
 
     @staticmethod
@@ -24,3 +24,8 @@ class PlayerCategoriesRepository:
     @staticmethod
     def getNumberPlayersByCategory(categoryId):
         return PlayerCategories.query.filter_by(categoryId=categoryId).count()
+
+    @staticmethod
+    def deleteAllPlayerCategories():
+        PlayerCategories.query.delete()
+        db.session.commit()

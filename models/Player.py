@@ -8,8 +8,8 @@ class Player(db.Model):
     __tablename__ = "players"
 
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    fftId = db.Column(db.String, unique=True, index=True)
-    inscriptionId = db.Column(db.String, unique=True, index=True)
+    fftId = db.Column(db.BigInteger, unique=True, index=True)
+    inscriptionId = db.Column(db.BigInteger, unique=True, index=True)
     lastName = db.Column(db.String, nullable=False)
     firstName = db.Column(db.String, nullable=False)
     rankingId = db.Column(db.Integer, db.ForeignKey("rankings.id"))
@@ -21,10 +21,10 @@ class Player(db.Model):
     updatedAt = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
     
     # Relations
-    ranking = db.relationship('Ranking', foreign_keys=[rankingId], backref='players')
-    # matches_as_player1 = relationship("Match", foreign_keys="[Match.player1_id]", back_populates="player1")
-    # matches_as_player2 = relationship("Match", foreign_keys="[Match.player2_id]", back_populates="player2")
-    # matches_won = relationship("Match", foreign_keys="[Match.winner_id]", back_populates="winner")
+    #ranking = db.relationship('Ranking', foreign_keys=[rankingId], backref='ranking')
+    #matches_as_player1 = db.relationship("Match", foreign_keys="[Match.player1_id]", back_populates="player1")
+    #matches_as_player2 = db.relationship("Match", foreign_keys="[Match.player2_id]", back_populates="player2")
+    #matches_won = db.relationship("Match", foreign_keys="[Match.winner_id]", back_populates="winner")
     categories = db.relationship("Category", 
                                secondary="player_categories",
                                backref=db.backref("players", lazy="dynamic"),
@@ -58,11 +58,11 @@ class Player(db.Model):
             "phoneNumber": self.phoneNumber,
             "email": self.email,
             "isActive": self.isActive,
-            "ranking": self.ranking.toDict(),
+            "ranking": self.ranking.toDict() if self.ranking else None,
             "categories": [category.code for category in self.categories],
-            "balance": self.balance.toDictForPlayer(),
-            "payments": [payment.toDictForPlayer() for payment in self.payments],
-            "reductions": [reduction.toDictForPlayer() for reduction in self.reductions],
+            "balance": self.balance.toDictForPlayer() if self.balance else None,
+            "payments": [payment.toDictForPlayer() for payment in self.payments] if self.payments else None,
+            "reductions": [reduction.toDictForPlayer() for reduction in self.reductions] if self.reductions else None,
             "fullName": self.getFullName()
         }
 
@@ -89,6 +89,11 @@ class Player(db.Model):
     def getFullNameWithRanking(self):
         return f"{self.getFullName()} ({self.ranking.simple})"
 
+    def isDifferent(self, player):
+        return self.lastName != player.lastName or self.firstName != player.firstName or \
+         self.club != player.club or self.rankingId != player.rankingId or \
+         self.phoneNumber != player.phoneNumber or self.email != player.email
+
     @classmethod
     def fromJson(cls, data):
         return cls(
@@ -102,3 +107,24 @@ class Player(db.Model):
             email=data['email'],
             isActive=data['isActive']
         )
+
+    @classmethod
+    def fromFFT(cls, data):
+        return cls(
+            fftId=data['joueur1Id'],
+            inscriptionId=data['inscriptionId'],
+            firstName= data['joueur1Prenom'].title(),
+            lastName=data['joueur1Nom'].title(),
+            club = data['clubJoueur1']
+        )
+
+    @classmethod
+    def fromFFT2(cls, data):
+        return cls(
+            fftId=data['joueur2Id'],
+            inscriptionId=data['inscriptionId'],
+            firstName= data['joueur2Prenom'].title(),
+            lastName=data['joueur2Nom'].title(),
+            club = data['clubJoueur2']
+        )
+

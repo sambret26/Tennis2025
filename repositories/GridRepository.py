@@ -1,0 +1,32 @@
+from models.Grid import Grid
+from database import db
+
+class GridRepository:
+
+    @staticmethod
+    def addGrid(grid):
+        db.session.add(grid)
+        db.session.commit()
+
+    @staticmethod
+    def addGrids(grids):
+        db.session.add_all(grids)
+        db.session.commit()
+
+    @staticmethod
+    def getAllGrids():
+        return Grid.query.all()
+
+    @staticmethod
+    def getGridById(gridId):
+        return Grid.query.get(gridId)
+
+    @staticmethod
+    def deleteAllGrids():
+        Grid.query.delete()
+        db.session.commit()
+
+    @staticmethod
+    def deleteAllGridsByCategory(categoryId):
+        Grid.query.filter_by(categoryId=categoryId).delete()
+        db.session.commit()

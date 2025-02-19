@@ -10,7 +10,7 @@ class CourtRepository:
 
     @staticmethod
     def addCourts(courts):
-        db.session.addAll(courts)
+        db.session.add_all(courts)
         db.session.commit()
 
     @staticmethod
@@ -20,3 +20,8 @@ class CourtRepository:
     @staticmethod
     def getCourtById(courtId):
         return Court.query.get(courtId)
+
+    @staticmethod
+    def deleteAllCourts():
+        Court.query.delete()
+        db.session.commit()

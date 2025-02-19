@@ -10,7 +10,7 @@ class ReductionSettingsRepository:
 
     @staticmethod
     def addReductionSettings(reductionSettings):
-        db.session.addAll(reductionSettings)
+        db.session.add_all(reductionSettings)
         db.session.commit()
 
     @staticmethod

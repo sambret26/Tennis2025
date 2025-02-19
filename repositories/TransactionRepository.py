@@ -10,7 +10,7 @@ class TransactionRepository:
 
     @staticmethod
     def addTransactions(transactions):
-        db.session.addAll(transactions)
+        db.session.add_all(transactions)
         db.session.commit()
 
     @staticmethod
@@ -28,3 +28,8 @@ class TransactionRepository:
     @staticmethod
     def getAllWithdrawalForDay(day):
         return Transaction.query.filter_by(date=day, type=0).all()
+
+    @staticmethod
+    def deleteAllTransactions():
+        Transaction.query.delete()
+        db.session.commit()

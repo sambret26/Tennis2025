@@ -10,7 +10,7 @@ class MatchRepository:
 
     @staticmethod
     def addMatches(matches):
-        db.session.addAll(matches)
+        db.session.add_all(matches)
         db.session.commit()
 
     @staticmethod
@@ -33,3 +33,8 @@ class MatchRepository:
     @staticmethod
     def getMatchByLabel(matchLabel):
         return Match.query.filter(Match.label == matchLabel).first()
+
+    @staticmethod
+    def deleteAllMatchesByGrid(gridId):
+        Match.query.filter(Match.gridId == gridId).delete()
+        db.session.commit()

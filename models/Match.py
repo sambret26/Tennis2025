@@ -5,9 +5,10 @@ class Match(db.Model):
     __tablename__ = 'matches'
 
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    fftId = db.Column(db.Integer, nullable=False)
+    fftId = db.Column(db.BigInteger, nullable=False)
     categoryId = db.Column(db.Integer, db.ForeignKey('categories.id'), nullable=False)
-    double = db.Column(db.Integer, nullable=False)
+    gridId = db.Column(db.Integer, db.ForeignKey('grids.id'), nullable=False)
+    double = db.Column(db.Boolean, nullable=False, default=False)
     label = db.Column(db.String, nullable=False)
     player1Id = db.Column(db.Integer, db.ForeignKey('players.id'))
     player2Id = db.Column(db.Integer, db.ForeignKey('players.id'))
@@ -18,11 +19,10 @@ class Match(db.Model):
     day = db.Column(db.String)
     hour = db.Column(db.String)
     courtId = db.Column(db.Integer, db.ForeignKey('courts.id'))
-    finish = db.Column(db.Integer, nullable=False)
+    finish = db.Column(db.Boolean, nullable=False, default=False)
     winnerId = db.Column(db.Integer, db.ForeignKey('players.id'))
-    notif = db.Column(db.Integer, nullable=False)
+    notif = db.Column(db.Boolean, nullable=False, default=False)
     score = db.Column(db.String)
-    panel = db.Column(db.String)
     nextRound = db.Column(db.String)
     calId = db.Column(db.String)
     isActive = db.Column(db.Boolean, default=True)
@@ -30,16 +30,18 @@ class Match(db.Model):
     updatedAt = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
 
     #relashionship
-    player1 = db.relationship('Player', foreign_keys=[player1Id], backref='player1')
-    player2 = db.relationship('Player', foreign_keys=[player2Id], backref='player2')
-    team1 = db.relationship('Team', foreign_keys=[team1Id], backref='team1')
-    team2 = db.relationship('Team', foreign_keys=[team2Id], backref='team2')
+    # player1 = db.relationship('Player', foreign_keys=[player1Id], backref='player1')
+    # player2 = db.relationship('Player', foreign_keys=[player2Id], backref='player2')
+    # team1 = db.relationship('Team', foreign_keys=[team1Id], backref='team1')
+    #team2 = db.relationship('Team', foreign_keys=[team2Id], backref='team2')
     court = db.relationship('Court', backref='court')
     winner = db.relationship('Player', foreign_keys=[winnerId], backref='winner')
+    grid = db.relationship('Grid', backref='grid')
 
-    def __init__(self, fftId, categoryId, double, label, player1Id, player2Id, team1Id, team2Id, player1Availability, player2Availability, day, hour, courtId, finish, winnerId, notif, score, panel, nextRound, calId, isActive):
+    def __init__(self, fftId, categoryId, gridId, double, label, player1Id, player2Id, team1Id, team2Id, player1Availability, player2Availability, day, hour, courtId, finish, winnerId, notif, score, nextRound, calId, isActive):
         self.fftId = fftId
         self.categoryId = categoryId
+        self.gridId = gridId
         self.double = double
         self.label = label
         self.player1Id = player1Id
@@ -55,7 +57,6 @@ class Match(db.Model):
         self.winnerId = winnerId
         self.notif = notif
         self.score = score
-        self.panel = panel
         self.nextRound = nextRound
         self.calId = calId
         self.isActive = isActive
@@ -65,6 +66,7 @@ class Match(db.Model):
             'id': self.id,
             'fftId': self.fftId,
             'categoryId': self.categoryId,
+            'gridId': self.gridId,
             'double': self.double,
             'label': self.label,
             'player1Id': self.player1Id if self.double == 0 else self.team1Id,
@@ -78,7 +80,6 @@ class Match(db.Model):
             'winnerId': self.winnerId,
             'notif': self.notif,
             'score': self.score,
-            'panel': self.panel,
             'nextRound': self.nextRound,
             'calId': self.calId,
             'isActive': self.isActive,
@@ -101,6 +102,7 @@ class Match(db.Model):
         return cls(
             fftId=data['fftId'],
             categoryId=data['categoryId'],
+            gridId=data['gridId'],
             double=data['double'],
             label=data['label'],
             player1Id=data['player1Id'],
@@ -116,8 +118,33 @@ class Match(db.Model):
             winnerId=data['winnerId'],
             notif=data['notif'],
             score=data['score'],
-            panel=data['panel'],
             nextRound=data['nextRound'],
             calId=data['calId'],
             isActive=data['isActive']
+        )
+
+    @classmethod
+    def fromFFT(cls, data, double, categoryId, gridId):
+        return cls(
+            fftId=data['matchId'],
+            categoryId=categoryId,
+            gridId=gridId,
+            double=double,
+            label=data['numeroMatch'], #TODO
+            player1Id=data['joueurList'][0]['joueurId'] if len(data['joueurList']) > 0 and not double else None,
+            player2Id=data['joueurList'][1]['joueurId'] if len(data['joueurList']) > 1 and not double else None,
+            team1Id=data['joueurList'][0]['joueurId'] if len(data['joueurList']) > 0 and double else None, #TODO
+            team2Id=data['joueurList'][1]['joueurId'] if len(data['joueurList']) > 1 and double else None, #TODO
+            player1Availability=0,
+            player2Availability=0,
+            day=data['dateProgrammation'], #TODO
+            hour=data['dateDebut'], #TODO
+            courtId=data['courtId'],
+            finish=False,#data['typeResultat'], #TODO
+            winnerId=data['equipeGagnante'], #TODO
+            notif=False,
+            score=data['sets'], #TODO
+            nextRound=data['matchsSuivants']['matchId'] if 'matchId' in data['matchsSuivants'] else None,
+            calId=None,
+            isActive=True
         )

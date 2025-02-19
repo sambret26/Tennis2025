@@ -10,7 +10,7 @@ class CategoryRepository:
 
     @staticmethod
     def addCategories(categories):
-        db.session.addAll(categories)
+        db.session.add_all(categories)
         db.session.commit()
 
     @staticmethod
@@ -24,3 +24,12 @@ class CategoryRepository:
     @staticmethod
     def getCategoryByCode(code):
         return Category.query.filter_by(code=code).first()
+
+    @staticmethod
+    def getCategoryIdByFftId(fftId):
+        return Category.query.filter_by(fftId=fftId).first().id
+
+    @staticmethod
+    def deleteAllCategories():
+        Category.query.delete()
+        db.session.commit()

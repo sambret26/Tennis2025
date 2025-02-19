@@ -10,7 +10,7 @@ class PlayerBalanceRepository:
 
     @staticmethod
     def addplayerBalances(playerBalances):
-        db.session.addAll(playerBalances)
+        db.session.add_all(playerBalances)
         db.session.commit()
 
     @staticmethod
@@ -20,3 +20,24 @@ class PlayerBalanceRepository:
     @staticmethod
     def getplayerBalanceById(playerBalanceId):
         return PlayerBalance.query.get(playerBalanceId)
+
+    @staticmethod
+    def getPlayerBalanceByPlayerId(playerId):
+        return PlayerBalance.query.filter_by(playerId=playerId).first()
+
+    @staticmethod
+    def updatePlayerBalanceForPlayerId(playerId, balance):
+        PlayerBalance.query.filter_by(playerId=playerId).update({'remainingAmount': balance["remainingAmount"],
+                                                                'finalAmount': balance["finalAmount"],
+                                                                'initialAmount': balance["initialAmount"]})
+        db.session.commit()
+
+    @staticmethod
+    def updatePlayerBalance(playerBalance):
+        PlayerBalance.query.filter_by(id=playerBalance.id).update(playerBalance.toDict())
+        db.session.commit()
+
+    @staticmethod
+    def deleteAllPlayerBalances():
+        PlayerBalance.query.delete()
+        db.session.commit()

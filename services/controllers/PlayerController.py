@@ -2,22 +2,24 @@ from flask import Blueprint, jsonify, request
 from models.Player import Player
 from repositories.PlayerRepository import PlayerRepository
 
+playerRepository = PlayerRepository()
+
 playerBp = Blueprint('playerBp', __name__, url_prefix='/players')
 
 @playerBp.route('/', methods=['GET'])
 def getPlayers():
-    players = PlayerRepository.getAllPlayers()
+    players = playerRepository.getAllPlayers()
     return jsonify([player.toDict() for player in players]), 200
 
 @playerBp.route('/allNames', methods=['GET'])
 def getAllPlayerNames():
-    players = PlayerRepository.getAllPlayerNames()
+    players = playerRepository.getAllPlayerNames()
     return jsonify([player.toNameDict() for player in players]), 200
 
 @playerBp.route('/', methods=['POST'])
 def addPlayer():
     player = Player.fromJson(request.json)
-    PlayerRepository.addPlayer(player)
+    playerRepository.addPlayer(player)
     return jsonify({"message": "Player added successfully!"}), 201
 
 @playerBp.route('/multiple', methods=['POST'])
@@ -25,5 +27,5 @@ def addPlayers():
     players = []
     for player in request.json: 
         players.append(Player.fromJson(player))
-    PlayerRepository.addPlayers(players)
+    playerRepository.addPlayers(players)
     return jsonify({"message": "Players added successfully!"}), 201

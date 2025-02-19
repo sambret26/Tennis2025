@@ -1,5 +1,6 @@
 import discord.discordFunctions as functions
 from constants import constants
+import moja.mojaService as mojaService
 
 from repositories.ChannelRepository import ChannelRepository
 from repositories.CategoryRepository import CategoryRepository
@@ -55,6 +56,35 @@ async def pgw(bot):
         else:
             message += f"{match.hour} : {match.player1.getFullNameWithRanking()} contre {match.player2.getFullNameWithRanking()}\n"
     await channel.send(message)
+
+async def updateCourts(ctx):
+    response = mojaService.updateCourts()
+    if response == 200 : await ctx.send("Courts mis à jour")
+    elif response == 404 : await ctx.send("Homologation non trouvée")
+    else : await ctx.send("Erreur lors de la mise à jour des courts")
+
+async def updateCategories(ctx):
+    response = mojaService.updateCategories()
+    if response == 200 : await ctx.send("Categories mises à jour")
+    else : await ctx.send("Erreur lors de la mise à jour des categories")
+
+async def updateGrids(ctx):
+    categories = categoryRepository.getAllCategories()
+    for category in categories:
+        response = mojaService.updateGrid(category.id, category.fftId)
+        if response == 200 : await ctx.send("Découpages mise à jour pour l'épreuve " + category.code)
+        elif response == 404 : await ctx.send("Epreuve non trouvée : " + category.code)
+        else : await ctx.send("Erreur lors de la mise à jour des découpages de l'épreuve " + category.code)
+
+async def updateRankings(ctx):
+    response = mojaService.updateRankings()
+    if response == 200 : await ctx.send("Classements mis à jour")
+    else : await ctx.send("Erreur lors de la mise à jour des classements")
+
+async def updateHomologation(ctx):
+    response = mojaService.updateHomologation()
+    if response == 200 : await ctx.send("Homologation mise à jour")
+    else : await ctx.send("Erreur lors de la mise à jour de l'homologation")
 
 async def cmd(ctx):
     await ctx.send(constants.COMMANDS_LIST)

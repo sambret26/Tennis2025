@@ -10,7 +10,7 @@ class AvailabilityRepository:
 
     @staticmethod
     def addAvailabilities(availabilities):
-        db.session.addAll(availabilities)
+        db.session.add_all(availabilities)
         db.session.commit()
 
     @staticmethod

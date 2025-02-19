@@ -10,7 +10,7 @@ class SettingRepository:
 
     @staticmethod
     def addSettings(settings):
-        db.session.addAll(settings)
+        db.session.add_all(settings)
         db.session.commit()
 
     @staticmethod
@@ -28,3 +28,21 @@ class SettingRepository:
         ).filter(Setting.key.in_(['startDate', 'endDate'])).all()
         dates = {result.key: result.value for result in results}
         return dates
+
+    @staticmethod
+    def getHomologationId():
+        return Setting.query.filter(Setting.key == 'homologationId').first().value
+
+    @staticmethod
+    def getJaId():
+        return Setting.query.filter(Setting.key == 'jaId').first().value
+
+    @staticmethod
+    def setStartDate(date):
+        db.session.query(Setting).filter(Setting.key == 'startDate').update({Setting.value: date})
+        db.session.commit()
+
+    @staticmethod
+    def setEndDate(date):
+        db.session.query(Setting).filter(Setting.key == 'endDate').update({Setting.value: date})
+        db.session.commit()

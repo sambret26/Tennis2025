@@ -6,12 +6,14 @@ from config import Config
 
 SECRET_KEY = Config.SECRET_KEY
 
+userRepository = UserRepository()
+
 userBp = Blueprint('userBp', __name__, url_prefix='/users')
 
 @userBp.route('/connect', methods=['POST'])
 def connectUser():
     data = request.json
-    user = UserRepository.getUserByName(data['username'])
+    user = userRepository.getUserByName(data['username'])
     if not user:
         return jsonify({'message': 'User not found!'}), 404
     if user.password != data['password']:
@@ -22,25 +24,25 @@ def connectUser():
 @userBp.route('/create', methods=['POST'])
 def createAccount():
     data = request.json
-    user = UserRepository.getUserByName(data['username'])
+    user = userRepository.getUserByName(data['username'])
     if user:
         return jsonify({'message': 'User already exists!'}), 409
     user = User.fromJson(data)
-    UserRepository.addUser(user)
+    userRepository.addUser(user)
     token = jwt.encode(user.toDict(), SECRET_KEY, algorithm='HS256')
     return jsonify({'token': token}), 200
 
 @userBp.route('/<int:userId>/role', methods=['PUT'])
 def updateRole(userId):
-    user = UserRepository.getUserById(userId)
+    user = userRepository.getUserById(userId)
     if not user:
         return jsonify({'message': 'User not found!'}), 404
     newRole = int(request.json['newRole'])
     if newRole < user.profileValue or user.superAdmin == 1:
         if user.profileValue == 2:
-            user = UserRepository.updateProfile(userId, newRole, 1)
+            user = userRepository.updateProfile(userId, newRole, 1)
         else :
-            user = UserRepository.updateProfile(userId, newRole, user.superAdmin)
+            user = userRepository.updateProfile(userId, newRole, user.superAdmin)
         token = jwt.encode(user.toDict(), SECRET_KEY, algorithm='HS256')
         return jsonify({'token': token}), 200
     else : 
@@ -52,9 +54,9 @@ def connectAdmin():
     password = data['password']
     userId = int(data['userId'])
     newRole = int(data['newRole'])
-    admin = UserRepository.getAdminWithPassword(password)
+    admin = userRepository.getAdminWithPassword(password)
     if not admin:
         return jsonify({'message': 'Invalid password!'}), 401
-    user = UserRepository.updateProfile(userId, newRole, 0)
+    user = userRepository.updateProfile(userId, newRole, 0)
     token = jwt.encode(user.toDict(), SECRET_KEY, algorithm='HS256')
     return jsonify({'token': token}), 200

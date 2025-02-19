@@ -24,6 +24,7 @@ from services.controllers.ProfilController import profilBp
 from services.controllers.UserController import userBp
 
 from models.Channel import Channel # Pour créer la table sans bp
+from models.Message import Message
 
 from flask_cors import CORS
 
@@ -67,5 +68,5 @@ with app.app_context():
 discordThread = threading.Thread(target=runDiscordBot)
 discordThread.start()
 
-if __name__ == '__main__':
-    app.run()
+# if __name__ == '__main__':
+#     app.run()

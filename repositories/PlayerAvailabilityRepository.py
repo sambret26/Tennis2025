@@ -10,7 +10,7 @@ class PlayerAvailabilityRepository:
 
     @staticmethod
     def addPlayerAvailabilities(playerAvailabilities):
-        db.session.addAll(playerAvailabilities)
+        db.session.add_all(playerAvailabilities)
         db.session.commit()
 
     @staticmethod
@@ -33,3 +33,8 @@ class PlayerAvailabilityRepository:
     @staticmethod
     def getPlayerAvailabilityByPlayerId(playerId):
         return PlayerAvailability.query.filter_by(playerId=playerId).all()
+
+    @staticmethod
+    def deleteAllPlayerAvailabilities():
+        PlayerAvailability.query.delete()
+        db.session.commit()
