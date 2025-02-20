@@ -30,8 +30,8 @@ class Match(db.Model):
     updatedAt = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
 
     #relashionship
-    # player1 = db.relationship('Player', foreign_keys=[player1Id], backref='player1')
-    # player2 = db.relationship('Player', foreign_keys=[player2Id], backref='player2')
+    player1 = db.relationship('Player', foreign_keys=[player1Id], backref='player1')
+    player2 = db.relationship('Player', foreign_keys=[player2Id], backref='player2')
     # team1 = db.relationship('Team', foreign_keys=[team1Id], backref='team1')
     #team2 = db.relationship('Team', foreign_keys=[team2Id], backref='team2')
     court = db.relationship('Court', backref='court')
@@ -124,17 +124,17 @@ class Match(db.Model):
         )
 
     @classmethod
-    def fromFFT(cls, data, double, categoryId, gridId):
+    def fromFFT(cls, data):
         return cls(
             fftId=data['matchId'],
-            categoryId=categoryId,
-            gridId=gridId,
-            double=double,
+            categoryId=0,
+            gridId=0,
+            double=False,
             label=data['numeroMatch'], #TODO
-            player1Id=data['joueurList'][0]['joueurId'] if len(data['joueurList']) > 0 and not double else None,
-            player2Id=data['joueurList'][1]['joueurId'] if len(data['joueurList']) > 1 and not double else None,
-            team1Id=data['joueurList'][0]['joueurId'] if len(data['joueurList']) > 0 and double else None, #TODO
-            team2Id=data['joueurList'][1]['joueurId'] if len(data['joueurList']) > 1 and double else None, #TODO
+            player1Id=0,
+            player2Id=0,
+            team1Id=0,
+            team2Id=0,
             player1Availability=0,
             player2Availability=0,
             day=data['dateProgrammation'], #TODO

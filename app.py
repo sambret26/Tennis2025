@@ -68,5 +68,5 @@ with app.app_context():
 discordThread = threading.Thread(target=runDiscordBot)
 discordThread.start()
 
-# if __name__ == '__main__':
-#     app.run()
+if __name__ == '__main__':
+    app.run()

@@ -8,7 +8,7 @@ from repositories.MatchRepository import MatchRepository
 
 channelRepository = ChannelRepository()
 categoryRepository = CategoryRepository()
-matchsRepository = MatchRepository()
+matchRepository = MatchRepository()
 
 async def check(ctx):
     await ctx.send("Connected !")
@@ -32,7 +32,7 @@ async def info(ctx, matchLabel: str = None):
         await ctx.send(constants.INFO_UNVALID_PARAM)
         return
     matchLabel = matchLabel.upper()
-    match = matchsRepository.getMatchByLabel(matchLabel)
+    match = matchRepository.getMatchByLabel(matchLabel)
     if match == None:
         await ctx.send(constants.NO_MATCH.replace("MATCH_LABEL", matchLabel))
         return
@@ -42,15 +42,15 @@ async def info(ctx, matchLabel: str = None):
 async def pgw(bot):
     channelId = channelRepository.getLogChannelId("WA")
     channel = await bot.fetch_channel(channelId)
-    matchs = False
+    matches = False
     date = functions.getCurrentDate().strftime("%d/%m")
     requestDate = functions.getCurrentDate().strftime("%Y-%m-%d")
-    matchs = matchsRepository.getMatchesForPlanning(requestDate)
-    if matchs == None or matchs == []:
+    matches = matchRepository.getMatchesForPlanning(requestDate)
+    if matches == None or matches == []:
         await channel.send(constants.NO_PG.replace("DATE", date))
         return
     message = constants.PG.replace("DATE", date)
-    for match in matchs:
+    for match in matches:
         if match.double :
             message += f"{match.hour} : {match.team1.getFullNameWithRanking()} contre {match.team2.getFullNameWithRanking()}\n"
         else:
@@ -85,6 +85,11 @@ async def updateHomologation(ctx):
     response = mojaService.updateHomologation()
     if response == 200 : await ctx.send("Homologation mise à jour")
     else : await ctx.send("Erreur lors de la mise à jour de l'homologation")
+
+async def updateMatches(ctx):
+    response = mojaService.updateAllMatches()
+    if response == 200 : await ctx.send("Matches mis à jour")
+    else : await ctx.send("Erreur lors de la mise à jour des matches")
 
 async def cmd(ctx):
     await ctx.send(constants.COMMANDS_LIST)

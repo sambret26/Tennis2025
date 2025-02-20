@@ -58,6 +58,10 @@ async def updateHomologation(ctx):
     await discordBusiness.updateHomologation(ctx)
 
 @bot.command()
+async def updateMatches(ctx):
+    await discordBusiness.updateMatches(ctx)
+
+@bot.command()
 async def cmd(ctx):
     await discordBusiness.cmd(ctx)
 

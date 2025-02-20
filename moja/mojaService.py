@@ -84,9 +84,7 @@ def updateHomologation():
     for category in categoryRepository.getAllCategories():
         print("Mise à jour des découpages de la catégorie " + category.code)
         updateGrid(category.id, category.fftId)
-    for grid in gridRepository.getAllGrids():
-        print("Mise à jour des matches de la grille " + grid.name)
-        updateMatches(grid.id, grid.tableId)
+    updateAllMatches()
     print("Mise à jour des classements")
     updateRankings()
     return 200
@@ -141,6 +139,14 @@ def updateCategories():
         categoryRepository.addCategories(categoriesToAdd)
     return 200
 
+def updateAllMatches():
+    result = 200
+    for grid in gridRepository.getAllGrids():
+        print("Mise à jour des matches de la grille " + grid.name)
+        if updateMatches(grid.id, grid.tableId, grid.categoryId) == 404:
+            result = 404
+    return result
+
 def updateGrid(categoryId, categoryFftId):  
     categoryInfos = getCategoryInfos(categoryFftId)
     if categoryInfos == None: return 404
@@ -155,18 +161,13 @@ def updateGrid(categoryId, categoryFftId):
         gridRepository.addGrids(gridsToAdd)
     return 200
 
-def updateMatches(gridId, gridFftId):
+def updateMatches(gridId, gridFftId, categoryId):
     url = getGridDataUrl(gridFftId)
-    print("Mise à jour des matches de la grille " + url)
-    matchs = mojaRequests.sendGetRequest(url)
-    print("Matchs : " + str(matchs))
-    if matchs == None: return 404
+    matches = mojaRequests.sendGetRequest(url)
+    if matches == None: return 404
     matchesToAdd = []
-    for match in matchs:
-        double = match["nomCategorie"].startswith("D")
-        categoryId = categoryRepository.getCategoryIdByFftId(match["epreuveId"])
-        newMatch = Match.fromFFT(match, double, categoryId, gridId)
-        matchesToAdd.append(newMatch)
+    for match in matches:
+        matchesToAdd.append(createMatch(match, categoryId, gridId))
     if matchesToAdd != []:
         matchRepository.deleteAllMatchesByGrid(gridId)
         matchRepository.addMatches(matchesToAdd)
@@ -186,10 +187,27 @@ def updateRankings():
     rankingRepository.addRankings(rankingsToAdd)
     return 200
 
+def createMatch(match, categoryId, gridId):
+    newMatch = Match.fromFFT(match)
+    newMatch.player1Id = getPlayerId(match['joueurList'], 0)
+    newMatch.player2Id = getPlayerId(match['joueurList'], 1)
+    newMatch.team1Id = None #TODO
+    newMatch.team2Id = None #TODO
+    newMatch.double = match["nomCategorie"].startswith("D")
+    newMatch.categoryId = categoryId
+    newMatch.gridId = gridId
+    return newMatch
+
 def addRankings(rankingsToAdd, rankings):
     for ranking in rankings:
         newRanking = Ranking.fromFFT(ranking)
         if newRanking != None and newRanking not in rankingsToAdd :
             rankingsToAdd.append(newRanking)
 
+def getPlayerId(list, i):
+    fftId = list[i]['joueurId'] if len(list) > i else None
+    if fftId == None: return None
+    player = playerRepository.getPlayerByFftId(fftId)
+    if player == None: return None
+    return player.id
 
