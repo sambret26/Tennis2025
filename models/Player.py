@@ -14,7 +14,6 @@ class Player(db.Model):
     club = db.Column(db.String)
     phoneNumber = db.Column(db.String)
     email = db.Column(db.String)
-    isActive = db.Column(db.Boolean, default=True)
     createdAt = db.Column(db.DateTime, default=datetime.utcnow)
     updatedAt = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
     
@@ -37,7 +36,7 @@ class Player(db.Model):
     #teamAs2 = db.relationship('Team', foreign_keys=[Team.player2Id], back_populates="player2", lazy="select")
 
     def __init__(self, id=None, fftId=None, inscriptionId=None, lastName=None,
-            firstName=None, rankingId=None, club=None, phoneNumber=None, email=None, isActive=None):
+            firstName=None, rankingId=None, club=None, phoneNumber=None, email=None):
         self.id = id
         self.fftId = fftId
         self.inscriptionId = inscriptionId
@@ -47,7 +46,6 @@ class Player(db.Model):
         self.club = club
         self.phoneNumber = phoneNumber
         self.email = email
-        self.isActive = isActive
 
     def toDictForDB(self):
         return {
@@ -59,8 +57,7 @@ class Player(db.Model):
             "rankingId": self.rankingId,
             "club": self.club,
             "phoneNumber": self.phoneNumber,
-            "email": self.email,
-            "isActive": self.isActive,
+            "email": self.email
         }
 
     def toDict(self):
@@ -111,8 +108,7 @@ class Player(db.Model):
             rankingId=data['rankingId'],        
             club=data['club'],        
             phoneNumber=data['phoneNumber'],
-            email=data['email'],
-            isActive=data['isActive']
+            email=data['email']
         )
 
     @classmethod

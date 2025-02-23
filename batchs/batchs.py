@@ -43,6 +43,7 @@ def getPlayersAndTeams():
 def addPlayerInPlayersList(players, player, category):
     newPlayer = Player.fromFFT(player)
     newPlayer.ranking = rankingRepository.getRankingBySimple(player['classementJoueur1'])
+    newPlayer.rankingId = newPlayer.ranking.id
     addPlayer(players, newPlayer, category)
 
 def addPlayersAndTeamInLists(players, teams, player, category):
@@ -75,28 +76,24 @@ def updatePlayerBalance(player, amount):
     player.balance.initialAmount += amount
 
 def updateDBPlayers(players):
-    playerRepository.setPlayersToInactive()
-    activePlayersId = []
+    playersIdToDelete = playerRepository.getAllPlayersId()
     newPlayers = []
     oldPlayers = []
-    playersToDelete = []
     for player in players:
         playerInDB = playerRepository.getPlayerByFftId(player.fftId)
         if playerInDB: #TODO : Update player balance
             checkCategories(player, playerInDB)
-            if player.isDifferent(playerInDB) : 
+            if player.isDifferent(playerInDB):
                 player.id = playerInDB.id
                 playerRepository.updatePlayer(playerInDB.id, player)
-            activePlayersId.append(playerInDB.id)
+            playersIdToDelete.remove(playerInDB.id)
         else:
             newPlayers.append(player)
-    playerRepository.setPlayersToActive(activePlayersId)
-    for playerToRemove in playerRepository.getInactivePlayers():
-        oldPlayers.append(createPlayer(playerToRemove))
-        playersToDelete.append(playerToRemove.id)
+    for playerId in playersIdToDelete:
+        oldPlayers.append(createPlayer(playerRepository.getPlayerById(playerId)))
     sendNotif(newPlayers, oldPlayers)
     playerRepository.addPlayers(newPlayers)
-    playerRepository.deletePlayers(playersToDelete)
+    playerRepository.deletePlayers(playersIdToDelete)
 
 def createPlayer(player):
     return {

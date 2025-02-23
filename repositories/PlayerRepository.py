@@ -23,6 +23,10 @@ class PlayerRepository:
         return Player.query.filter_by(fftId=fftId).first()
 
     @staticmethod
+    def getAllPlayersId():
+        return [player.id for player in Player.query.all()]
+
+    @staticmethod
     def addPlayer(player):
         db.session.add(player)
         db.session.commit()
@@ -46,20 +50,6 @@ class PlayerRepository:
     def getRankingIdsByCategoryId(categoryId):
         results = db.session.query(Player.rankingId).select_from(Player).join(PlayerCategories, Player.id == PlayerCategories.playerId).filter(PlayerCategories.categoryId == categoryId).all()
         return [result[0] for result in results]
-
-    @staticmethod
-    def setPlayersToInactive():
-        Player.query.update({'isActive': False})
-        db.session.commit()
-
-    @staticmethod
-    def setPlayersToActive(playersId):
-        Player.query.filter(Player.id.in_(playersId)).update({'isActive': True})
-        db.session.commit()
-
-    @staticmethod
-    def getInactivePlayers():
-        return Player.query.filter_by(isActive=False).all()
 
     @staticmethod
     def updatePlayer(id, player):
