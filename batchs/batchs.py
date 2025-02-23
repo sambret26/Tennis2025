@@ -58,8 +58,8 @@ def addPlayersAndTeamInLists(players, teams, player, category):
     newPlayer2.ranking = rankingRepository.getRankingBySimple(player['classementJoueur2'])
     addPlayer(players, newPlayer1, category)
     addPlayer(players, newPlayer2, category)
-    ranking = None#TODO
-    fftId = player["inscriptionId"] #TODO : Check inscirptioId pour les players.team (conflit)
+    ranking = None#TODO : team ranking
+    fftId = player["inscriptionId"] #TODO : Check inscirptionId pour les players.team (conflit)
     newTeam = Team(fftId, newPlayer1, newPlayer2, ranking, 1)
     teams.append(newTeam)
 
@@ -86,7 +86,7 @@ def updateDBPlayers(players):
     oldPlayers = []
     for player in players:
         playerInDB = playerRepository.getPlayerByFftId(player.fftId)
-        if playerInDB: #TODO : Update player balance
+        if playerInDB:
             checkCategories(player, playerInDB)
             if player.isDifferent(playerInDB):
                 player.id = playerInDB.id

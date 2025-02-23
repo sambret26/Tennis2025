@@ -58,12 +58,12 @@ def getGridDataUrl(gridId):
 
 def updateCompetitions():
     competitionsToAdd = []
-    jaId = settingRepository.getJaId() #TODO
-    competitionUrl = os.environ.get("CompetitionUrl").replace("JA_ID", str(jaId))#TODO
+    jaId = settingRepository.getJaId()
+    competitionUrl = os.environ.get("CompetitionUrl").replace("JA_ID", str(jaId))
     competitions = mojaRequests.sendGetRequest(competitionUrl)
     for competition in competitions:
-        competitionsToAdd.append(Competition.fromFFT(competition)) #TODO
-    competitionRepository.addCompetitions(competitionsToAdd) #TODO
+        competitionsToAdd.append(Competition.fromFFT(competition))
+    competitionRepository.addCompetitions(competitionsToAdd)
 
 def updateHomologation():
     log.info(BATCH, "Suppression de toutes les données")
