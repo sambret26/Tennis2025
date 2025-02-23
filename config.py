@@ -1,5 +1,7 @@
 import os
 from dotenv import load_dotenv
+from logger.logger import log, CONFIG
+
 
 # Charge les variables d'environnement depuis le fichier .env
 basedir = os.path.abspath(os.path.dirname(__file__))
@@ -14,4 +16,4 @@ class Config:
 
     def __init__(self):
         if self.SQLALCHEMY_DATABASE_URI is None:
-            print("WARNING: DATABASE_URL is not set in .env file")
+            log.warn(CONFIG, "DATABASE_URL is not set in .env file")

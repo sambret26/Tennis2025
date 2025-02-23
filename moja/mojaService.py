@@ -23,6 +23,8 @@ from repositories.ReductionRepository import ReductionRepository
 from repositories.TransactionRepository import TransactionRepository
 from repositories.MatchRepository import MatchRepository
 
+from logger.logger import log, BATCH
+
 # from repositories.CompetitionRepository import CompetitionRepository
 
 categoryRepository = CategoryRepository()
@@ -64,7 +66,7 @@ def updateCompetitions():
     competitionRepository.addCompetitions(competitionsToAdd) #TODO
 
 def updateHomologation():
-    print("Suppression de toutes les données")
+    log.info(BATCH, "Suppression de toutes les données")
     playerAvailabilityRepository.deleteAllPlayerAvailabilities()
     playerAvailabilityCommentRepository.deleteAllPlayerAvailabilityComments()
     playerBalanceRepository.deleteAllPlayerBalances()
@@ -75,17 +77,17 @@ def updateHomologation():
     transactionRepository.deleteAllTransactions()
     competition = getHomologationInfos()
     if competition:
-        print("Mise à jour des courts")
+        log.info(BATCH, "Mise à jour des courts")
         updateCourtsInDB(competition["courts"])
-        print("Mise à jour des dates")
+        log.info(BATCH, "Mise à jour des dates")
         updateDates(competition)
-    print("Mise à jour des catégories")
+    log.info(BATCH, "Mise à jour des catégories")
     updateCategories()
     for category in categoryRepository.getAllCategories():
-        print("Mise à jour des découpages de la catégorie " + category.code)
+        log.info(BATCH, "Mise à jour des découpages de la catégorie " + category.code)
         updateGrid(category.id, category.fftId)
     updateAllMatches()
-    print("Mise à jour des classements")
+    log.info(BATCH, "Mise à jour des classements")
     updateRankings()
     return 200
 
@@ -142,7 +144,7 @@ def updateCategories():
 def updateAllMatches():
     result = 200
     for grid in gridRepository.getAllGrids():
-        print("Mise à jour des matches de la grille " + grid.name)
+        log.info(BATCH, "Mise à jour des matches de la grille " + grid.name)
         if updateMatches(grid.id, grid.tableId, grid.categoryId) == 404:
             result = 404
     return result

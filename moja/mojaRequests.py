@@ -1,3 +1,4 @@
+from logger.logger import log, MOJA
 import requests
 import os
 
@@ -24,13 +25,13 @@ def createHeaders():
 def sendGetRequest(url):
     response =  requests.get(url, headers = createHeaders())
     if response.status_code != 200:
-        print(f"Erreur lors de la requete GET a l'URL {url}: {response.status_code}")
+        log.error(MOJA, f"Erreur lors de la requete GET a l'URL {url}: {response.status_code}")
         return None
     return response.json()
 
 def sendPostRequest(url, data):
     response = requests.post(url, data=data)
     if response.status_code != 200:
-        print(f"Erreur lors de la requete POST a l'URL {url}: {response.status_code} ({response.json()})")
+        log.error(MOJA, f"Erreur lors de la requete POST a l'URL {url}: {response.status_code} ({response.json()})")
         return None
     return response.json()

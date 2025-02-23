@@ -3,6 +3,8 @@ from datetime import datetime
 BATCH = '[BATCH]'
 DISCORD = '[DISCORD]'
 BOT = '[BOT]'
+CONFIG = '[CONFIG]'
+MOJA = '[MOJA]'
 
 class Log:
     def __init__(self):
