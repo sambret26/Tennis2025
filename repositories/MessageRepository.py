@@ -18,6 +18,15 @@ class MessageRepository:
         return Message.query.filter(Message.category == category).all()
 
     @staticmethod
+    def getAllMessages():
+        return Message.query.all()
+
+    @staticmethod
     def deleteMessagesByCategory(category):
         Message.query.filter(Message.category == category).delete()
+        db.session.commit()
+
+    @staticmethod
+    def deleteMessagesByIds(messageIds):
+        Message.query.filter(Message.id.in_(messageIds)).delete()
         db.session.commit()
