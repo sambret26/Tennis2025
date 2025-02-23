@@ -1,12 +1,17 @@
 from flask import Blueprint, jsonify, request
 from repositories.UserRepository import UserRepository
+from repositories.MessageRepository import MessageRepository
+from repositories.ProfilRepository import ProfilRepository
 from models.User import User
+from models.Message import Message
 import jwt
 from config import Config
 
 SECRET_KEY = Config.SECRET_KEY
 
 userRepository = UserRepository()
+messageRepository = MessageRepository()
+profilRepository = ProfilRepository()
 
 userBp = Blueprint('userBp', __name__, url_prefix='/users')
 
@@ -60,3 +65,15 @@ def connectAdmin():
     user = userRepository.updateProfile(userId, newRole, 0)
     token = jwt.encode(user.toDict(), SECRET_KEY, algorithm='HS256')
     return jsonify({'token': token}), 200
+
+@userBp.route('/<int:userId>/access', methods=['POST'])
+def askAccess(userId):
+    data = request.json
+    role = str(data['role'])
+    user = userRepository.getUserById(userId)
+    profil = profilRepository.getProfilByValue(role)
+    if not user or not profil:
+        return jsonify({'message': 'User not found!'}), 404
+    message = Message("ASK", f"{user.name.title()} a demandé des accès {profil.label}")
+    messageRepository.addMessage(message)
+    return jsonify({'message': 'Message sent!'}), 200
