@@ -26,6 +26,11 @@ class PlayerCategoriesRepository:
         return PlayerCategories.query.filter_by(categoryId=categoryId).count()
 
     @staticmethod
+    def deletePlayerCategoryByPlayerIdAndCategoryId(playerId, categoryId):
+        PlayerCategories.query.filter_by(playerId=playerId, categoryId=categoryId).delete()
+        db.session.commit()
+
+    @staticmethod
     def deleteAllPlayerCategories():
         PlayerCategories.query.delete()
         db.session.commit()

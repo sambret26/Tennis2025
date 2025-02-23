@@ -3,11 +3,14 @@ from models.Player import Player
 from models.Team import Team
 from models.Message import Message
 from models.PlayerBalance import PlayerBalance
+from models.PlayerCategories import PlayerCategories
 from repositories.CategoryRepository import CategoryRepository
 from repositories.PlayerRepository import PlayerRepository
 from repositories.TeamRepository import TeamRepository
 from repositories.RankingRepository import RankingRepository
 from repositories.MessageRepository import MessageRepository
+from repositories.PlayerBalanceRepository import PlayerBalanceRepository
+from repositories.PlayerCategoriesRepository import PlayerCategoriesRepository
 
 import moja.mojaService as mojaService
 
@@ -16,6 +19,8 @@ teamRepository = TeamRepository()
 categoryRepository = CategoryRepository()
 rankingRepository = RankingRepository()
 messageRepository = MessageRepository()
+playerBalanceRepository = PlayerBalanceRepository()
+playerCategoriesRepository = PlayerCategoriesRepository()
 
 async def inscriptions():
     players, teams = getPlayersAndTeams()
@@ -122,16 +127,21 @@ def checkCategories(player, playerInDB):
     messages = []
     for category in newCategories:
         if category not in oldCategories:
+            playerCategory = PlayerCategories(playerInDB.id, category.id)
+            PlayerCategoriesRepository.addPlayerCategory(playerCategory)
             msg = f"Nouvelle inscription : {player.getFullName()} ({player.club})"
             if player.ranking : msg += f" classé(e) {player.ranking.simple}"
             messages.append(Message(category.code, msg))
 
     for category in oldCategories:
         if category not in newCategories:
-            msg = f"Désinscription de {player["fullName"]} ({player["club"]})"
-            if player["ranking"] : msg += f" classé(e) {player["ranking"]}"
+            playerCategory = playerCategoriesRepository.deletePlayerCategoryByPlayerIdAndCategoryId(player.id, category.id)
+            msg = f"Désinscription de {player.getFullName()} ({player.club})"
+            if player.ranking : msg += f" classé(e) {player.ranking.simple}"
             messages.append(Message(category.code, msg))
-    messageRepository.addMessages(messages)
+    if len(messages) > 0 :
+        playerBalanceRepository.updatePlayerBalanceByPlayerId(playerInDB.id, player.balance)
+        messageRepository.addMessages(messages)
 
 def sendNotif(newPlayers, oldPlayers):
     messages = []

@@ -33,6 +33,13 @@ class PlayerBalanceRepository:
         db.session.commit()
 
     @staticmethod
+    def updatePlayerBalanceByPlayerId(playerId, balance):
+        PlayerBalance.query.filter_by(playerId=playerId).update({'remainingAmount': balance.remainingAmount,
+                                                                'finalAmount': balance.finalAmount,
+                                                                'initialAmount': balance.initialAmount})
+        db.session.commit()
+
+    @staticmethod
     def updatePlayerBalance(playerBalance):
         PlayerBalance.query.filter_by(id=playerBalance.id).update(playerBalance.toDict())
         db.session.commit()
