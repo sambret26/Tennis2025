@@ -14,11 +14,11 @@ class Team(db.Model):
     updatedAt = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)  
 
     #relashionship
-    player1 = db.relationship('Player', foreign_keys=[player1Id], backref='team_player1')
-    player2 = db.relationship('Player', foreign_keys=[player2Id], backref='team_player2')
-    #matches_as_team1 = db.relationship('Match', foreign_keys=[Match.team1Id], backref='team1')
-    #matches_as_team2 = db.relationship('Match', foreign_keys=[Match.team2Id], backref='team2')
-    ranking = db.relationship('Ranking', backref='teams')
+    player1 = db.relationship('Player', foreign_keys=[player1Id])#, back_populates='teamAs1')
+    player2 = db.relationship('Player', foreign_keys=[player2Id])#, back_populates='teamAs2')
+    ranking = db.relationship('Ranking')#, back_populates='teams')
+    #matchesAs1 = db.relationship('Match', foreign_keys=[Match.team1Id], back_populates="team1", lazy="select")
+    #matchesAs2 = db.relationship('Match', foreign_keys=[Match.team2Id], back_populates="team2", lazy="select")
 
     def __init__(self, fftId, player1Id, player2Id, rankingId, isActive):
         self.fftId = fftId

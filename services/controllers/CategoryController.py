@@ -16,11 +16,3 @@ def addCategory():
     category = Category.fromJson(request.json)
     categoryRepository.addCategory(category)
     return jsonify({'message': 'Category added successfully!'}), 201
-
-@categoryBp.route('/multiple', methods=['POST'])
-def addCategories():
-    categories = []
-    for data in request.json:
-        categories.append(Category.fromJson(data))
-    categoryRepository.addCategories(categories)
-    return jsonify({'message': 'Categories added successfully!'}), 201

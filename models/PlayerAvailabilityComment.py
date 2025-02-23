@@ -11,6 +11,8 @@ class PlayerAvailabilityComment(db.Model):
     createdAt = db.Column(db.DateTime, default=datetime.utcnow)
     updatedAt = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
 
+    player = db.relationship('Player', back_populates='availabilitiesComments')
+
     def __init__(self, playerId, day, comments=None):
         self.playerId = playerId
         self.day = day

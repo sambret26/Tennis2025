@@ -23,14 +23,6 @@ def addMatch():
     matchRepository.addMatch(match)
     return jsonify({'message': 'Match added successfully!'}), 201
 
-@matchBp.route('/multiple', methods=['POST'])
-def addMatches():
-    matches = []
-    for data in request.json:
-        matches.append(Match.fromJson(data))
-    matchRepository.addMatches(matches)
-    return jsonify({'message': 'Matches added successfully!'}), 201
-
 @matchBp.route('/result', methods=['POST'])
 def updateMatchResult():
     data = request.json

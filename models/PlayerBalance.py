@@ -12,6 +12,8 @@ class PlayerBalance(db.Model):
     createdAt = db.Column(db.DateTime, default=datetime.utcnow)
     updatedAt = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
 
+    player = db.relationship('Player', back_populates='balance')
+
     def __init__(self, playerId, initialAmount, finalAmount, remainingAmount):
         self.playerId = playerId
         self.initialAmount = initialAmount
@@ -41,4 +43,13 @@ class PlayerBalance(db.Model):
             initialAmount=data['initialAmount'],
             finalAmount=data['finalAmount'],
             remainingAmount=data['remainingAmount']
+        )
+
+    @classmethod
+    def fromPlayer(cls, player, amount):
+        return cls(
+            playerId=player.id,
+            initialAmount=amount,
+            finalAmount=amount,
+            remainingAmount=amount
         )

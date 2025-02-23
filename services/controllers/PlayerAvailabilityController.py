@@ -38,11 +38,3 @@ def updatePlayerAvailability():
         return jsonify({'message': 'PlayerAvailability created successfully!'}), 200
     playerAvailabilityRepository.addPlayerAvailability(playerAvailability)
     return jsonify({'message': 'PlayerAvailability updated successfully!'}), 200
-
-@playerAvailabilityBp.route('/multiple', methods=['POST'])
-def addPlayerAvailabilities():
-    playerAvailabilities = []
-    for data in request.json:
-        playerAvailabilities.append(PlayerAvailability.fromJson(data))
-    playerAvailabilityRepository.addPlayerAvailabilities(playerAvailabilities)
-    return jsonify({'message': 'PlayerAvailabilities added successfully!'}), 201

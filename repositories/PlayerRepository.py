@@ -16,7 +16,7 @@ class PlayerRepository:
 
     @staticmethod
     def getPlayerById(id):
-        return Player.query.get(id).first()
+        return Player.query.get(id)
 
     @staticmethod
     def getPlayerByFftId(fftId):
@@ -63,7 +63,7 @@ class PlayerRepository:
 
     @staticmethod
     def updatePlayer(id, player):
-        Player.query.filter_by(id=id).update(player.toDict())
+        Player.query.filter_by(id=id).update(player.toDictForDB())
         db.session.commit()
 
     @staticmethod

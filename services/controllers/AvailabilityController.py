@@ -16,11 +16,3 @@ def addAvailability():
     availability = Availability.fromJson(request.json)
     availabilityRepository.addAvailability(availability)
     return jsonify({'message': 'Availability added successfully!'}), 201
-
-@availabilityBp.route('/multiple', methods=['POST'])
-def addAvailabilities():
-    availabilities = []
-    for data in request.json:
-        availabilities.append(Availability.fromJson(data))
-    availabilityRepository.addAvailabilities(availabilities)
-    return jsonify({'message': 'Availabilities added successfully!'}), 201

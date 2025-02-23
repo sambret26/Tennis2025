@@ -30,13 +30,14 @@ class Match(db.Model):
     updatedAt = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
 
     #relashionship
-    player1 = db.relationship('Player', foreign_keys=[player1Id], backref='player1')
-    player2 = db.relationship('Player', foreign_keys=[player2Id], backref='player2')
-    # team1 = db.relationship('Team', foreign_keys=[team1Id], backref='team1')
-    #team2 = db.relationship('Team', foreign_keys=[team2Id], backref='team2')
-    court = db.relationship('Court', backref='court')
-    winner = db.relationship('Player', foreign_keys=[winnerId], backref='winner')
-    grid = db.relationship('Grid', backref='grid')
+    category = db.relationship('Category')#, back_populates='matches')
+    player1 = db.relationship('Player', foreign_keys=[player1Id])#, back_populates='matchesAs1')
+    player2 = db.relationship('Player', foreign_keys=[player2Id])#, back_populates='matchesAs2')
+    team1 = db.relationship('Team', foreign_keys=[team1Id])#, back_populates='matchesAs1')
+    team2 = db.relationship('Team', foreign_keys=[team2Id])#, back_populates='matchesAs2')
+    court = db.relationship('Court')#, back_populates='matches')
+    winner = db.relationship('Player', foreign_keys=[winnerId])#, back_populates='matchesAsWinner')
+    grid = db.relationship('Grid')#, back_populates='matches')
 
     def __init__(self, fftId, categoryId, gridId, double, label, player1Id, player2Id, team1Id, team2Id, player1Availability, player2Availability, day, hour, courtId, finish, winnerId, notif, score, nextRound, calId, isActive):
         self.fftId = fftId

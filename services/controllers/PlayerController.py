@@ -15,17 +15,3 @@ def getPlayers():
 def getAllPlayerNames():
     players = playerRepository.getAllPlayerNames()
     return jsonify([player.toNameDict() for player in players]), 200
-
-@playerBp.route('/', methods=['POST'])
-def addPlayer():
-    player = Player.fromJson(request.json)
-    playerRepository.addPlayer(player)
-    return jsonify({"message": "Player added successfully!"}), 201
-
-@playerBp.route('/multiple', methods=['POST'])
-def addPlayers():
-    players = []
-    for player in request.json: 
-        players.append(Player.fromJson(player))
-    playerRepository.addPlayers(players)
-    return jsonify({"message": "Players added successfully!"}), 201

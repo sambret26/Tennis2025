@@ -16,11 +16,3 @@ def addTeam():
     team = Team.fromJson(request.json)
     teamRepository.addTeam(team)
     return jsonify({'message': 'Team added successfully!'}), 201
-
-@teamBp.route('/multiple', methods=['POST'])
-def addTeams():
-    teams = []
-    for data in request.json:
-        teams.append(Team.fromJson(data))
-    teamRepository.addTeams(teams)
-    return jsonify({'message': 'Teams added successfully!'}), 201

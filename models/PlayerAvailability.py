@@ -12,6 +12,8 @@ class PlayerAvailability(db.Model):
     createdAt = db.Column(db.DateTime, default=datetime.utcnow)
     updatedAt = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
 
+    player = db.relationship('Player', back_populates='availabilities')
+
     def __init__(self, playerId, day, timeSlot, available):
         self.playerId = playerId
         self.day = day

@@ -21,14 +21,6 @@ def addReduction():
     reductionRepository.addReduction(reduction)
     return jsonify({'message': 'Reduction added successfully!'}), 201
 
-@reductionBp.route('/multiple', methods=['POST'])
-def addReductions():
-    reductions = []
-    for data in request.json:
-        reductions.append(Reduction.fromJson(data))
-    reductionRepository.addReductions(reductions)
-    return jsonify({'message': 'Reductions added successfully!'}), 201
-
 @reductionBp.route('/<int:playerId>', methods=['PUT'])
 def updateReduction(playerId):
     player = playerRepository.getPlayerById(playerId)

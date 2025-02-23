@@ -1,6 +1,4 @@
 from datetime import datetime
-from models.PlayerAvailability import PlayerAvailability
-from models.Payment import Payment
 
 from database import db
 
@@ -21,17 +19,22 @@ class Player(db.Model):
     updatedAt = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
     
     # Relations
-    #ranking = db.relationship('Ranking', foreign_keys=[rankingId], backref='ranking')
-    #matches_as_player1 = db.relationship("Match", foreign_keys="[Match.player1_id]", back_populates="player1")
-    #matches_as_player2 = db.relationship("Match", foreign_keys="[Match.player2_id]", back_populates="player2")
-    #matches_won = db.relationship("Match", foreign_keys="[Match.winner_id]", back_populates="winner")
+    ranking = db.relationship('Ranking')#, back_populates='players')
+
     categories = db.relationship("Category", 
                                secondary="player_categories",
-                               backref=db.backref("players", lazy="dynamic"),
+                               #backref=db.backref("players", lazy="joined"),
                                lazy="joined")
-    payments = db.relationship("Payment", lazy="joined", back_populates="player")
-    reductions = db.relationship("Reduction", backref="player", lazy="joined")
-    balance = db.relationship("PlayerBalance", backref="player", uselist=False)
+    #matchesAs1 = db.relationship('Match', foreign_keys=[Match.player1Id], back_populates="player1", lazy="select")
+    #matchesAs2 = db.relationship('Match', foreign_keys=[Match.player2Id], back_populates="player2", lazy="select")
+    #matchesAsWinner = db.relationship('Match', foreign_keys=[Match.winnerId], back_populates="winner", lazy="select")
+    payments = db.relationship("Payment", back_populates="player", lazy="joined")
+    availabilities = db.relationship("PlayerAvailability", back_populates="player", lazy="joined")
+    availabilitiesComments = db.relationship("PlayerAvailabilityComment", back_populates="player", lazy="joined")
+    reductions = db.relationship("Reduction", back_populates="player", lazy="joined")
+    balance = db.relationship("PlayerBalance", back_populates="player", uselist=False)
+    #teamAs1 = db.relationship('Team', foreign_keys=[Team.player1Id], back_populates="player1", lazy="select")
+    #teamAs2 = db.relationship('Team', foreign_keys=[Team.player2Id], back_populates="player2", lazy="select")
 
     def __init__(self, id=None, fftId=None, inscriptionId=None, lastName=None,
             firstName=None, rankingId=None, club=None, phoneNumber=None, email=None, isActive=None):
@@ -46,7 +49,7 @@ class Player(db.Model):
         self.email = email
         self.isActive = isActive
 
-    def toDict(self):
+    def toDictForDB(self):
         return {
             "id": self.id,
             "lastName": self.lastName,
@@ -58,19 +61,23 @@ class Player(db.Model):
             "phoneNumber": self.phoneNumber,
             "email": self.email,
             "isActive": self.isActive,
-            "ranking": self.ranking.toDict() if self.ranking else None,
-            "categories": [category.code for category in self.categories],
-            "balance": self.balance.toDictForPlayer() if self.balance else None,
-            "payments": [payment.toDictForPlayer() for payment in self.payments] if self.payments else None,
-            "reductions": [reduction.toDictForPlayer() for reduction in self.reductions] if self.reductions else None,
-            "fullName": self.getFullName()
         }
+
+    def toDict(self):
+        dict = self.toDictForDB()
+        dict["fullName"] = self.getFullName()
+        dict["ranking"] = self.ranking.toDict() if self.ranking else None
+        dict["categories"] = [category.code for category in self.categories]
+        dict["balance"] = self.balance.toDictForPlayer() if self.balance else None
+        dict["payments"] = [payment.toDictForPlayer() for payment in self.payments] if self.payments else []
+        dict["reductions"] = [reduction.toDictForPlayer() for reduction in self.reductions] if self.reductions else []
+        return dict
 
     def toMiniDict(self):
         return {
             "id": self.id,
             "fullName": self.getFullName(),
-            "ranking": self.ranking.simple,
+            "ranking": self.ranking.simple if self.ranking else None,
             "phoneNumber": self.phoneNumber,
             "email": self.email
         }
@@ -127,4 +134,3 @@ class Player(db.Model):
             lastName=data['joueur2Nom'].title(),
             club = data['clubJoueur2']
         )
-

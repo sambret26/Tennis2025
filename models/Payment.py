@@ -11,7 +11,7 @@ class Payment(db.Model):
     createdAt = db.Column(db.DateTime, default=datetime.utcnow)  
     updatedAt = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)  
 
-    player = db.relationship('Player', foreign_keys=[playerId], back_populates='payments')
+    player = db.relationship('Player', back_populates='payments')
 
     def __init__(self, playerId, amount, date):
         self.playerId = playerId

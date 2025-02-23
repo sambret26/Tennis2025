@@ -15,11 +15,3 @@ def addRanking():
     ranking = Ranking.fromJson(request.json)
     rankingRepository.addRanking(ranking)
     return jsonify({'message': 'Ranking added successfully!'}), 201
-
-@rankingBp.route('/multiple', methods=['POST'])
-def addRankings():
-    rankings = []
-    for data in request.json:
-        rankings.append(Ranking.fromJson(data))
-    rankingRepository.addRankings(rankings)
-    return jsonify({'message': 'Rankings added successfully!'}), 201

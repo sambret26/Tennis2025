@@ -21,14 +21,6 @@ def addPayment():
     paymentRepository.addPayment(payment)
     return jsonify({'message': 'Payment added successfully!'}), 201
 
-@paymentBp.route('/multiple', methods=['POST'])
-def addPayments():
-    payments = []
-    for data in request.json:
-        payments.append(Payment.fromJson(data))
-    paymentRepository.addPayments(payments)
-    return jsonify({'message': 'Payments added successfully!'}), 201
-
 @paymentBp.route('/<int:playerId>', methods=['PUT'])
 def updatePlayerPayments(playerId):
     player = playersRepository.getPlayerById(playerId)

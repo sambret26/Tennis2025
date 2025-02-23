@@ -16,11 +16,3 @@ def addCourt():
     court = Court.fromJson(request.json)
     courtRepository.addCourt(court)
     return jsonify({'message': 'Court added successfully!'}), 201
-
-@courtBp.route('/multiple', methods=['POST'])
-def addCourts():
-    courts = []
-    for data in request.json:
-        courts.append(Court.fromJson(data))
-    courtRepository.addCourts(courts)
-    return jsonify({'message': 'Courts added successfully!'}), 201

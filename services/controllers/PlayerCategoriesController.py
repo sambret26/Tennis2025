@@ -16,11 +16,3 @@ def addPlayerCategory():
     playerCategory = PlayerCategories.fromJson(request.json)
     playerCategoriesRepository.addPlayerCategory(playerCategory)
     return jsonify({'message': 'Player category added successfully!'}), 201
-
-@playerCategoriesBp.route('/multiple', methods=['POST'])
-def addPlayerCategories():
-    playerCategories = []
-    for data in request.json:
-        playerCategories.append(PlayerCategories.fromJson(data))
-    playerCategoriesRepository.addPlayerCategories(playerCategories)
-    return jsonify({'message': 'Player categories added successfully!'}), 201

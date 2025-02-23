@@ -12,7 +12,8 @@ class Ranking(db.Model):
     updatedAt = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
 
     # Relationships
-    players = db.relationship('Player', backref='ranking', lazy=True)
+    #players = db.relationship('Player', back_populates='ranking', lazy="select")
+    #teams = db.relationship('Team', back_populates='ranking', lazy="select")
 
     def __init__(self, fftId, simple, double):
         self.fftId = fftId

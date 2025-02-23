@@ -21,11 +21,3 @@ def addSetting():
     setting = Setting.fromJson(request.json)
     settingRepository.addSetting(setting)
     return jsonify({'message': 'Setting added successfully!'}), 201
-
-@settingBp.route('/multiple', methods=['POST'])
-def addSettings():
-    settings = []
-    for data in request.json:
-        settings.append(Setting.fromJson(data))
-    settingRepository.addSettings(settings)
-    return jsonify({'message': 'Settings added successfully!'}), 201

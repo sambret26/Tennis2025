@@ -14,6 +14,9 @@ class Grid(db.Model):
     createdAt = db.Column(db.DateTime, default=datetime.utcnow)
     updatedAt = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
 
+    category = db.relationship('Category')#, back_populates='grids')
+    #matches = db.relationship('Match', back_populates='grid', lazy="select")
+
     def __init__(self, fftId, categoryId, name, type, tableId, nextGridId):
         self.fftId = fftId
         self.categoryId = categoryId

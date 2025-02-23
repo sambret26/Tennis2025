@@ -12,6 +12,8 @@ class Reduction(db.Model):
     createdAt = db.Column(db.DateTime, default=datetime.utcnow)
     updatedAt = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
 
+    player = db.relationship('Player', back_populates='reductions')
+
     def __init__(self, playerId, reason, amount, default):
         self.playerId = playerId
         self.reason = reason

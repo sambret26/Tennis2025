@@ -2,13 +2,13 @@
 from models.Player import Player
 from models.Team import Team
 from models.Message import Message
+from models.PlayerBalance import PlayerBalance
 from repositories.CategoryRepository import CategoryRepository
 from repositories.PlayerRepository import PlayerRepository
 from repositories.TeamRepository import TeamRepository
 from repositories.RankingRepository import RankingRepository
 from repositories.MessageRepository import MessageRepository
 
-import discord.discordNotif as discordNotif
 import moja.mojaService as mojaService
 
 playerRepository = PlayerRepository()
@@ -58,12 +58,21 @@ def addPlayersAndTeamInLists(players, teams, player, category):
     teams.append(newTeam)
 
 def addPlayer(players, newPlayer, category):
+    newPlayer.categories.append(category)
+    updatePlayerBalance(newPlayer, category.amount)
     for player in players:
         if newPlayer.fftId == player.fftId : 
-            newPlayer.categories.append(category)
             return
-    newPlayer.categories.append(category)
     players.append(newPlayer)
+
+def updatePlayerBalance(player, amount):
+    if not player.balance :
+        player.balance = PlayerBalance.fromPlayer(player, amount)
+        return
+    if amount == 0 : return
+    player.balance.remainingAmount += amount
+    player.balance.finalAmount += amount
+    player.balance.initialAmount += amount
 
 def updateDBPlayers(players):
     playerRepository.setPlayersToInactive()
@@ -73,9 +82,10 @@ def updateDBPlayers(players):
     playersToDelete = []
     for player in players:
         playerInDB = playerRepository.getPlayerByFftId(player.fftId)
-        if playerInDB:
+        if playerInDB: #TODO : Update player balance
             checkCategories(player, playerInDB)
             if player.isDifferent(playerInDB) : 
+                player.id = playerInDB.id
                 playerRepository.updatePlayer(playerInDB.id, player)
             activePlayersId.append(playerInDB.id)
         else:
