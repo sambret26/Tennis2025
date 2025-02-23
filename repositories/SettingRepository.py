@@ -38,6 +38,10 @@ class SettingRepository:
         return Setting.query.filter(Setting.key == 'jaId').first().value
 
     @staticmethod
+    def getBatchsActive():
+        return Setting.query.filter(Setting.key == 'batchsActive').first().value == "1"
+
+    @staticmethod
     def setStartDate(date):
         db.session.query(Setting).filter(Setting.key == 'startDate').update({Setting.value: date})
         db.session.commit()
@@ -45,4 +49,9 @@ class SettingRepository:
     @staticmethod
     def setEndDate(date):
         db.session.query(Setting).filter(Setting.key == 'endDate').update({Setting.value: date})
+        db.session.commit()
+
+    @staticmethod
+    def setBatchsActive(batchsActive):
+        db.session.query(Setting).filter(Setting.key == 'batchsActive').update({Setting.value: batchsActive})
         db.session.commit()
