@@ -79,3 +79,17 @@ def askAccess(userId):
     message = Message("ASK", f"{user.name.title()} a demandé des accès {profil.label}")
     messageRepository.addMessage(message)
     return jsonify({'message': 'Message sent!'}), 200
+
+@userBp.route('/<int:userId>/changePassword', methods=['PUT'])
+def changePassword(userId):
+    data = request.json
+    oldPassword = str(data['oldPassword'])
+    password = str(data['password'])
+    user = userRepository.getUserById(userId)
+    if not user:
+        return jsonify({'message': 'User not found!'}), 404
+    if not user.password == oldPassword:
+        return jsonify({'message': 'Invalid password!'}), 401
+    user.password = password
+    userRepository.updatePassword(userId, password)
+    return jsonify({'message': 'Password changed!'}), 200

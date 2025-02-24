@@ -20,6 +20,11 @@ class UserRepository:
         return user
 
     @staticmethod
+    def updatePassword(userId, password):
+        User.query.filter_by(id=userId).update({"password": password})
+        db.session.commit()
+
+    @staticmethod
     def addUser(user):
         db.session.add(user)
         db.session.commit()
