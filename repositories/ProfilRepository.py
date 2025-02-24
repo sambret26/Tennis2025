@@ -3,6 +3,7 @@ from database import db
 
 class ProfilRepository:
 
+    #GETTERS
     @staticmethod
     def getAllProfils():
         return Profil.query.all()

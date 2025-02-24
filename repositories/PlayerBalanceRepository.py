@@ -3,16 +3,7 @@ from database import db
 
 class PlayerBalanceRepository:
 
-    @staticmethod
-    def addPlayerBalance(playerBalance):
-        db.session.add(playerBalance)
-        db.session.commit()
-
-    @staticmethod
-    def addplayerBalances(playerBalances):
-        db.session.add_all(playerBalances)
-        db.session.commit()
-
+    #GETTERS
     @staticmethod
     def getAllplayerBalances():
         return PlayerBalance.query.all()
@@ -25,6 +16,18 @@ class PlayerBalanceRepository:
     def getPlayerBalanceByPlayerId(playerId):
         return PlayerBalance.query.filter_by(playerId=playerId).first()
 
+    #ADDERS
+    @staticmethod
+    def addPlayerBalance(playerBalance):
+        db.session.add(playerBalance)
+        db.session.commit()
+
+    @staticmethod
+    def addplayerBalances(playerBalances):
+        db.session.add_all(playerBalances)
+        db.session.commit()
+
+    #SETTERS
     @staticmethod
     def updatePlayerBalanceForPlayerId(playerId, balance):
         PlayerBalance.query.filter_by(playerId=playerId).update({'remainingAmount': balance["remainingAmount"],
@@ -44,6 +47,7 @@ class PlayerBalanceRepository:
         PlayerBalance.query.filter_by(id=playerBalance.id).update(playerBalance.toDict())
         db.session.commit()
 
+    #DELETERS
     @staticmethod
     def deleteAllPlayerBalances():
         PlayerBalance.query.delete()

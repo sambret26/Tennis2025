@@ -3,6 +3,16 @@ from database import db
 
 class GridRepository:
 
+    #GETTERS
+    @staticmethod
+    def getAllGrids():
+        return Grid.query.all()
+
+    @staticmethod
+    def getGridById(gridId):
+        return Grid.query.get(gridId)
+
+    #ADDERS
     @staticmethod
     def addGrid(grid):
         db.session.add(grid)
@@ -13,14 +23,7 @@ class GridRepository:
         db.session.add_all(grids)
         db.session.commit()
 
-    @staticmethod
-    def getAllGrids():
-        return Grid.query.all()
-
-    @staticmethod
-    def getGridById(gridId):
-        return Grid.query.get(gridId)
-
+    #DELETERS
     @staticmethod
     def deleteAllGrids():
         Grid.query.delete()

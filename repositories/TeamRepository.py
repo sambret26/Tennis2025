@@ -3,16 +3,7 @@ from database import db
 
 class TeamRepository:
 
-    @staticmethod
-    def addTeam(team):
-        db.session.add(team)
-        db.session.commit()
-
-    @staticmethod
-    def addTeams(teams):
-        db.session.add_all(teams)
-        db.session.commit()
-
+    #GETTERS
     @staticmethod
     def getAllTeams():
         return Team.query.all()
@@ -25,6 +16,18 @@ class TeamRepository:
     def getTeamById(teamId):
         return Team.query.get(teamId)
 
+    #ADDERS
+    @staticmethod
+    def addTeam(team):
+        db.session.add(team)
+        db.session.commit()
+
+    @staticmethod
+    def addTeams(teams):
+        db.session.add_all(teams)
+        db.session.commit()
+
+    #SETTERS
     @staticmethod
     def setTeamsToActive(teamsId):
         Team.query.filter(Team.id.in_(teamsId)).update({'isActive': True})
@@ -35,6 +38,7 @@ class TeamRepository:
         Team.query.update({'isActive': False})
         db.session.commit()
 
+    #DELETERS
     @staticmethod
     def deleteInactiveTeams():
         Team.query.filter_by(isActive=False).delete()

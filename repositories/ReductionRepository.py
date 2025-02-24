@@ -3,6 +3,16 @@ from database import db
 
 class ReductionRepository:
 
+    #GETTERS
+    @staticmethod
+    def getAllReductions():
+        return Reduction.query.all()
+
+    @staticmethod
+    def getReductionById(reductionId):
+        return Reduction.query.get(reductionId)
+
+    #ADDERS
     @staticmethod
     def addReduction(reduction):
         db.session.add(reduction)
@@ -13,14 +23,7 @@ class ReductionRepository:
         db.session.add_all(reductions)
         db.session.commit()
 
-    @staticmethod
-    def getAllReductions():
-        return Reduction.query.all()
-
-    @staticmethod
-    def getReductionById(reductionId):
-        return Reduction.query.get(reductionId)
-
+    #DELETERS
     @staticmethod
     def deleteReduction(reduction):
         db.session.delete(reduction)

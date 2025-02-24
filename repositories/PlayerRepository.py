@@ -4,6 +4,7 @@ from database import db
 
 class PlayerRepository:
 
+    #GETTERS
     @staticmethod
     def getAllPlayers():
         return Player.query.all()
@@ -27,17 +28,6 @@ class PlayerRepository:
         return [player.id for player in Player.query.all()]
 
     @staticmethod
-    def addPlayer(player):
-        db.session.add(player)
-        db.session.commit()
-        return player
-
-    @staticmethod
-    def addPlayers(players):
-        db.session.add_all(players)
-        db.session.commit()
-
-    @staticmethod
     def getNumberPlayers():
         return Player.query.count()
 
@@ -51,11 +41,25 @@ class PlayerRepository:
         results = db.session.query(Player.rankingId).select_from(Player).join(PlayerCategories, Player.id == PlayerCategories.playerId).filter(PlayerCategories.categoryId == categoryId).all()
         return [result[0] for result in results]
 
+    #ADDERS
+    @staticmethod
+    def addPlayer(player):
+        db.session.add(player)
+        db.session.commit()
+        return player
+
+    @staticmethod
+    def addPlayers(players):
+        db.session.add_all(players)
+        db.session.commit()
+
+    #SETTERS
     @staticmethod
     def updatePlayer(id, player):
         Player.query.filter_by(id=id).update(player.toDictForDB())
         db.session.commit()
 
+    #DELETERS
     @staticmethod
     def deletePlayerById(id):
         Player.query.filter_by(id=id).delete()

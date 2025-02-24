@@ -3,21 +3,7 @@ from database import db
 
 class PlayerAvailabilityRepository:
 
-    @staticmethod
-    def addPlayerAvailability(playerAvailability):
-        db.session.add(playerAvailability)
-        db.session.commit()
-
-    @staticmethod
-    def addPlayerAvailabilities(playerAvailabilities):
-        db.session.add_all(playerAvailabilities)
-        db.session.commit()
-
-    @staticmethod
-    def updatePlayerAvailability(id, available):
-        PlayerAvailability.query.filter_by(id=id).update({"available": available})
-        db.session.commit()
-
+    #GETTERS
     @staticmethod
     def getAllPlayerAvailabilities():
         return PlayerAvailability.query.all()
@@ -34,6 +20,24 @@ class PlayerAvailabilityRepository:
     def getPlayerAvailabilityByPlayerId(playerId):
         return PlayerAvailability.query.filter_by(playerId=playerId).all()
 
+    #ADDERS
+    @staticmethod
+    def addPlayerAvailability(playerAvailability):
+        db.session.add(playerAvailability)
+        db.session.commit()
+
+    @staticmethod
+    def addPlayerAvailabilities(playerAvailabilities):
+        db.session.add_all(playerAvailabilities)
+        db.session.commit()
+
+    #SETTERS
+    @staticmethod
+    def updatePlayerAvailability(id, available):
+        PlayerAvailability.query.filter_by(id=id).update({"available": available})
+        db.session.commit()
+
+    #DELETERS
     @staticmethod
     def deleteAllPlayerAvailabilities():
         PlayerAvailability.query.delete()

@@ -3,16 +3,7 @@ from database import db
 
 class SettingRepository:
 
-    @staticmethod
-    def addSetting(setting):
-        db.session.add(setting)
-        db.session.commit()
-
-    @staticmethod
-    def addSettings(settings):
-        db.session.add_all(settings)
-        db.session.commit()
-
+    #GETTERS
     @staticmethod
     def getAllSettings():
         return Setting.query.all()
@@ -41,17 +32,50 @@ class SettingRepository:
     def getBatchsActive():
         return Setting.query.filter(Setting.key == 'batchsActive').first().value == "1"
 
+    #ADDERS
+    @staticmethod
+    def addSetting(setting):
+        db.session.add(setting)
+        db.session.commit()
+
+    @staticmethod
+    def addSettings(settings):
+        db.session.add_all(settings)
+        db.session.commit()
+
+    #SETTERS
     @staticmethod
     def setStartDate(date):
-        db.session.query(Setting).filter(Setting.key == 'startDate').update({Setting.value: date})
+        Setting.query.filter(Setting.key == 'startDate').update({Setting.value: date})
         db.session.commit()
 
     @staticmethod
     def setEndDate(date):
-        db.session.query(Setting).filter(Setting.key == 'endDate').update({Setting.value: date})
+        Setting.query.filter(Setting.key == 'endDate').update({Setting.value: date})
         db.session.commit()
 
     @staticmethod
     def setBatchsActive(batchsActive):
-        db.session.query(Setting).filter(Setting.key == 'batchsActive').update({Setting.value: batchsActive})
+        Setting.query.filter(Setting.key == 'batchsActive').update({Setting.value: batchsActive})
+        db.session.commit()
+
+    @staticmethod
+    def setCalendarSync(calendarSync):
+        Setting.query.filter(Setting.key == 'calendarSync').update({Setting.value: calendarSync})
+        db.session.commit()
+
+    @staticmethod
+    def setMojaSync(mojaSync):
+        Setting.query.filter(Setting.key == 'mojaSync').update({Setting.value: mojaSync})
+        db.session.commit()
+
+    @staticmethod
+    def updateSettings(settings):
+        Setting.query.update(settings)
+        db.session.commit()
+
+    @staticmethod
+    def updatePrices(prices):
+        Setting.query.filter(Setting.key == 'simplePrice').update({Setting.value: prices['simplePrice']})
+        Setting.query.filter(Setting.key == 'doublePrice').update({Setting.value: prices['doublePrice']})
         db.session.commit()

@@ -3,16 +3,7 @@ from database import db
 
 class TransactionRepository:
 
-    @staticmethod
-    def addTransaction(transaction):
-        db.session.add(transaction)
-        db.session.commit()
-
-    @staticmethod
-    def addTransactions(transactions):
-        db.session.add_all(transactions)
-        db.session.commit()
-
+    #GETTERS
     @staticmethod
     def getAllTransactions():
         return Transaction.query.order_by(Transaction.date).all()
@@ -29,6 +20,18 @@ class TransactionRepository:
     def getAllWithdrawalForDay(day):
         return Transaction.query.filter_by(date=day, type=0).all()
 
+    #ADDERS
+    @staticmethod
+    def addTransaction(transaction):
+        db.session.add(transaction)
+        db.session.commit()
+
+    @staticmethod
+    def addTransactions(transactions):
+        db.session.add_all(transactions)
+        db.session.commit()
+
+    #DELETERS
     @staticmethod
     def deleteAllTransactions():
         Transaction.query.delete()

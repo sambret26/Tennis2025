@@ -22,6 +22,7 @@ from services.controllers.PlayerAvailabilityCommentController import playerAvail
 from services.controllers.PaymentController import paymentBp
 from services.controllers.ProfilController import profilBp
 from services.controllers.UserController import userBp
+from services.controllers.CompetitionController import competitionBp
 
 from models.Channel import Channel # Pour créer la table sans bp
 from models.Message import Message
@@ -55,6 +56,7 @@ app.register_blueprint(playerAvailabilityCommentBp)
 app.register_blueprint(paymentBp)
 app.register_blueprint(profilBp)
 app.register_blueprint(userBp)
+app.register_blueprint(competitionBp)
 
 
 def runDiscordBot():

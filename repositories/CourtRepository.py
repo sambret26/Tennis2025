@@ -3,6 +3,16 @@ from database import db
 
 class CourtRepository:
 
+    #GETTERS
+    @staticmethod
+    def getAllCourts():
+        return Court.query.all()
+
+    @staticmethod
+    def getCourtById(courtId):
+        return Court.query.get(courtId)
+
+    #ADDERS
     @staticmethod
     def addCourt(court):
         db.session.add(court)
@@ -13,14 +23,7 @@ class CourtRepository:
         db.session.add_all(courts)
         db.session.commit()
 
-    @staticmethod
-    def getAllCourts():
-        return Court.query.all()
-
-    @staticmethod
-    def getCourtById(courtId):
-        return Court.query.get(courtId)
-
+    #DELETERS
     @staticmethod
     def deleteAllCourts():
         Court.query.delete()

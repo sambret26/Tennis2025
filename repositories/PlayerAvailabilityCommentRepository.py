@@ -3,11 +3,7 @@ from database import db
 
 class PlayerAvailabilityCommentRepository:
 
-    @staticmethod
-    def addPlayerAvailabilityComment(comment):
-        db.session.add(comment)
-        db.session.commit()
-
+    #GETTERS
     @staticmethod
     def getPlayerAvailabilityComment(playerId, day):
         return PlayerAvailabilityComment.query.filter_by(playerId=playerId, day=day).first()
@@ -16,11 +12,19 @@ class PlayerAvailabilityCommentRepository:
     def getAllCommentsForDay(day):
         return PlayerAvailabilityComment.query.filter_by(day=day).all()
 
+    #ADDERS
+    @staticmethod
+    def addPlayerAvailabilityComment(comment):
+        db.session.add(comment)
+        db.session.commit()
+
+    #SETTERS
     @staticmethod
     def updatePlayerAvailabilityComment(comment, comments):
         comment.comments = comments
         db.session.commit()
 
+    #DELETERS
     @staticmethod
     def deletePlayerAvailabilityComment(playerId, day):
         PlayerAvailabilityComment.query.filter_by(playerId=playerId, day=day).delete()

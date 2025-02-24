@@ -3,16 +3,7 @@ from database import db
 
 class PaymentRepository:
 
-    @staticmethod
-    def addPayment(payment):
-        db.session.add(payment)
-        db.session.commit()
-
-    @staticmethod
-    def addPayments(payments):
-        db.session.add_all(payments)
-        db.session.commit()
-
+    #GETTERS
     @staticmethod
     def getAllPayments():
         return Payment.query.all()
@@ -33,6 +24,18 @@ class PaymentRepository:
     def getAllPaymentsBeforeDay(day):
         return Payment.query.filter(Payment.date < day).all()
 
+    #ADDERS
+    @staticmethod
+    def addPayment(payment):
+        db.session.add(payment)
+        db.session.commit()
+
+    @staticmethod
+    def addPayments(payments):
+        db.session.add_all(payments)
+        db.session.commit()
+
+    #DELETERS
     @staticmethod
     def deletePayment(payment):
         db.session.delete(payment)

@@ -3,16 +3,7 @@ from database import db
 
 class PlayerCategoriesRepository:
 
-    @staticmethod
-    def addPlayerCategory(playerCategory):
-        db.session.add(playerCategory)
-        db.session.commit()
-
-    @staticmethod
-    def addPlayerCategories(playerCategories):
-        db.session.add_all(playerCategories)
-        db.session.commit()
-
+    #GETTERS
     @staticmethod
     def getAllPlayerCategories():
         return PlayerCategories.query.all()
@@ -25,6 +16,18 @@ class PlayerCategoriesRepository:
     def getNumberPlayersByCategory(categoryId):
         return PlayerCategories.query.filter_by(categoryId=categoryId).count()
 
+    #ADDERS
+    @staticmethod
+    def addPlayerCategory(playerCategory):
+        db.session.add(playerCategory)
+        db.session.commit()
+
+    @staticmethod
+    def addPlayerCategories(playerCategories):
+        db.session.add_all(playerCategories)
+        db.session.commit()
+
+    #DELETERS
     @staticmethod
     def deletePlayerCategoryByPlayerIdAndCategoryId(playerId, categoryId):
         PlayerCategories.query.filter_by(playerId=playerId, categoryId=categoryId).delete()

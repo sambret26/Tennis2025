@@ -3,16 +3,7 @@ from database import db
 
 class RankingRepository:
 
-    @staticmethod
-    def addRanking(ranking):
-        db.session.add(ranking)
-        db.session.commit()
-
-    @staticmethod
-    def addRankings(rankings):
-        db.session.add_all(rankings)
-        db.session.commit()
-
+    #GETTERS
     @staticmethod
     def getAllRankings():
         return Ranking.query.all()
@@ -25,6 +16,18 @@ class RankingRepository:
     def getRankingBySimple(rankingSimple):
         return Ranking.query.filter_by(simple=rankingSimple).first()
 
+    #ADDERS
+    @staticmethod
+    def addRanking(ranking):
+        db.session.add(ranking)
+        db.session.commit()
+
+    @staticmethod
+    def addRankings(rankings):
+        db.session.add_all(rankings)
+        db.session.commit()
+
+    #DELETERS
     @staticmethod
     def deleteAllRankings():
         Ranking.query.delete()

@@ -3,6 +3,16 @@ from database import db
 
 class MessageRepository:
 
+    #GETTERS
+    @staticmethod
+    def getMessagesByCategory(category):
+        return Message.query.filter(Message.category == category).all()
+
+    @staticmethod
+    def getAllMessages():
+        return Message.query.all()
+
+    #ADDERS
     @staticmethod
     def addMessage(message):
         db.session.add(message)
@@ -13,14 +23,7 @@ class MessageRepository:
         db.session.add_all(messages)
         db.session.commit()
 
-    @staticmethod
-    def getMessagesByCategory(category):
-        return Message.query.filter(Message.category == category).all()
-
-    @staticmethod
-    def getAllMessages():
-        return Message.query.all()
-
+    #DELETERS
     @staticmethod
     def deleteMessagesByCategory(category):
         Message.query.filter(Message.category == category).delete()

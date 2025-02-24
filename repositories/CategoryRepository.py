@@ -3,16 +3,7 @@ from database import db
 
 class CategoryRepository:
 
-    @staticmethod
-    def addCategory(category):
-        db.session.add(category)
-        db.session.commit()
-
-    @staticmethod
-    def addCategories(categories):
-        db.session.add_all(categories)
-        db.session.commit()
-
+    #GETTERS
     @staticmethod
     def getAllCategories():
         return Category.query.all()
@@ -29,6 +20,18 @@ class CategoryRepository:
     def getCategoryIdByFftId(fftId):
         return Category.query.filter_by(fftId=fftId).first().id
 
+    #ADDERS
+    @staticmethod
+    def addCategory(category):
+        db.session.add(category)
+        db.session.commit()
+
+    @staticmethod
+    def addCategories(categories):
+        db.session.add_all(categories)
+        db.session.commit()
+
+    #DELETERS
     @staticmethod
     def deleteAllCategories():
         Category.query.delete()

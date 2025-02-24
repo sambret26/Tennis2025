@@ -4,6 +4,7 @@ from database import db
 
 class ChannelRepository:
 
+    #GETTERS
     @staticmethod
     def getCategoryByChannelId(channelId):
         return db.session.query(Category).join(Channel, Category.code == Channel.category).filter(Channel.channelId == channelId).first()
