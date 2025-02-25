@@ -13,6 +13,7 @@ class Config:
     SECRET_KEY = os.getenv('SECRET_KEY')
     DISCORD_TOKEN = os.getenv('DISCORD_TOKEN')
     DISCORD_GUILD_ID = os.getenv('DISCORD_GUILD_ID')
+    TIME_ZONE = os.getenv('TIME_ZONE')
 
     def __init__(self):
         if self.SQLALCHEMY_DATABASE_URI is None:

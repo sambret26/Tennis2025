@@ -1,4 +1,11 @@
 from datetime import datetime
+from pytz import timezone
+from dotenv import load_dotenv
+import os
+
+basedir = os.path.abspath(os.path.dirname(__file__))
+load_dotenv(os.path.join(basedir, '../.env'))
+timezone = timezone(os.getenv('TIME_ZONE'))
 
 BATCH = '[BATCH]'
 DISCORD = '[DISCORD]'
@@ -20,7 +27,7 @@ class Log:
         self.logPrint(f"[ERROR] - {type} - {message}")
 
     def logPrint(self, message):
-        currentTime = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        currentTime = datetime.now(timezone).strftime("%Y-%m-%d %H:%M:%S")
         message = f"[{currentTime}] - {message}"
         print(message)
 

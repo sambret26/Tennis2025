@@ -12,6 +12,8 @@ from logger.logger import log, BOT
 
 scheduler = AsyncIOScheduler()
 
+timezone = timezone(Config.TIME_ZONE)
+
 DISCORD_GUILD_ID = int(Config.DISCORD_GUILD_ID)
 
 intent = Intents(messages=True, members=True, guilds=True, reactions=True, message_content=True)
@@ -72,11 +74,11 @@ async def clear(ctx, nombre: int = 100):
 @bot.event
 async def on_ready():
     log.info(BOT, "Connected !")
-    scheduler.add_job(batchsLauncher.pgwLoop, CronTrigger(hour=7, minute=58, timezone=timezone('Europe/Paris')), args=[bot])
-    scheduler.add_job(batchsLauncher.inscriptionsLoop, CronTrigger(second=30, timezone=timezone('Europe/Paris')))
-    scheduler.add_job(batchsLauncher.sendNotifLoop, CronTrigger(second=0, timezone=timezone('Europe/Paris')), args=[bot])
-    scheduler.add_job(batchsLauncher.updateMatchLoop, CronTrigger(hour=2, timezone=timezone('Europe/Paris')))
-    scheduler.add_job(batchsLauncher.updateCalLoop, CronTrigger(hour=3, timezone=timezone('Europe/Paris')))
+    scheduler.add_job(batchsLauncher.pgwLoop, CronTrigger(hour=8, minute=58, timezone=timezone), args=[bot])
+    scheduler.add_job(batchsLauncher.inscriptionsLoop, CronTrigger(second=30, timezone=timezone))
+    scheduler.add_job(batchsLauncher.sendNotifLoop, CronTrigger(second=0, timezone=timezone), args=[bot])
+    scheduler.add_job(batchsLauncher.updateMatchLoop, CronTrigger(hour=2, timezone=timezone))
+    scheduler.add_job(batchsLauncher.updateCalLoop, CronTrigger(hour=3, timezone=timezone))
     scheduler.start()
 
 @bot.event
