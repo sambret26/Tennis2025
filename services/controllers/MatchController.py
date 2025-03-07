@@ -30,10 +30,12 @@ def updateMatchResult():
     winnerId = data['playerId']
     score = data['score']
     finish = data['finish']
+    double = data['double']
     match = matchRepository.getMatchById(matchId)
     if not match:
         return jsonify({'message': 'Match not found!'}), 404
-    match.winnerId = winnerId
+    if double : match.teamWinnerId = winnerId
+    else : match.winnerId = winnerId
     match.score = score
     match.finish = finish
     matchRepository.updateMatch(match)

@@ -21,6 +21,7 @@ class Match(db.Model):
     courtId = db.Column(db.Integer, db.ForeignKey('courts.id'))
     finish = db.Column(db.Boolean, nullable=False, default=False)
     winnerId = db.Column(db.Integer, db.ForeignKey('players.id'))
+    teamWinnerId = db.Column(db.Integer, db.ForeignKey('teams.id'))
     notif = db.Column(db.Boolean, nullable=False, default=False)
     score = db.Column(db.String)
     nextRound = db.Column(db.String)
@@ -37,9 +38,10 @@ class Match(db.Model):
     team2 = db.relationship('Team', foreign_keys=[team2Id])#, back_populates='matchesAs2')
     court = db.relationship('Court')#, back_populates='matches')
     winner = db.relationship('Player', foreign_keys=[winnerId])#, back_populates='matchesAsWinner')
+    teamWinner = db.relationship('Team', foreign_keys=[teamWinnerId])#, back_populates='matchesAsWinner')
     grid = db.relationship('Grid')#, back_populates='matches')
 
-    def __init__(self, fftId, categoryId, gridId, double, label, player1Id, player2Id, team1Id, team2Id, player1Availability, player2Availability, day, hour, courtId, finish, winnerId, notif, score, nextRound, calId, isActive):
+    def __init__(self, fftId, categoryId, gridId, double, label, player1Id, player2Id, team1Id, team2Id, player1Availability, player2Availability, day, hour, courtId, finish, winnerId, teamWinnerId, notif, score, nextRound, calId, isActive):
         self.fftId = fftId
         self.categoryId = categoryId
         self.gridId = gridId
@@ -56,6 +58,7 @@ class Match(db.Model):
         self.courtId = courtId
         self.finish = finish
         self.winnerId = winnerId
+        self.teamWinnerId = teamWinnerId
         self.notif = notif
         self.score = score
         self.nextRound = nextRound
@@ -70,15 +73,15 @@ class Match(db.Model):
             'gridId': self.gridId,
             'double': self.double,
             'label': self.label,
-            'player1Id': self.player1Id if self.double == 0 else self.team1Id,
-            'player2Id': self.player2Id if self.double == 0 else self.team2Id,
+            'player1Id': self.player1Id if not self.double else self.team1Id,
+            'player2Id': self.player2Id if not self.double else self.team2Id,
             'player1Availability': self.player1Availability,
             'player2Availability': self.player2Availability,
             'day': self.day,
             'hour': self.hour,
             'courtId': self.courtId,
             'finish': self.finish,
-            'winnerId': self.winnerId,
+            'winnerId': self.winnerId if not self.double else self.teamWinnerId,
             'notif': self.notif,
             'score': self.score,
             'nextRound': self.nextRound,
@@ -87,7 +90,7 @@ class Match(db.Model):
             'player1' : self.player1.toMiniDict() if self.player1 else self.team1.toMiniDict() if self.team1 else None,
             'player2' : self.player2.toMiniDict() if self.player2 else self.team2.toMiniDict() if self.team2 else None,
             'court' : self.court.toDict() if self.court else None,
-            'winner' : self.winner.toMiniDict() if self.winner else None
+            'winner' : self.winner.toMiniDict() if self.winner else self.teamWinner.toMiniDict() if self.teamWinner else None
         }
 
     def getFormattedDate(self):
@@ -117,6 +120,7 @@ class Match(db.Model):
             courtId=data['courtId'],
             finish=data['finish'],
             winnerId=data['winnerId'],
+            teamWinnerId=data['teamWinnerId'],
             notif=data['notif'],
             score=data['score'],
             nextRound=data['nextRound'],
@@ -143,6 +147,7 @@ class Match(db.Model):
             courtId=data['courtId'],
             finish=False,#data['typeResultat'], #TODO
             winnerId=data['equipeGagnante'], #TODO
+            teamWinnerId=data['equipeGagnante'], #TODO
             notif=False,
             score=data['sets'], #TODO
             nextRound=data['matchsSuivants']['matchId'] if 'matchId' in data['matchsSuivants'] else None,

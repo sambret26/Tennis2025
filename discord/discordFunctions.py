@@ -65,6 +65,10 @@ def generateMatchFinishInfosMessage(match):
         info += f" Le gagnant est {match.winner.getFullName()}"
         if match.score : info += f" ({match.score})"
         info += '.'
+    if match.teamWinner :
+        info += f" La paire gagnante est {match.teamWinner.getFullName()}"
+        if match.score : info += f" ({match.score})"
+        info += '.'
     return info
 
 def generateMatchNotFinishInfosMessage(match):
