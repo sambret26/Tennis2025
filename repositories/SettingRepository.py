@@ -32,6 +32,10 @@ class SettingRepository:
     def getBatchsActive():
         return Setting.query.filter(Setting.key == 'batchsActive').first().value == "1"
 
+    @staticmethod
+    def getRefreshToken():
+        return Setting.query.filter(Setting.key == 'refreshToken').first().value
+
     #ADDERS
     @staticmethod
     def addSetting(setting):
@@ -67,6 +71,11 @@ class SettingRepository:
     @staticmethod
     def setMojaSync(mojaSync):
         Setting.query.filter(Setting.key == 'mojaSync').update({Setting.value: mojaSync})
+        db.session.commit()
+
+    @staticmethod
+    def setRefreshToken(refreshToken):
+        Setting.query.filter(Setting.key == 'refreshToken').update({Setting.value: refreshToken})
         db.session.commit()
 
     @staticmethod

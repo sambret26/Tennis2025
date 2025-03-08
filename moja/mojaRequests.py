@@ -1,23 +1,40 @@
+from repositories.SettingRepository import SettingRepository
 from logger.logger import log, MOJA
 import requests
+import time
 import os
 
+settingsRepository = SettingRepository()
 
 def getRefreshToken():
-    return os.environ.get("RefreshToken")
+    return settingsRepository.getRefreshToken()
+
+def getClientSecret():
+    return os.environ.get("ClientSecret")
+
+def isTokenValid():
+    return time.time() < float(os.environ.get("AccessTokenExpirationTime"))
 
 def getAccessToken():
+    accessToken = os.environ.get("AccessToken")
+    if accessToken is not None :
+        if isTokenValid():
+            return accessToken
     url = os.environ.get("AccessTokenUrl")
     data = {
         "client_id": "moja-site",
-        "client_secret": "d5a60529-5414-4e70-ae2c-56a182a39bb6",
+        "client_secret": getClientSecret(),
         "refresh_token": getRefreshToken(),
         "grant_type": "refresh_token"
     }
     response = sendPostRequest(url, data)
     if response is None:
         return None
-    return response["access_token"]
+    accessToken = response["access_token"]
+    expirationTime = response["expires_in"] - 30
+    os.environ["AccessToken"] = accessToken
+    os.environ["AccessTokenExpirationTime"] = str(time.time() + expirationTime)
+    return accessToken
 
 def createHeaders():
     return {"Authorization": "Bearer " + getAccessToken()}
