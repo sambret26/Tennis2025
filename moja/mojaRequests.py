@@ -1,10 +1,13 @@
 from repositories.SettingRepository import SettingRepository
+from repositories.MessageRepository import MessageRepository
+from models.Message import Message
 from logger.logger import log, MOJA
 import requests
 import time
 import os
 
 settingsRepository = SettingRepository()
+messageRepository = MessageRepository()
 
 def getRefreshToken():
     return settingsRepository.getRefreshToken()
@@ -20,6 +23,8 @@ def getAccessToken():
     if accessToken is not None :
         if isTokenValid():
             return accessToken
+    if settingsRepository.getAuthError():
+        return 500
     url = os.environ.get("AccessTokenUrl")
     data = {
         "client_id": "moja-site",
@@ -37,10 +42,22 @@ def getAccessToken():
     return accessToken
 
 def createHeaders():
-    return {"Authorization": "Bearer " + getAccessToken()}
+    accessToken = getAccessToken()
+    if accessToken == 500:
+        return None
+    if accessToken is None :
+        log.error(MOJA, "Erreur lors de la récupération du token d'authentification")
+        message = Message("ERROR", "Erreur lors de la récupération du token d'authentification")
+        messageRepository.addMessage(message)
+        settingsRepository.setAuthError("1")
+        return None
+    return {"Authorization": "Bearer " + accessToken}
 
 def sendGetRequest(url):
-    response =  requests.get(url, headers = createHeaders())
+    headers = createHeaders()
+    if headers is None :
+        return None
+    response =  requests.get(url, headers = headers)
     if response.status_code != 200:
         log.error(MOJA, f"Erreur lors de la requete GET a l'URL {url}: {response.status_code}")
         return None

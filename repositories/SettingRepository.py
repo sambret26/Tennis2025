@@ -36,6 +36,10 @@ class SettingRepository:
     def getRefreshToken():
         return Setting.query.filter(Setting.key == 'refreshToken').first().value
 
+    @staticmethod
+    def getAuthError():
+        return Setting.query.filter(Setting.key == 'authError').first().value == "1"
+
     #ADDERS
     @staticmethod
     def addSetting(setting):
@@ -76,6 +80,11 @@ class SettingRepository:
     @staticmethod
     def setRefreshToken(refreshToken):
         Setting.query.filter(Setting.key == 'refreshToken').update({Setting.value: refreshToken})
+        db.session.commit()
+
+    @staticmethod
+    def setAuthError(authError):
+        Setting.query.filter(Setting.key == 'authError').update({Setting.value: authError})
         db.session.commit()
 
     @staticmethod
