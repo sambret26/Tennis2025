@@ -10,7 +10,7 @@ class RankingRepository:
 
     @staticmethod
     def getRankingById(rankingId):
-        return Ranking.query.get(rankingId).first()
+        return Ranking.query.get(rankingId)
 
     @staticmethod
     def getRankingBySimple(rankingSimple):

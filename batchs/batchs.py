@@ -84,11 +84,15 @@ def updateDBPlayers(players):
     playersIdToDelete = playerRepository.getAllPlayersId()
     newPlayers = []
     oldPlayers = []
+    newRankingsPlayers = []
     for player in players:
         playerInDB = playerRepository.getPlayerByFftId(player.fftId)
         if playerInDB:
             checkCategories(player, playerInDB)
             if player.isDifferent(playerInDB):
+                if playerInDB.rankingId != player.rankingId:
+                    print(playerInDB.rankingId)
+                    newRankingsPlayers.append((player, playerInDB.rankingId))
                 player.id = playerInDB.id
                 playerRepository.updatePlayer(playerInDB.id, player)
             playersIdToDelete.remove(playerInDB.id)
@@ -96,7 +100,7 @@ def updateDBPlayers(players):
             newPlayers.append(player)
     for playerId in playersIdToDelete:
         oldPlayers.append(createPlayer(playerRepository.getPlayerById(playerId)))
-    sendNotif(newPlayers, oldPlayers)
+    sendNotif(newPlayers, oldPlayers, newRankingsPlayers)
     playerRepository.addPlayers(newPlayers)
     playerRepository.deletePlayers(playersIdToDelete)
 
@@ -143,7 +147,7 @@ def checkCategories(player, playerInDB):
         playerBalanceRepository.updatePlayerBalanceByPlayerId(playerInDB.id, player.balance)
         messageRepository.addMessages(messages)
 
-def sendNotif(newPlayers, oldPlayers):
+def sendNotif(newPlayers, oldPlayers, newRankingsPlayers):
     messages = []
     for player in newPlayers:
         msg = f"Nouvelle inscription : {player.getFullName()} ({player.club})"
@@ -157,4 +161,9 @@ def sendNotif(newPlayers, oldPlayers):
         messages.append(Message("G", msg))
         for category in player["categories"]:
             messages.append(Message(category.code, msg))
+    for player, rankingId in newRankingsPlayers:
+        print(rankingId)
+        ranking = rankingRepository.getRankingById(rankingId)
+        msg = f"Reclassement de {player.getFullName()} ({ranking.simple} => {player.ranking.simple})"
+        messages.append(Message("G", msg))
     messageRepository.addMessages(messages)
