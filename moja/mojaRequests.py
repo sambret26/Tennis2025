@@ -1,5 +1,6 @@
 from repositories.SettingRepository import SettingRepository
 from repositories.MessageRepository import MessageRepository
+from repositories.UrlRepository import UrlRepository
 from models.Message import Message
 from logger.logger import log, MOJA
 import requests
@@ -8,6 +9,7 @@ import os
 
 settingsRepository = SettingRepository()
 messageRepository = MessageRepository()
+urlRepository = UrlRepository()
 
 def getRefreshToken():
     return settingsRepository.getRefreshToken()
@@ -25,7 +27,7 @@ def getAccessToken():
             return accessToken
     if settingsRepository.getAuthError():
         return 500
-    url = os.environ.get("AccessTokenUrl")
+    url = urlRepository.getUrlByLabel("AccessToken")
     data = {
         "client_id": "moja-site",
         "client_secret": getClientSecret(),
