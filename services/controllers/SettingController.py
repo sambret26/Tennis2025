@@ -12,11 +12,6 @@ def getSettings():
     settingsDict = {setting.key: setting.value for setting in settings}
     return jsonify(settingsDict), 200
 
-@settingBp.route('/dates', methods=['GET'])
-def getDates():
-    dates =  settingRepository.getDates()
-    return jsonify({'startDate': dates['startDate'], 'endDate': dates['endDate']}), 200
-
 @settingBp.route('/', methods=['POST'])
 def addSetting():
     setting = Setting.fromJson(request.json)

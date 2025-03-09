@@ -13,18 +13,6 @@ class SettingRepository:
         return Setting.query.get(settingId)
 
     @staticmethod
-    def getDates():
-        results = Setting.query.with_entities(
-            Setting.value.label('value'), Setting.key.label('key')
-        ).filter(Setting.key.in_(['startDate', 'endDate'])).all()
-        dates = {result.key: result.value for result in results}
-        return dates
-
-    @staticmethod
-    def getHomologationId():
-        return Setting.query.filter(Setting.key == 'homologationId').first().value
-
-    @staticmethod
     def getJaId():
         return Setting.query.filter(Setting.key == 'jaId').first().value
 

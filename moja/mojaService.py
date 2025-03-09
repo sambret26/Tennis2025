@@ -22,10 +22,9 @@ from repositories.PlayerCategoriesRepository import PlayerCategoriesRepository
 from repositories.ReductionRepository import ReductionRepository
 from repositories.TransactionRepository import TransactionRepository
 from repositories.MatchRepository import MatchRepository
+from repositories.CompetitionRepository import CompetitionRepository
 
 from logger.logger import log, BATCH
-
-# from repositories.CompetitionRepository import CompetitionRepository
 
 categoryRepository = CategoryRepository()
 courtRepository = CourtRepository()
@@ -41,20 +40,26 @@ playerCategoriesRepository = PlayerCategoriesRepository()
 reductionRepository = ReductionRepository()
 transactionRepository = TransactionRepository()
 matchRepository = MatchRepository()
-#competitionRepository = CompetitionRepository()
+competitionRepository = CompetitionRepository()
 
 
 def getCategoryDataUrl(categoryId):
     categoryUrl = os.environ.get("CategoryDataUrl")
     return categoryUrl.replace("CATEGORY_ID", str(categoryId))
 
+def getCompetitionsDataUrl():
+    competitionUrl = os.environ.get("CompetitionUrl")
+    return competitionUrl.replace("JA_ID", str(settingRepository.getJaId()))
+
 def getCategoryInfos(categoryId):
-    url = getCategoryDataUrl(categoryId)
-    return mojaRequests.sendGetRequest(url)
+    return mojaRequests.sendGetRequest(getCategoryDataUrl(categoryId))
 
 def getGridDataUrl(gridId):
     gridUrl = os.environ.get("GridDataUrl")
     return gridUrl.replace("GRID_ID", str(gridId))
+
+def getCompetitions():
+    return mojaRequests.sendGetRequest(getCompetitionsDataUrl())
 
 def updateCompetitions():
     competitionsToAdd = []
@@ -92,7 +97,7 @@ def updateHomologation():
     return 200
 
 def getHomologationInfos():
-    homologationId = settingRepository.getHomologationId()
+    homologationId = competitionRepository.getHomologationId()
     jaId = settingRepository.getJaId()
     competitionUrl = os.environ.get("CompetitionUrl").replace("JA_ID", str(jaId))
     response = mojaRequests.sendGetRequest(competitionUrl)
@@ -125,7 +130,7 @@ def updateDates(competition):
     settingRepository.setEndDate(competition["dateFinHomologation"].split('T')[0])
 
 def updateCategories():
-    homologationId = settingRepository.getHomologationId()
+    homologationId = competitionRepository.getHomologationId()
     categoriesUrl = os.environ.get("CategoryUrl").replace("HOMOLOGATION_ID", str(homologationId))
     categories = mojaRequests.sendGetRequest(categoriesUrl)
     if categories == None:
