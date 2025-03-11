@@ -56,7 +56,9 @@ def generateMatchInfosMessage(match):
     return generateMatchNotFinishInfosMessage(match)
 
 def generateMatchFinishInfosMessage(match):
-    info = f"Le match {match.label} a opposé {match.player1.getFullName()} et {match.player2.getFullName()}"
+    entity1 = match.team1 if match.double else match.player1
+    entity2 = match.team2 if match.double else match.player2
+    info = f"Le match {match.label} a opposé {entity1.getFullName()} et {entity2.getFullName()}"
     if match.day : info += f" le {match.getFormattedDate()}"
     if match.hour : info += f" à {match.getFormattedHour()}"
     if match.court : info += f" sur le {match.court.name.lower()}"
@@ -72,12 +74,14 @@ def generateMatchFinishInfosMessage(match):
     return info
 
 def generateMatchNotFinishInfosMessage(match):
-    if match.player1 and match.player2 :
-        info = f"Le match {match.label} opposera {match.player1.getFullName()} à {match.player2.getFullName()}"
-    elif match.player1 :
-        info = f"Le match {match.label} opposera {match.player1.getFullName()} à ?"
-    elif match.player2 :
-        info = f"Le match {match.label} opposera {match.player2.getFullName()} à ?"
+    entity1 = match.team1 if match.double else match.player1
+    entity2 = match.team2 if match.double else match.player2
+    if entity1 and entity2 :
+        info = f"Le match {match.label} opposera {entity1.getFullName()} à {entity2.getFullName()}"
+    elif entity1 :
+        info = f"Le match {match.label} opposera {entity1.getFullName()} à ?"
+    elif entity2 :
+        info = f"Le match {match.label} opposera {entity2.getFullName()} à ?"
     else :
         info = f"Le match {match.label} se jouera "
     if match.day : info += f" le {match.getFormattedDate()}"
