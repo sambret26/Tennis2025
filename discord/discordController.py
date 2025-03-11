@@ -77,8 +77,8 @@ async def on_ready():
     scheduler.add_job(batchsLauncher.pgwLoop, CronTrigger(hour=8, minute=58, timezone=timezone), args=[bot])
     scheduler.add_job(batchsLauncher.inscriptionsLoop, CronTrigger(second=30, timezone=timezone))
     scheduler.add_job(batchsLauncher.sendNotifLoop, CronTrigger(second=0, timezone=timezone), args=[bot])
-    scheduler.add_job(batchsLauncher.updateMatchLoop, CronTrigger(hour=2, timezone=timezone))
-    scheduler.add_job(batchsLauncher.updateCalLoop, CronTrigger(hour=3, timezone=timezone))
+    scheduler.add_job(batchsLauncher.updateMatchLoop, CronTrigger(hour=2, minute=0, timezone=timezone))
+    scheduler.add_job(batchsLauncher.updateCalLoop, CronTrigger(hour=3, minute=0, timezone=timezone))
     scheduler.start()
 
 @bot.event

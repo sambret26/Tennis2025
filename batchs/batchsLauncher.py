@@ -29,7 +29,7 @@ async def sendNotifLoop(bot):
 async def updateMatchLoop():
     if settingRepository.getBatchsActive() == False: return
     log.info(BATCH, "Lancement du batch updateMatch")
-    await batchs.updateMatch()
+    batchs.updateMatch()
     log.info(BATCH, "Fin du batch updateMatch")
 
 async def updateCalLoop():

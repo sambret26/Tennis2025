@@ -27,10 +27,10 @@ def inscriptions(sendNotif):
     if players : updateDBPlayers(players, sendNotif)
     if teams : updateDBTeams(teams)
 
-async def updateMatch():
-    return None
+def updateMatch():
+    return mojaService.updateAllMatches()
 
-async def updateCalendar():
+def updateCalendar():
     return None
 
 def getPlayersAndTeams():
