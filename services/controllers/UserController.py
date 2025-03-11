@@ -93,3 +93,16 @@ def changePassword(userId):
     user.password = password
     userRepository.updatePassword(userId, password)
     return jsonify({'message': 'Password changed!'}), 200
+
+@userBp.route('/users', methods=['GET'])
+def getUsers():
+    users = userRepository.getAllUsers()
+    return jsonify([user.toDict() for user in users]), 200
+
+@userBp.route('/update', methods=['PUT'])
+def updateUsers():
+    data = request.json
+    users = data
+    for userId, userProfile in users.items():
+        userRepository.updateProfile(userId, userProfile, 0)
+    return jsonify({'message': 'Users updated successfully!'}), 200

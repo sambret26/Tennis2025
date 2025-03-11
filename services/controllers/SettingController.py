@@ -41,3 +41,9 @@ def updatePrices():
     prices = request.json
     settingRepository.updatePrices(prices)
     return jsonify({'message': 'Prices updated successfully!'}), 200
+
+@settingBp.route('/token', methods=['PUT'])
+def updateToken():
+    token = request.json['token']
+    settingRepository.setRefreshToken(token)
+    return jsonify({'message': 'Token updated successfully!'}), 200

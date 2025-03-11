@@ -6,6 +6,10 @@ class UserRepository:
 
     #GETTERS
     @staticmethod
+    def getAllUsers():
+        return User.query.order_by(User.profileValue.desc()).all()
+
+    @staticmethod
     def getUserByName(name):
         return User.query.filter(func.lower(User.name) == name.lower()).first()
 
