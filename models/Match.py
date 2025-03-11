@@ -26,7 +26,6 @@ class Match(db.Model):
     score = db.Column(db.String)
     nextRound = db.Column(db.String)
     calId = db.Column(db.String)
-    isActive = db.Column(db.Boolean, default=True)
     createdAt = db.Column(db.DateTime, default=datetime.utcnow)
     updatedAt = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
 
@@ -41,7 +40,10 @@ class Match(db.Model):
     teamWinner = db.relationship('Team', foreign_keys=[teamWinnerId])#, back_populates='matchesAsWinner')
     grid = db.relationship('Grid')#, back_populates='matches')
 
-    def __init__(self, fftId, label=None, categoryId=None, gridId=None, double=False, player1Id=None, player2Id=None, team1Id=None, team2Id=None, player1Availability=0, player2Availability=0, day=None, hour=None, courtId=None, finish=False, winnerId=None, teamWinnerId=None, notif=False, score="", nextRound=None, calId=None, isActive=True):
+    def __init__(self, fftId, label=None, categoryId=None, gridId=None, double=False, player1Id=None,\
+        player2Id=None, team1Id=None, team2Id=None, player1Availability=0, player2Availability=0, day=None,\
+        hour=None, courtId=None, finish=False, winnerId=None, teamWinnerId=None, notif=False, score="",\
+        nextRound=None, calId=None):
         self.fftId = fftId
         self.categoryId = categoryId
         self.gridId = gridId
@@ -63,7 +65,6 @@ class Match(db.Model):
         self.score = score
         self.nextRound = nextRound
         self.calId = calId
-        self.isActive = isActive
 
     def toDict(self):
         return {
@@ -86,7 +87,6 @@ class Match(db.Model):
             'score': self.score,
             'nextRound': self.nextRound,
             'calId': self.calId,
-            'isActive': self.isActive,
             'player1' : self.player1.toMiniDict() if self.player1 else self.team1.toMiniDict() if self.team1 else None,
             'player2' : self.player2.toMiniDict() if self.player2 else self.team2.toMiniDict() if self.team2 else None,
             'court' : self.court.toDict() if self.court else None,
@@ -124,8 +124,7 @@ class Match(db.Model):
             notif=data['notif'],
             score=data['score'],
             nextRound=data['nextRound'],
-            calId=data['calId'],
-            isActive=data['isActive']
+            calId=data['calId']
         )
 
     @classmethod
@@ -134,3 +133,19 @@ class Match(db.Model):
             fftId=data['matchId'],
             nextRound=data['matchsSuivants']['matchId'] if 'matchId' in data['matchsSuivants'] else None
         )
+
+    def isDifferent(self, match):
+        if self.label != match.label : return True
+        if self.player1Id != match.player1Id : return True
+        if self.player2Id != match.player2Id : return True
+        if self.team1Id != match.team1Id : return True
+        if self.team2Id != match.team2Id : return True
+        if self.day != match.day : return True
+        if self.hour != match.hour : return True
+        if self.courtId != match.courtId : return True
+        if self.finish != match.finish : return True
+        if self.winnerId != match.winnerId : return True
+        if self.teamWinnerId != match.teamWinnerId : return True
+        if self.score != match.score : return True
+        if self.nextRound != match.nextRound : return True
+        return False

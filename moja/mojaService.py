@@ -142,15 +142,18 @@ def updateCategories():
     return 200
 
 def updateAllMatches():
+    report = UpdatedMatchReport(0, 0, 0)
     result = 200
     oldCategory = None
     matchIndex = 1
     for grid in gridRepository.getAllGrids():
         if oldCategory != grid.categoryId: matchIndex = 1
-        matchAdded = updateMatches(grid.category.code, grid, matchIndex)
+        matchAdded = updateMatches(grid.category.code, grid, matchIndex, report)
         if matchAdded == 404: result = 404
         matchIndex += matchAdded
         oldCategory = grid.categoryId
+    message = report.createMessage()
+    log.info(BATCH, message)
     return result
 
 def updateGrids():
@@ -171,26 +174,40 @@ def updateGrid(categoryId, categoryFftId):
         gridRepository.addGrids(gridsToAdd)
     return 200
 
-def updateMatches(categoryCode, grid, matchIndex):
+def updateMatches(categoryCode, grid, matchIndex, report):
+    matchsIdtoDelete = matchRepository.getAllMatchesIdByGrid(grid.id)
+    newMatchs = []
+    matches = []
     courtsMap = courtRepository.getCourtsMap()
     if grid.type == "POU":
         url = getGridDataUrlPoule(grid.fftId)
     else:
         url = getGridDataUrl(grid.tableId)
-    matches = mojaRequests.sendGetRequest(url)
-    if matches == None: return 404
-    matchesToAdd = []
+    matchesFromFFT = mojaRequests.sendGetRequest(url)
+    if matchesFromFFT == None: return 404
     if grid.type != "POU" :
-        sortedMatchs = sorted(matches, key=lambda x: (int(x["numeroMatch"][3]), int(x["numeroMatch"][1]), int(x["numeroMatch"][5])))
+        sortedMatchs = sorted(matchesFromFFT, key=lambda x: (int(x["numeroMatch"][3]), int(x["numeroMatch"][1]), int(x["numeroMatch"][5])))
     else:
-        sortedMatchs = matches
+        sortedMatchs = matchesFromFFT
     for match in sortedMatchs:
-        matchesToAdd.append(createMatch(match, grid.categoryId, grid.id, courtsMap, categoryCode, matchIndex))
+        newMatch = createMatch(match, grid.categoryId, grid.id, courtsMap, categoryCode, matchIndex)
+        matches.append(newMatch)
         matchIndex += 1
-    if matchesToAdd != []:
-        matchRepository.deleteAllMatchesByGrid(grid.id)
-        matchRepository.addMatches(matchesToAdd)
-    return len(matchesToAdd)
+    for match in matches:
+        matchInDB = matchRepository.getMatchByFftId(match.fftId)
+        if matchInDB:
+            if match.isDifferent(matchInDB):
+                match.id = matchInDB.id
+                report.updated += 1
+                matchRepository.updateMatchFromBatch(match)
+            matchsIdtoDelete.remove(matchInDB.id)
+        else:
+            newMatchs.append(match)
+    if newMatchs != []: matchRepository.addMatches(newMatchs)
+    matchRepository.deleteMatches(matchsIdtoDelete)
+    report.added += len(newMatchs)
+    report.deleted += len(matchsIdtoDelete)
+    return len(matches)
 
 def updateRankings():
     categories = categoryRepository.getAllCategories()
@@ -289,3 +306,11 @@ def getTeamId(list, i):
     if team == None: return None
     return team.id
 
+class UpdatedMatchReport:
+    def __init__(self, updated, added, deleted):
+        self.updated = updated
+        self.added = added
+        self.deleted = deleted
+
+    def createMessage(self):
+        return f"Nombre de matchs mis à jour : {self.updated} | Nombre de matchs ajoutés : {self.added} | Nombre de matchs supprimés : {self.deleted}"

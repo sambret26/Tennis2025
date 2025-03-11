@@ -103,7 +103,7 @@ def updateDBPlayers(players, sendNotif):
     for playerId in playersIdToDelete:
         oldPlayers.append(createPlayer(playerRepository.getPlayerById(playerId)))
     sendMessages(newPlayers, oldPlayers, newRankingsPlayers)
-    playerRepository.addPlayers(newPlayers)
+    if newPlayers != []: playerRepository.addPlayers(newPlayers)
     playerRepository.deletePlayers(playersIdToDelete)
 
 def createPlayer(player):
@@ -126,7 +126,7 @@ def updateDBTeams(teams):
             team.player1Id = playersMap[team.player1Id]
             team.player2Id = playersMap[team.player2Id]
             newTeams.append(team)
-    teamRepository.addTeams(newTeams)
+    if newTeams != []: teamRepository.addTeams(newTeams)
     teamRepository.deleteTeams(teamsIdToDelete)
 
 def checkCategories(player, playerInDB, sendNotif):
