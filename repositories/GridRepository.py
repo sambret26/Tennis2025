@@ -6,7 +6,7 @@ class GridRepository:
     #GETTERS
     @staticmethod
     def getAllGrids():
-        return Grid.query.all()
+        return Grid.query.order_by(Grid.categoryId).all()
 
     @staticmethod
     def getGridById(gridId):

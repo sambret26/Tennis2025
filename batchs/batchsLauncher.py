@@ -17,7 +17,7 @@ async def pgwLoop(bot):
 async def inscriptionsLoop():
     if settingRepository.getBatchsActive() == False: return
     log.info(BATCH, "Lancement du batch inscriptions")
-    await batchs.inscriptions()
+    batchs.inscriptions(True)
     log.info(BATCH, "Fin du batch inscriptions")
 
 async def sendNotifLoop(bot):

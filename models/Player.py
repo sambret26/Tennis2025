@@ -7,7 +7,6 @@ class Player(db.Model):
 
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     fftId = db.Column(db.BigInteger, unique=True, index=True)
-    inscriptionId = db.Column(db.BigInteger, unique=True, index=True)
     lastName = db.Column(db.String, nullable=False)
     firstName = db.Column(db.String, nullable=False)
     rankingId = db.Column(db.Integer, db.ForeignKey("rankings.id"))
@@ -35,11 +34,10 @@ class Player(db.Model):
     #teamAs1 = db.relationship('Team', foreign_keys=[Team.player1Id], back_populates="player1", lazy="select")
     #teamAs2 = db.relationship('Team', foreign_keys=[Team.player2Id], back_populates="player2", lazy="select")
 
-    def __init__(self, id=None, fftId=None, inscriptionId=None, lastName=None,
+    def __init__(self, id=None, fftId=None, lastName=None,
             firstName=None, rankingId=None, club=None, phoneNumber=None, email=None):
         self.id = id
         self.fftId = fftId
-        self.inscriptionId = inscriptionId
         self.lastName = lastName
         self.firstName = firstName
         self.rankingId = rankingId
@@ -53,7 +51,6 @@ class Player(db.Model):
             "lastName": self.lastName,
             "firstName": self.firstName,
             "fftId": self.fftId,
-            "inscriptionId": self.inscriptionId,
             "rankingId": self.rankingId,
             "club": self.club,
             "phoneNumber": self.phoneNumber,
@@ -102,7 +99,6 @@ class Player(db.Model):
     def fromJson(cls, data):
         return cls(
             fftId=data['fftId'],
-            inscriptionId=data['inscriptionId'],        
             lastName=data['lastName'],        
             firstName=data['firstName'],        
             rankingId=data['rankingId'],        
@@ -115,7 +111,6 @@ class Player(db.Model):
     def fromFFT(cls, data):
         return cls(
             fftId=data['joueur1Id'],
-            inscriptionId=data['inscriptionId'],
             firstName= data['joueur1Prenom'].title(),
             lastName=data['joueur1Nom'].title(),
             club = data['clubJoueur1']
@@ -125,7 +120,6 @@ class Player(db.Model):
     def fromFFT2(cls, data):
         return cls(
             fftId=data['joueur2Id'],
-            inscriptionId=data['inscriptionId'],
             firstName= data['joueur2Prenom'].title(),
             lastName=data['joueur2Nom'].title(),
             club = data['clubJoueur2']

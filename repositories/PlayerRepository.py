@@ -41,6 +41,10 @@ class PlayerRepository:
         results = db.session.query(Player.rankingId).select_from(Player).join(PlayerCategories, Player.id == PlayerCategories.playerId).filter(PlayerCategories.categoryId == categoryId).all()
         return [result[0] for result in results]
 
+    @staticmethod
+    def getPlayersMap():
+        return {player.fftId: player.id for player in Player.query.all()}
+
     #ADDERS
     @staticmethod
     def addPlayer(player):

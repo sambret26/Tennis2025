@@ -16,6 +16,14 @@ class TeamRepository:
     def getTeamById(teamId):
         return Team.query.get(teamId)
 
+    @staticmethod
+    def getTeamByPlayersIds(player1Id, player2Id):
+        return Team.query.filter_by(player1Id=player1Id, player2Id=player2Id).first()
+
+    @staticmethod
+    def getAllTeamsId():
+        return [team.id for team in Team.query.all()]
+
     #ADDERS
     @staticmethod
     def addTeam(team):
@@ -27,19 +35,13 @@ class TeamRepository:
         db.session.add_all(teams)
         db.session.commit()
 
-    #SETTERS
-    @staticmethod
-    def setTeamsToActive(teamsId):
-        Team.query.filter(Team.id.in_(teamsId)).update({'isActive': True})
-        db.session.commit()
-
-    @staticmethod
-    def setTeamsToInactive():
-        Team.query.update({'isActive': False})
-        db.session.commit()
-
     #DELETERS
     @staticmethod
-    def deleteInactiveTeams():
-        Team.query.filter_by(isActive=False).delete()
+    def deleteTeams(teamsId):
+        Team.query.filter(Team.id.in_(teamsId)).delete()
+        db.session.commit()
+
+    @staticmethod
+    def deleteAllTeams():
+        Team.query.delete()
         db.session.commit()

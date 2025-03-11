@@ -9,7 +9,7 @@ class Match(db.Model):
     categoryId = db.Column(db.Integer, db.ForeignKey('categories.id'), nullable=False)
     gridId = db.Column(db.Integer, db.ForeignKey('grids.id'), nullable=False)
     double = db.Column(db.Boolean, nullable=False, default=False)
-    label = db.Column(db.String, nullable=False)
+    label = db.Column(db.String)
     player1Id = db.Column(db.Integer, db.ForeignKey('players.id'))
     player2Id = db.Column(db.Integer, db.ForeignKey('players.id'))
     team1Id = db.Column(db.Integer, db.ForeignKey('teams.id'))
@@ -41,7 +41,7 @@ class Match(db.Model):
     teamWinner = db.relationship('Team', foreign_keys=[teamWinnerId])#, back_populates='matchesAsWinner')
     grid = db.relationship('Grid')#, back_populates='matches')
 
-    def __init__(self, fftId, categoryId, gridId, double, label, player1Id, player2Id, team1Id, team2Id, player1Availability, player2Availability, day, hour, courtId, finish, winnerId, teamWinnerId, notif, score, nextRound, calId, isActive):
+    def __init__(self, fftId, label=None, categoryId=None, gridId=None, double=False, player1Id=None, player2Id=None, team1Id=None, team2Id=None, player1Availability=0, player2Availability=0, day=None, hour=None, courtId=None, finish=False, winnerId=None, teamWinnerId=None, notif=False, score="", nextRound=None, calId=None, isActive=True):
         self.fftId = fftId
         self.categoryId = categoryId
         self.gridId = gridId
@@ -132,25 +132,5 @@ class Match(db.Model):
     def fromFFT(cls, data):
         return cls(
             fftId=data['matchId'],
-            categoryId=0,
-            gridId=0,
-            double=False,
-            label=data['numeroMatch'], #TODO
-            player1Id=0,
-            player2Id=0,
-            team1Id=0,
-            team2Id=0,
-            player1Availability=0,
-            player2Availability=0,
-            day=data['dateProgrammation'], #TODO
-            hour=data['dateDebut'], #TODO
-            courtId=data['courtId'],
-            finish=False,#data['typeResultat'], #TODO
-            winnerId=data['equipeGagnante'], #TODO
-            teamWinnerId=data['equipeGagnante'], #TODO
-            notif=False,
-            score=data['sets'], #TODO
-            nextRound=data['matchsSuivants']['matchId'] if 'matchId' in data['matchsSuivants'] else None,
-            calId=None,
-            isActive=True
+            nextRound=data['matchsSuivants']['matchId'] if 'matchId' in data['matchsSuivants'] else None
         )

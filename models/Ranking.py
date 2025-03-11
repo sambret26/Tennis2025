@@ -6,8 +6,8 @@ class Ranking(db.Model):
 
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     fftId = db.Column(db.BigInteger, nullable=False)
-    simple = db.Column(db.String, nullable=False)
-    double = db.Column(db.Integer, nullable=False)
+    simple = db.Column(db.String)
+    double = db.Column(db.String)
     createdAt = db.Column(db.DateTime, default=datetime.utcnow)
     updatedAt = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
 
@@ -37,9 +37,17 @@ class Ranking(db.Model):
         )
 
     @classmethod
-    def fromFFT(cls, data):
+    def fromFFTSimple(cls, data):
         return cls(
             fftId=data['echelon'],
             simple=data['libelle'],
-            double=0
+            double=None
+        )
+
+    @classmethod
+    def fromFFTDouble(cls, data):
+        return cls(
+            fftId=data['echelon'],
+            simple=None,
+            double=data['libelle']
         )

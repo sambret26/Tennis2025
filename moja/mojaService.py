@@ -24,6 +24,7 @@ from repositories.TransactionRepository import TransactionRepository
 from repositories.MatchRepository import MatchRepository
 from repositories.CompetitionRepository import CompetitionRepository
 from repositories.UrlRepository import UrlRepository
+from repositories.TeamRepository import TeamRepository
 
 from logger.logger import log, BATCH
 
@@ -43,6 +44,7 @@ transactionRepository = TransactionRepository()
 matchRepository = MatchRepository()
 competitionRepository = CompetitionRepository()
 urlRepository = UrlRepository()
+teamRepository = TeamRepository()
 
 def getCategoryDataUrl(categoryId):
     categoryUrl = urlRepository.getUrlByLabel("CategoryData")
@@ -55,9 +57,13 @@ def getCompetitionsDataUrl():
 def getCategoryInfos(categoryId):
     return mojaRequests.sendGetRequest(getCategoryDataUrl(categoryId))
 
-def getGridDataUrl(gridId):
+def getGridDataUrl(gridTableId):
     gridUrl = urlRepository.getUrlByLabel("GridData")
-    return gridUrl.replace("GRID_ID", str(gridId))
+    return gridUrl.replace("GRID_ID", str(gridTableId))
+
+def getGridDataUrlPoule(gridFftId):
+    gridUrl = urlRepository.getUrlByLabel("GridDataPoule")
+    return gridUrl.replace("GRID_ID", str(gridFftId))
 
 def getCompetitions():
     return mojaRequests.sendGetRequest(getCompetitionsDataUrl())
@@ -72,7 +78,6 @@ def updateCompetitions():
     competitionRepository.addCompetitions(competitionsToAdd)
 
 def updateHomologation():
-    log.info(BATCH, "Suppression de toutes les données")
     playerAvailabilityRepository.deleteAllPlayerAvailabilities()
     playerAvailabilityCommentRepository.deleteAllPlayerAvailabilityComments()
     playerBalanceRepository.deleteAllPlayerBalances()
@@ -83,17 +88,11 @@ def updateHomologation():
     transactionRepository.deleteAllTransactions()
     competition = getHomologationInfos()
     if competition:
-        log.info(BATCH, "Mise à jour des courts")
         updateCourtsInDB(competition["courts"])
-        log.info(BATCH, "Mise à jour des dates")
-        updateDates(competition)
-    log.info(BATCH, "Mise à jour des catégories")
     updateCategories()
     for category in categoryRepository.getAllCategories():
-        log.info(BATCH, "Mise à jour des découpages de la catégorie " + category.code)
         updateGrid(category.id, category.fftId)
     updateAllMatches()
-    log.info(BATCH, "Mise à jour des classements")
     updateRankings()
     return 200
 
@@ -125,11 +124,6 @@ def updateCourtsInDB(courts):
         courtRepository.deleteAllCourts()
         courtRepository.addCourts(courtsToAdd)
 
-def updateDates(competition):
-    format = "%Y-%m-%d"
-    settingRepository.setStartDate(competition["dateDebutHomologation"].split('T')[0])
-    settingRepository.setEndDate(competition["dateFinHomologation"].split('T')[0])
-
 def updateCategories():
     homologationId = competitionRepository.getHomologationId()
     categoriesUrl = urlRepository.getUrlByLabel("Category").replace("HOMOLOGATION_ID", str(homologationId))
@@ -149,11 +143,19 @@ def updateCategories():
 
 def updateAllMatches():
     result = 200
+    oldCategory = None
+    matchIndex = 1
     for grid in gridRepository.getAllGrids():
-        log.info(BATCH, "Mise à jour des matches de la grille " + grid.name)
-        if updateMatches(grid.id, grid.tableId, grid.categoryId) == 404:
-            result = 404
+        if oldCategory != grid.categoryId: matchIndex = 1
+        matchAdded = updateMatches(grid.category.code, grid, matchIndex)
+        if matchAdded == 404: result = 404
+        matchIndex += matchAdded
+        oldCategory = grid.categoryId
     return result
+
+def updateGrids():
+    for category in categoryRepository.getAllCategories():
+        updateGrid(category.id, category.fftId)
 
 def updateGrid(categoryId, categoryFftId):  
     categoryInfos = getCategoryInfos(categoryFftId)
@@ -169,17 +171,26 @@ def updateGrid(categoryId, categoryFftId):
         gridRepository.addGrids(gridsToAdd)
     return 200
 
-def updateMatches(gridId, gridFftId, categoryId):
-    url = getGridDataUrl(gridFftId)
+def updateMatches(categoryCode, grid, matchIndex):
+    courtsMap = courtRepository.getCourtsMap()
+    if grid.type == "POU":
+        url = getGridDataUrlPoule(grid.fftId)
+    else:
+        url = getGridDataUrl(grid.tableId)
     matches = mojaRequests.sendGetRequest(url)
     if matches == None: return 404
     matchesToAdd = []
-    for match in matches:
-        matchesToAdd.append(createMatch(match, categoryId, gridId))
+    if grid.type != "POU" :
+        sortedMatchs = sorted(matches, key=lambda x: (int(x["numeroMatch"][3]), int(x["numeroMatch"][1]), int(x["numeroMatch"][5])))
+    else:
+        sortedMatchs = matches
+    for match in sortedMatchs:
+        matchesToAdd.append(createMatch(match, grid.categoryId, grid.id, courtsMap, categoryCode, matchIndex))
+        matchIndex += 1
     if matchesToAdd != []:
-        matchRepository.deleteAllMatchesByGrid(gridId)
+        matchRepository.deleteAllMatchesByGrid(grid.id)
         matchRepository.addMatches(matchesToAdd)
-    return 200
+    return len(matchesToAdd)
 
 def updateRankings():
     categories = categoryRepository.getAllCategories()
@@ -189,26 +200,71 @@ def updateRankings():
         if categoryInfos == None: continue
         rankings = categoryInfos["classementList"]
         if rankings == None: continue
-        addRankings(rankingsToAdd, rankings)
+        addRankings(category.code, rankingsToAdd, rankings)
     playerRepository.deleteAllPlayers()
     rankingRepository.deleteAllRankings()
     rankingRepository.addRankings(rankingsToAdd)
     return 200
 
-def createMatch(match, categoryId, gridId):
+def createMatch(match, categoryId, gridId, courtsMap, categoryCode, matchIndex):
     newMatch = Match.fromFFT(match)
-    newMatch.player1Id = getPlayerId(match['joueurList'], 0)
-    newMatch.player2Id = getPlayerId(match['joueurList'], 1)
-    newMatch.team1Id = None #TODO
-    newMatch.team2Id = None #TODO
-    newMatch.double = match["nomCategorie"].startswith("D")
     newMatch.categoryId = categoryId
     newMatch.gridId = gridId
+    newMatch.double = match["nomCategorie"].startswith("D")
+    newMatch.courtId = courtsMap.get(int(match['courtId'])) if match['courtId'] != None else None
+    newMatch.label = categoryCode + str(matchIndex).zfill(2)
+    setPlayersOrTeam(newMatch, match)
+    setWinner(newMatch, match)
+    setProgrammation(newMatch, match)
     return newMatch
 
-def addRankings(rankingsToAdd, rankings):
+def setPlayersOrTeam(match, matchData):
+    if match.double:
+        match.team1Id = getTeamId(matchData['joueurList'], 0)
+        match.team2Id = getTeamId(matchData['joueurList'], 1)
+    else:
+        match.player1Id = getPlayerId(matchData['joueurList'], 0)
+        match.player2Id = getPlayerId(matchData['joueurList'], 1)
+
+def setWinner(match, matchData):
+    if matchData["equipeGagnante"] == None: return
+    match.finish = True
+    if match.double:
+        if matchData["equipeGagnante"] == "equipeA":
+            match.teamWinnerId = match.team1Id
+        else:
+            match.teamWinnerId = match.team2Id
+    else:
+        if matchData["equipeGagnante"] == "equipeA":
+            match.winnerId = match.player1Id
+        else:
+            match.winnerId = match.player2Id
+    setScore(match, matchData)
+
+def setScore(match, matchData):
+    score = ""
+    for set in matchData["sets"]:
+        if set["scoreA"] == 0 and set["scoreB"] == 0: break
+        if score != "" : score += " "
+        if matchData["equipeGagnante"] == "equipeA":
+            score += str(set["scoreA"]) + "/" + str(set["scoreB"])
+        else:
+            score += str(set["scoreB"]) + "/" + str(set["scoreA"])
+        if set["tieBreak"] != None:
+            score += "(" + str(set["tieBreak"]) + ")"
+    match.score = score
+
+def setProgrammation(match, matchData):
+    if matchData["dateProgrammation"] and "T" in matchData["dateProgrammation"]:
+        match.day = matchData["dateProgrammation"].split("T")[0]
+        match.hour = matchData["dateProgrammation"].split("T")[1][:5]
+
+def addRankings(categoryCode, rankingsToAdd, rankings):
     for ranking in rankings:
-        newRanking = Ranking.fromFFT(ranking)
+        if categoryCode.startswith("S"):
+            newRanking = Ranking.fromFFTSimple(ranking)
+        else:
+            newRanking = Ranking.fromFFTDouble(ranking)
         if newRanking != None and newRanking not in rankingsToAdd :
             rankingsToAdd.append(newRanking)
 
@@ -218,4 +274,18 @@ def getPlayerId(list, i):
     player = playerRepository.getPlayerByFftId(fftId)
     if player == None: return None
     return player.id
+
+def getTeamId(list, i):
+    if i == 0 :
+        fftId1 = list[0]['joueurId'] if len(list) > 0 else None
+        fftId2 = list[1]['joueurId'] if len(list) > 1 else None
+    else :
+        fftId1 = list[2]['joueurId'] if len(list) > 2 else None
+        fftId2 = list[3]['joueurId'] if len(list) > 3 else None
+    if fftId1 == None or fftId2 == None: return None
+    player1Id = playerRepository.getPlayerByFftId(fftId1).id
+    player2Id = playerRepository.getPlayerByFftId(fftId2).id
+    team = teamRepository.getTeamByPlayersIds(player1Id, player2Id)
+    if team == None: return None
+    return team.id
 

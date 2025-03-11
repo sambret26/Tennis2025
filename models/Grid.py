@@ -9,7 +9,7 @@ class Grid(db.Model):
     categoryId = db.Column(db.Integer, db.ForeignKey('categories.id'), nullable=False)
     name = db.Column(db.String, nullable=False)
     type = db.Column(db.String, nullable=False)
-    tableId = db.Column(db.BigInteger, nullable=False)
+    tableId = db.Column(db.BigInteger)
     nextGridId = db.Column(db.BigInteger)
     createdAt = db.Column(db.DateTime, default=datetime.utcnow)
     updatedAt = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)

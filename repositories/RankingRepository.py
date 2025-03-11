@@ -16,6 +16,10 @@ class RankingRepository:
     def getRankingBySimple(rankingSimple):
         return Ranking.query.filter_by(simple=rankingSimple).first()
 
+    @staticmethod
+    def getRankingByDouble(rankingDouble):
+        return Ranking.query.filter_by(double=rankingDouble).first()
+
     #ADDERS
     @staticmethod
     def addRanking(ranking):

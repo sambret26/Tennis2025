@@ -42,3 +42,8 @@ class MatchRepository:
     def deleteAllMatchesByGrid(gridId):
         Match.query.filter(Match.gridId == gridId).delete()
         db.session.commit()
+
+    @staticmethod
+    def deleteAllMatches():
+        Match.query.delete()
+        db.session.commit()

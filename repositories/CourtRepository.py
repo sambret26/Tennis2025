@@ -12,6 +12,10 @@ class CourtRepository:
     def getCourtById(courtId):
         return Court.query.get(courtId)
 
+    @staticmethod
+    def getCourtsMap():
+        return {court.fftId: court.id for court in Court.query.all()}
+
     #ADDERS
     @staticmethod
     def addCourt(court):
