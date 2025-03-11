@@ -17,8 +17,9 @@ async def sendNotifByCategory(bot, categoryCode):
     channelId = channelRepository.getLogChannelId(categoryCode)
     messages = messageRepository.getMessagesByCategory(categoryCode)
     channel = bot.get_channel(channelId)
-    for message in messages:
-        await channel.send(message.message)
+    for i in range(0, len(messages), 20):
+        message = '\n'.join([m.message for m in messages[i:i+20]])
+        await channel.send(message)
     messageRepository.deleteMessagesByCategory(categoryCode)
 
 async def sendOtherNotif(bot):
@@ -32,7 +33,8 @@ async def sendOtherNotif(bot):
     for category, messagesInCategory in messagesByCategory.items():
         channelId = channelRepository.getLogChannelId(category)
         channel = bot.get_channel(channelId)
-        for message in messagesInCategory:
-            await channel.send(message.message)
-            messageIdToDelete.append(message.id)
+        for i in range(0, len(messagesInCategory), 20):
+            message = '\n'.join([m.message for m in messagesInCategory[i:i+20]])
+            await channel.send(message)
+        messageIdToDelete.extend([m.id for m in messagesInCategory])
     messageRepository.deleteMessagesByIds(messageIdToDelete)
