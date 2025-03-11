@@ -66,12 +66,13 @@ def addPlayersAndTeamInLists(players, teams, team, category):
     teams.append(newTeam)
 
 def addPlayer(players, newPlayer, category):
-    newPlayer.categories.append(category)
-    updatePlayerBalance(newPlayer, category.amount)
     for player in players:
         if newPlayer.fftId == player.fftId : 
             player.categories.append(category)
+            updatePlayerBalance(player, category.amount)
             return
+    newPlayer.categories.append(category)
+    updatePlayerBalance(newPlayer, category.amount)
     players.append(newPlayer)
 
 def updatePlayerBalance(player, amount):

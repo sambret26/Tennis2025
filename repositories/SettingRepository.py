@@ -28,6 +28,12 @@ class SettingRepository:
     def getAuthError():
         return Setting.query.filter(Setting.key == 'authError').first().value == "1"
 
+    @staticmethod
+    def getCategoriesPrices():
+        result = Setting.query.with_entities(Setting.value.label('value'), Setting.key.label('key'))\
+        .filter(Setting.key.in_(['simplePrice', 'doublePrice'])).all()
+        return {r.key: r.value for r in result}
+
     #ADDERS
     @staticmethod
     def addSetting(setting):

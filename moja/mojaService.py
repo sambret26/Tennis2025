@@ -125,6 +125,7 @@ def updateCourtsInDB(courts):
         courtRepository.addCourts(courtsToAdd)
 
 def updateCategories():
+    categoriesPrices = settingRepository.getCategoriesPrices()
     homologationId = competitionRepository.getHomologationId()
     categoriesUrl = urlRepository.getUrlByLabel("Category").replace("HOMOLOGATION_ID", str(homologationId))
     categories = mojaRequests.sendGetRequest(categoriesUrl)
@@ -133,7 +134,9 @@ def updateCategories():
     categoriesToAdd = []
     for category in categories:
         newCategory = Category.fromFFT(category)
-        newCategory.amount = 17 #TODO
+        if ("C") in newCategory.label: newCategory.amount = 0
+        elif newCategory.code.startswith("D"): newCategory.amount = categoriesPrices['doublePrice']
+        else : newCategory.amount = categoriesPrices['simplePrice']
         categoriesToAdd.append(newCategory)
     if categoriesToAdd != []:
         gridRepository.deleteAllGrids()
