@@ -14,7 +14,7 @@ class MatchRepository:
 
     @staticmethod
     def getMatchesForPlanning(date):
-        return Match.query.filter(Match.day == date).order_by(Match.hour).all()
+        return Match.query.filter(Match.day == date).order_by(Match.hour, Match.courtId.asc()).all()
 
     @staticmethod
     def getMatchByLabel(matchLabel):
