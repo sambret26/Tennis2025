@@ -73,7 +73,8 @@ class Player(db.Model):
             "fullName": self.getFullName(),
             "ranking": self.ranking.simple if self.ranking else None,
             "phoneNumber": self.phoneNumber,
-            "email": self.email
+            "email": self.email,
+            "club": self.club
         }
 
     def toNameDict(self):

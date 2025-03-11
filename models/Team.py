@@ -38,11 +38,13 @@ class Team(db.Model):
         return {
             "id": self.id,
             "fullName": self.getFullName(),
-            "ranking": self.ranking.double
+            "ranking": self.ranking.double,
+            "player1": self.player1.toMiniDict(),
+            "player2": self.player2.toMiniDict()
         }
 
     def getFullName(self):
-        return f"{self.player1.lastName}/{self.player2.lastName}"
+        return f"{self.player1.lastName.upper()}/{self.player2.lastName.upper()}"
 
     def getFullNameWithRanking(self):
         return f"{self.getFullName()} ({self.ranking.double})"
