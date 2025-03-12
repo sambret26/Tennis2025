@@ -1,5 +1,4 @@
 from models.Profil import Profil
-from database import db
 
 class ProfilRepository:
 

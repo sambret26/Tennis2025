@@ -1,6 +1,5 @@
 from flask import Blueprint, jsonify, request
 from repositories.SettingRepository import SettingRepository
-from models.Setting import Setting
 
 settingRepository = SettingRepository()
 
@@ -11,12 +10,6 @@ def getSettings():
     settings = settingRepository.getAllSettings()
     settingsDict = {setting.key: setting.value for setting in settings}
     return jsonify(settingsDict), 200
-
-@settingBp.route('/', methods=['POST'])
-def addSetting():
-    setting = Setting.fromJson(request.json)
-    settingRepository.addSetting(setting)
-    return jsonify({'message': 'Setting added successfully!'}), 201
 
 @settingBp.route('/batchsActive', methods=['PUT'])
 def setBatchsActive():

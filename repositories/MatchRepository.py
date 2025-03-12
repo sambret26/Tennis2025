@@ -28,6 +28,10 @@ class MatchRepository:
     def getMatchByFftId(matchFftId):
         return Match.query.filter(Match.fftId == matchFftId).first()
 
+    @staticmethod
+    def getMatchesMap():
+        return {match.fftId: match for match in Match.query.all()}
+
     #ADDERS
     @staticmethod
     def addMatch(match):
@@ -63,25 +67,6 @@ class MatchRepository:
             "nextRound": match.nextRound
         })
         db.session.commit()
-
-    #DELETERS
-    @staticmethod
-    def deleteAllMatchesByGrid(gridId):
-        Match.query.filter(Match.gridId == gridId).delete()
-        db.session.commit()
-
-    @staticmethod
-    def deleteAllMatches():
-        Match.query.delete()
-        db.session.commit()
-
-    @staticmethod
-    def deleteMatches(matchsId):
-        Match.query.filter(Match.id.in_(matchsId)).delete()
-        db.session.commit()
-        db.session.commit()
-        user = User.query.filter_by(id=userId).first()
-        return user
 
     #DELETERS
     @staticmethod

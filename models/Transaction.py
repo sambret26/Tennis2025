@@ -4,12 +4,12 @@ from database import db
 class Transaction(db.Model):
     __tablename__ = 'transactions'
 
-    id = db.Column(db.Integer, primary_key=True, autoincrement=True)  
-    type = db.Column(db.Integer, nullable=False)  
-    amount = db.Column(db.Integer, nullable=False)  
-    date = db.Column(db.String, nullable=False)  
-    createdAt = db.Column(db.DateTime, default=datetime.utcnow)  
-    updatedAt = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)  
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    type = db.Column(db.Integer, nullable=False)
+    amount = db.Column(db.Integer, nullable=False)
+    date = db.Column(db.String, nullable=False)
+    createdAt = db.Column(db.DateTime, default=datetime.utcnow)
+    updatedAt = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
 
     def __init__(self, type, amount, date):
         self.type = type

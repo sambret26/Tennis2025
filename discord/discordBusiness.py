@@ -1,6 +1,5 @@
-import discord.discordFunctions as functions
+from discord import discordFunctions as functions
 from constants import constants
-import moja.mojaService as mojaService
 
 from repositories.ChannelRepository import ChannelRepository
 from repositories.CategoryRepository import CategoryRepository
@@ -28,12 +27,12 @@ async def nb(bot, ctx):
             await ctx.send(embed=functions.getPlayersDetailsByCategory(category))
 
 async def info(ctx, matchLabel: str = None):
-    if matchLabel == None:
+    if matchLabel is None:
         await ctx.send(constants.INFO_UNVALID_PARAM)
         return
     matchLabel = matchLabel.upper()
     match = matchRepository.getMatchByLabel(matchLabel)
-    if match == None:
+    if match is None:
         await ctx.send(constants.NO_MATCH.replace("MATCH_LABEL", matchLabel))
         return
     message = functions.generateMatchInfosMessage(match)
@@ -46,15 +45,19 @@ async def pgw(bot):
     date = functions.getCurrentDate().strftime("%d/%m")
     requestDate = functions.getCurrentDate().strftime("%Y-%m-%d")
     matches = matchRepository.getMatchesForPlanning(requestDate)
-    if matches == None or matches == []:
+    if matches in (None, []):
         await channel.send(constants.NO_PG.replace("DATE", date))
         return
     message = constants.PG.replace("DATE", date)
     for match in matches:
         if match.double :
-            message += f"{match.hour} : {match.team1.getFullNameWithRanking()} contre {match.team2.getFullNameWithRanking()}\n"
+            team1Name = match.team1.getFullNameWithRanking()
+            team2Name = match.team2.getFullNameWithRanking()
+            message += f"{match.hour} : {team1Name} contre {team2Name}\n"
         else:
-            message += f"{match.hour} : {match.player1.getFullNameWithRanking()} contre {match.player2.getFullNameWithRanking()}\n"
+            player1Name = match.player1.getFullNameWithRanking()
+            player2Name = match.player2.getFullNameWithRanking()
+            message += f"{match.hour} : {player1Name} contre {player2Name}\n"
     await channel.send(message)
 
 async def cmd(ctx):

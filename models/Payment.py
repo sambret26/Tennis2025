@@ -4,12 +4,12 @@ from database import db
 class Payment(db.Model):
     __tablename__ = 'payments'
 
-    id = db.Column(db.Integer, primary_key=True, autoincrement=True)  
-    playerId = db.Column(db.Integer, db.ForeignKey('players.id'), nullable=False)  
-    amount = db.Column(db.Integer, nullable=False)  
-    date = db.Column(db.String, nullable=False)  
-    createdAt = db.Column(db.DateTime, default=datetime.utcnow)  
-    updatedAt = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)  
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    playerId = db.Column(db.Integer, db.ForeignKey('players.id'), nullable=False)
+    amount = db.Column(db.Integer, nullable=False)
+    date = db.Column(db.String, nullable=False)
+    createdAt = db.Column(db.DateTime, default=datetime.utcnow)
+    updatedAt = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
 
     player = db.relationship('Player', back_populates='payments')
 

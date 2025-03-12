@@ -21,7 +21,7 @@ class CompetitionRepository:
 
     @staticmethod
     def getHomologationId():
-        competition = Competition.query.filter(Competition.isActive == True).first()
+        competition = Competition.query.filter(Competition.isActive is True).first()
         if competition is None:
             return None
         return competition.homologationId
@@ -39,8 +39,8 @@ class CompetitionRepository:
 
     #SETTERS
     @staticmethod
-    def updateCompetition(id, competition):
-        Competition.query.filter_by(id=id).update(competition.toDictForDB())
+    def updateCompetition(competitionId, competition):
+        Competition.query.filter_by(id=competitionId).update(competition.toDictForDB())
         db.session.commit()
 
     @staticmethod

@@ -1,10 +1,10 @@
+import jwt
 from flask import Blueprint, jsonify, request
 from repositories.UserRepository import UserRepository
 from repositories.MessageRepository import MessageRepository
 from repositories.ProfilRepository import ProfilRepository
 from models.User import User
 from models.Message import Message
-import jwt
 from config import Config
 
 SECRET_KEY = Config.SECRET_KEY
@@ -52,9 +52,8 @@ def updateRole(userId):
             user = userRepository.updateProfile(userId, newRole, user.superAdmin)
         token = jwt.encode(user.toDict(), SECRET_KEY, algorithm='HS256')
         return jsonify({'token': token}), 200
-    else : 
-        return jsonify({'message': 'You cannot change the role of this user!'}), 403
-    
+    return jsonify({'message': 'You cannot change the role of this user!'}), 403
+
 @userBp.route('/admin/connect', methods=['POST'])
 def connectAdmin():
     data = request.json

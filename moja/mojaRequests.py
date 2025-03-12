@@ -1,11 +1,13 @@
+import time
+import os
+import requests
+
 from repositories.SettingRepository import SettingRepository
 from repositories.MessageRepository import MessageRepository
 from repositories.UrlRepository import UrlRepository
 from models.Message import Message
 from logger.logger import log, MOJA
-import requests
-import time
-import os
+from constants import constants
 
 settingsRepository = SettingRepository()
 messageRepository = MessageRepository()
@@ -48,8 +50,8 @@ def createHeaders():
     if accessToken == 500:
         return None
     if accessToken is None :
-        log.error(MOJA, "Erreur lors de la récupération du token d'authentification")
-        message = Message("ERROR", "Erreur lors de la récupération du token d'authentification")
+        log.error(MOJA, constants.TOKEN_ERROR)
+        message = Message("ERROR", constants.TOKEN_ERROR)
         messageRepository.addMessage(message)
         settingsRepository.setAuthError("1")
         return None
@@ -59,15 +61,15 @@ def sendGetRequest(url):
     headers = createHeaders()
     if headers is None :
         return None
-    response =  requests.get(url, headers = headers)
+    response =  requests.get(url, headers = headers, timeout=10)
     if response.status_code != 200:
-        log.error(MOJA, f"Erreur lors de la requete GET a l'URL {url}: {response.status_code}")
+        log.error(MOJA, f"{constants.GET_ERROR} {url}: {response.status_code}")
         return None
     return response.json()
 
 def sendPostRequest(url, data):
-    response = requests.post(url, data=data)
+    response = requests.post(url, data=data, timeout=10)
     if response.status_code != 200:
-        log.error(MOJA, f"Erreur lors de la requete POST a l'URL {url}: {response.status_code} ({response.json()})")
+        log.error(MOJA, f"{constants.POST_ERROR} {url}: {response.status_code} ({response.json()})")
         return None
     return response.json()

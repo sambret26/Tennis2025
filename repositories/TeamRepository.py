@@ -24,6 +24,10 @@ class TeamRepository:
     def getAllTeamsId():
         return [team.id for team in Team.query.all()]
 
+    @staticmethod
+    def getTeamsMap():
+        return {team.fftId: team for team in Team.query.all()}
+
     #ADDERS
     @staticmethod
     def addTeam(team):

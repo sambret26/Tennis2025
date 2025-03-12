@@ -1,27 +1,15 @@
 from flask import Blueprint, jsonify, request
 from repositories.MatchRepository import MatchRepository
-from models.Match import Match
 
 matchRepository = MatchRepository()
 
 matchBp = Blueprint('matchBp', __name__, url_prefix='/matches')
-
-@matchBp.route('/', methods=['GET'])
-def getMatch():
-    matches = matchRepository.getAllMatch()
-    return jsonify([match.toDict() for match in matches]), 200
 
 @matchBp.route('/planning', methods=['GET'])
 def getMatchesForPlanning():
     date = request.args.get('date')
     matches = matchRepository.getMatchesForPlanning(date)
     return jsonify([match.toDict() for match in matches]), 200
-
-@matchBp.route('/', methods=['POST'])
-def addMatch():
-    match = Match.fromJson(request.json)
-    matchRepository.addMatch(match)
-    return jsonify({'message': 'Match added successfully!'}), 201
 
 @matchBp.route('/result', methods=['POST'])
 def updateMatchResult():
@@ -34,8 +22,10 @@ def updateMatchResult():
     match = matchRepository.getMatchById(matchId)
     if not match:
         return jsonify({'message': 'Match not found!'}), 404
-    if double : match.teamWinnerId = winnerId
-    else : match.winnerId = winnerId
+    if double :
+        match.teamWinnerId = winnerId
+    else :
+        match.winnerId = winnerId
     match.score = score
     match.finish = finish
     matchRepository.updateMatch(match)
@@ -50,9 +40,9 @@ def updateMatchAvailability():
     match = matchRepository.getMatchById(matchId)
     if not match:
         return jsonify({'message': 'Match not found!'}), 404
-    if(playerNumber == 1):
+    if playerNumber == 1:
         match.player1Availability = available
-    elif(playerNumber == 2):
+    elif playerNumber == 2:
         match.player2Availability = available
     matchRepository.updateMatch(match)
     return jsonify({'message': 'Match availability updated successfully!'}), 200

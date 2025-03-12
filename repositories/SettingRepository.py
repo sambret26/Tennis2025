@@ -30,8 +30,9 @@ class SettingRepository:
 
     @staticmethod
     def getCategoriesPrices():
-        result = Setting.query.with_entities(Setting.value.label('value'), Setting.key.label('key'))\
-        .filter(Setting.key.in_(['simplePrice', 'doublePrice'])).all()
+        result = Setting.query.with_entities(Setting.value.label('value'),\
+            Setting.key.label('key'))\
+            .filter(Setting.key.in_(['simplePrice', 'doublePrice'])).all()
         return {r.key: r.value for r in result}
 
     #ADDERS
@@ -88,6 +89,8 @@ class SettingRepository:
 
     @staticmethod
     def updatePrices(prices):
-        Setting.query.filter(Setting.key == 'simplePrice').update({Setting.value: prices['simplePrice']})
-        Setting.query.filter(Setting.key == 'doublePrice').update({Setting.value: prices['doublePrice']})
+        Setting.query.filter(Setting.key == 'simplePrice')\
+            .update({Setting.value: prices['simplePrice']})
+        Setting.query.filter(Setting.key == 'doublePrice')\
+            .update({Setting.value: prices['doublePrice']})
         db.session.commit()

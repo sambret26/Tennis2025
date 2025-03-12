@@ -31,5 +31,5 @@ class PlayerAvailabilityComment(db.Model):
         return cls(
             playerId=data['playerId'],
             day=data['day'],
-            comments=data.get('comments')  # Utilisation de get() pour gérer le cas où comments est absent
+            comments=data.get('comments')
         )

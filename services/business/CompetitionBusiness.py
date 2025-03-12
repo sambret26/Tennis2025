@@ -1,4 +1,4 @@
-import moja.mojaService as mojaService
+from moja import mojaService
 from repositories.CompetitionRepository import CompetitionRepository
 from repositories.PlayerAvailabilityRepository import PlayerAvailabilityRepository
 from repositories.PlayerAvailabilityCommentRepository import PlayerAvailabilityCommentRepository
@@ -26,7 +26,7 @@ teamRepository = TeamRepository()
 
 def updateCompetitions():
     competitions = mojaService.getCompetitions()
-    if competitions == None:
+    if competitions is None:
         return None
     competitionsInDB = competitionRepository.getCompetitions()
     competitionsIdToDelete = [competition.homologationId for competition in competitionsInDB]

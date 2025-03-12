@@ -4,20 +4,18 @@ from database import db
 class Team(db.Model):
     __tablename__ = 'teams'
 
-    id = db.Column(db.Integer, primary_key=True, autoincrement=True)  
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     fftId = db.Column(db.BigInteger, nullable=False)
-    player1Id = db.Column(db.Integer, db.ForeignKey('players.id'), nullable=False)  
-    player2Id = db.Column(db.Integer, db.ForeignKey('players.id'), nullable=False)  
-    rankingId = db.Column(db.Integer, db.ForeignKey('rankings.id'), nullable=False)  
-    createdAt = db.Column(db.DateTime, default=datetime.utcnow)  
-    updatedAt = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)  
+    player1Id = db.Column(db.Integer, db.ForeignKey('players.id'), nullable=False)
+    player2Id = db.Column(db.Integer, db.ForeignKey('players.id'), nullable=False)
+    rankingId = db.Column(db.Integer, db.ForeignKey('rankings.id'), nullable=False)
+    createdAt = db.Column(db.DateTime, default=datetime.utcnow)
+    updatedAt = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
 
     #relashionship
-    player1 = db.relationship('Player', foreign_keys=[player1Id])#, back_populates='teamAs1')
-    player2 = db.relationship('Player', foreign_keys=[player2Id])#, back_populates='teamAs2')
-    ranking = db.relationship('Ranking')#, back_populates='teams')
-    #matchesAs1 = db.relationship('Match', foreign_keys=[Match.team1Id], back_populates="team1", lazy="select")
-    #matchesAs2 = db.relationship('Match', foreign_keys=[Match.team2Id], back_populates="team2", lazy="select")
+    player1 = db.relationship('Player', foreign_keys=[player1Id])
+    player2 = db.relationship('Player', foreign_keys=[player2Id])
+    ranking = db.relationship('Ranking')
 
     def __init__(self, fftId, player1Id, player2Id, rankingId):
         self.fftId = fftId

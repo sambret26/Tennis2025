@@ -20,6 +20,14 @@ class RankingRepository:
     def getRankingByDouble(rankingDouble):
         return Ranking.query.filter_by(double=rankingDouble).first()
 
+    @staticmethod
+    def getRankingMapSimple():
+        return {r.simple: r for r in Ranking.query.all() if r.simple is not None}
+
+    @staticmethod
+    def getRankingMapDouble():
+        return {r.double: r.id for r in Ranking.query.all() if r.double is not None}
+
     #ADDERS
     @staticmethod
     def addRanking(ranking):

@@ -4,6 +4,7 @@ venv/
 .env
 .env.local
 .env.*.local
+.pylintrc
 
 # Fichiers compilés Python
 __pycache__/

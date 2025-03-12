@@ -12,20 +12,16 @@ class PlayerRepository:
     @staticmethod
     def getAllPlayerNames():
         results = Player.query.with_entities(Player.id, Player.firstName, Player.lastName).all()
-        players = [Player(id=result[0], firstName=result[1], lastName=result[2]) for result in results]
+        players = [Player(id=r[0], firstName=r[1], lastName=r[2]) for r in results]
         return players
 
     @staticmethod
-    def getPlayerById(id):
-        return Player.query.get(id)
+    def getPlayerById(playerId):
+        return Player.query.get(playerId)
 
     @staticmethod
     def getPlayerByFftId(fftId):
         return Player.query.filter_by(fftId=fftId).first()
-
-    @staticmethod
-    def getAllPlayersId():
-        return [player.id for player in Player.query.all()]
 
     @staticmethod
     def getNumberPlayers():
@@ -38,12 +34,18 @@ class PlayerRepository:
 
     @staticmethod
     def getRankingIdsByCategoryId(categoryId):
-        results = db.session.query(Player.rankingId).select_from(Player).join(PlayerCategories, Player.id == PlayerCategories.playerId).filter(PlayerCategories.categoryId == categoryId).all()
+        results = db.session.query(Player.rankingId).select_from(Player)\
+            .join(PlayerCategories, Player.id == PlayerCategories.playerId)\
+            .filter(PlayerCategories.categoryId == categoryId).all()
         return [result[0] for result in results]
 
     @staticmethod
-    def getPlayersMap():
+    def getPlayersIdMap():
         return {player.fftId: player.id for player in Player.query.all()}
+
+    @staticmethod
+    def getPlayersMap():
+        return {player.fftId: player for player in Player.query.all()}
 
     #ADDERS
     @staticmethod
@@ -59,14 +61,14 @@ class PlayerRepository:
 
     #SETTERS
     @staticmethod
-    def updatePlayer(id, player):
-        Player.query.filter_by(id=id).update(player.toDictForDB())
+    def updatePlayer(playerId, player):
+        Player.query.filter_by(id=playerId).update(player.toDictForDB())
         db.session.commit()
 
     #DELETERS
     @staticmethod
-    def deletePlayerById(id):
-        Player.query.filter_by(id=id).delete()
+    def deletePlayerById(playerId):
+        Player.query.filter_by(id=playerId).delete()
         db.session.commit()
 
     @staticmethod

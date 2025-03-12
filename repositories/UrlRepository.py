@@ -6,6 +6,6 @@ class UrlRepository:
     @staticmethod
     def getUrlByLabel(label):
         url = Url.query.filter_by(label=label).first()
-        if url is None: 
+        if url is None:
             return None
         return url.url

@@ -4,16 +4,9 @@ from repositories.PlayerAvailabilityCommentRepository import PlayerAvailabilityC
 
 playerAvailabilityCommentRepository = PlayerAvailabilityCommentRepository()
 
-playerAvailabilityCommentBp = Blueprint('playerAvailabilityComment', __name__)
+playerAvailabilityCommentBp = Blueprint('playerAvailabilityComment', __name__, url_prefix='/playerAvailabilityComment')
 
-@playerAvailabilityCommentBp.route('/player-availability-comment/<int:playerId>/<string:day>', methods=['GET'])
-def getPlayerComment(playerId, day):
-    comment = playerAvailabilityCommentRepository.getPlayerAvailabilityComment(playerId, day)
-    if comment:
-        return jsonify(comment.toDict())
-    return jsonify(None)
-
-@playerAvailabilityCommentBp.route('/player-availability-comment', methods=['POST'])
+@playerAvailabilityCommentBp.route('/', methods=['POST'])
 def createOrUpdateComment():
     comment = PlayerAvailabilityComment.fromJson(request.json)
     commentInDB = playerAvailabilityCommentRepository.getPlayerAvailabilityComment(comment.playerId, comment.day)
@@ -23,12 +16,7 @@ def createOrUpdateComment():
         playerAvailabilityCommentRepository.addPlayerAvailabilityComment(comment)
     return jsonify({'message': 'Comment saved successfully'})
 
-@playerAvailabilityCommentBp.route('/player-availability-comments/<string:day>', methods=['GET'])
+@playerAvailabilityCommentBp.route('/<string:day>', methods=['GET'])
 def getAllCommentsForDay(day):
     comments = playerAvailabilityCommentRepository.getAllCommentsForDay(day)
     return jsonify([comment.toDict() for comment in comments])
-
-@playerAvailabilityCommentBp.route('/player-availability-comment/<int:playerId>/<string:day>', methods=['DELETE'])
-def deleteComment(playerId, day):
-    playerAvailabilityCommentRepository.deletePlayerAvailabilityComment(playerId, day)
-    return jsonify({'message': 'Comment deleted successfully'})

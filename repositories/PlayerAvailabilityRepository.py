@@ -14,7 +14,8 @@ class PlayerAvailabilityRepository:
 
     @staticmethod
     def getPlayerAvailabilityIdByPlayerIdDayTimeSlot(playerId, day, timeSlot):
-        return PlayerAvailability.query.with_entities(PlayerAvailability.id).filter_by(playerId=playerId, day=day, timeSlot=timeSlot).first()
+        return PlayerAvailability.query.with_entities(PlayerAvailability.id)\
+            .filter_by(playerId=playerId, day=day, timeSlot=timeSlot).first()
 
     @staticmethod
     def getPlayerAvailabilityByPlayerId(playerId):
@@ -33,8 +34,8 @@ class PlayerAvailabilityRepository:
 
     #SETTERS
     @staticmethod
-    def updatePlayerAvailability(id, available):
-        PlayerAvailability.query.filter_by(id=id).update({"available": available})
+    def updatePlayerAvailability(playerAvailabilityId, available):
+        PlayerAvailability.query.filter_by(id=playerAvailabilityId).update({"available": available})
         db.session.commit()
 
     #DELETERS

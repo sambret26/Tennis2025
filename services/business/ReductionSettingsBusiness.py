@@ -9,12 +9,12 @@ def update(reductionSettings):
     reductionToSave = []
     for reductionSetting in reductionSettings:
         reduction = ReductionSettings.fromJson(reductionSetting)
-        id = reductionSetting['id'] if 'id' in reductionSetting else None
-        if id is None:
+        reductionId = reductionSetting['id'] if 'id' in reductionSetting else None
+        if reductionId is None:
             reductionToSave.append(reduction)
         else :
-            idToSave.append(id)
-            reduction.id = id
+            idToSave.append(reductionId)
+            reduction.id = reductionId
             reductionToUpdate.append(reduction)
     reductionSettingsRepository.deleteByIdNoIn(idToSave)
     reductionSettingsRepository.addReductionSettings(reductionToSave)

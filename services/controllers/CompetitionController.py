@@ -1,10 +1,9 @@
 from flask import Blueprint, jsonify, request
 from repositories.CompetitionRepository import CompetitionRepository
-from services.business import CompetitionBusiness
-from models.Competition import Competition
 from repositories.SettingRepository import SettingRepository
-import moja.mojaService as mojaService
-import batchs.batchs as batchs
+from services.business import CompetitionBusiness
+from  moja import mojaService
+from  batchs import batchs
 
 competitionRepository = CompetitionRepository()
 settingRepository = SettingRepository()
@@ -16,28 +15,10 @@ def getCompetitions():
     competitions = competitionRepository.getCompetitions()
     return jsonify([competition.toDict() for competition in competitions]), 200
 
-@competitionBp.route('/', methods=['POST'])
-def addCompetition():
-    competition = Competition.fromJson(request.json)
-    competitionRepository.addCompetition(competition)
-    return jsonify({'message': 'Competition added successfully!'}), 201
-
-@competitionBp.route('/', methods=['PUT'])
-def updateCompetition():
-    competition = Competition.fromJson(request.json)
-    competitionRepository.updateCompetition(competition)
-    return jsonify({'message': 'Competition updated successfully!'}), 200
-
-@competitionBp.route('/', methods=['DELETE'])
-def deleteCompetition():
-    competition = Competition.fromJson(request.json)
-    competitionRepository.deleteCompetition(competition)
-    return jsonify({'message': 'Competition deleted successfully!'}), 200
-
 @competitionBp.route('/update', methods=['POST'])
 def updateCompetitions():
     result = CompetitionBusiness.updateCompetitions()
-    if result == None:
+    if result is None:
         return jsonify({'message': 'No competitions found!'}), 404
     return jsonify({'message': 'Competitions updated successfully!'}), 200
 
@@ -51,7 +32,7 @@ def getDates():
 @competitionBp.route('/active', methods=['PUT'])
 def activeCompetition():
     isBatchActive = settingRepository.getBatchsActive()
-    if (isBatchActive):
+    if isBatchActive:
         settingRepository.setBatchsActive("0")
     competitionId = request.json['competitionId']
     competitionRepository.setInactive()

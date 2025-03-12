@@ -1,18 +1,17 @@
-from config import Config
-from discord import Intents
-from discord.ext import commands
-import discord.discordBusiness as discordBusiness
-import batchs.batchsLauncher as batchsLauncher
-
 from apscheduler.schedulers.asyncio import AsyncIOScheduler
 from apscheduler.triggers.cron import CronTrigger
 from pytz import timezone
 
+from config import Config
+from discord import Intents
+from discord.ext import commands
+from discord import discordBusiness
+from batchs import batchsLauncher as launcher
 from logger.logger import log, BOT
 
 scheduler = AsyncIOScheduler()
 
-timezone = timezone(Config.TIME_ZONE)
+tz = timezone(Config.TIME_ZONE)
 
 DISCORD_GUILD_ID = int(Config.DISCORD_GUILD_ID)
 
@@ -50,18 +49,18 @@ async def clear(ctx, nombre: int = 100):
 @bot.event
 async def on_ready():
     log.info(BOT, "Connected !")
-    scheduler.add_job(batchsLauncher.pgwLoop, CronTrigger(hour=8, minute=58, timezone=timezone), args=[bot])
-    scheduler.add_job(batchsLauncher.inscriptionsLoop, CronTrigger(second=30, timezone=timezone))
-    scheduler.add_job(batchsLauncher.sendNotifLoop, CronTrigger(second=0, timezone=timezone), args=[bot])
-    scheduler.add_job(batchsLauncher.updateMatchLoop, CronTrigger(hour=2, minute=0, timezone=timezone))
-    scheduler.add_job(batchsLauncher.updateCalLoop, CronTrigger(hour=3, minute=0, timezone=timezone))
+    scheduler.add_job(launcher.pgwLoop, CronTrigger(hour=8, minute=58, timezone=tz), args=[bot])
+    scheduler.add_job(launcher.inscriptionsLoop, CronTrigger(second=30, timezone=tz))
+    scheduler.add_job(launcher.sendNotifLoop, CronTrigger(second=0, timezone=tz), args=[bot])
+    scheduler.add_job(launcher.updateMatchLoop, CronTrigger(hour=2, minute=0, timezone=tz))
+    scheduler.add_job(launcher.updateCalLoop, CronTrigger(hour=3, minute=0, timezone=tz))
     scheduler.start()
 
 @bot.event
 async def on_message(message):
     if message.author == bot.user:
         return
-    if message.guild.id != DISCORD_GUILD_ID: 
+    if message.guild.id != DISCORD_GUILD_ID:
         return
     await bot.process_commands(message)
 

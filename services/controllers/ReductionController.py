@@ -49,5 +49,5 @@ def updateReduction(playerId):
 
     playerBalanceRepository.updatePlayerBalanceForPlayerId(playerId, balance)
 
-    result = [reduction.toDict() for reduction in new_reductions]
+    result = [reduction.toDict() for reduction in newReductions]
     return jsonify(result), 200

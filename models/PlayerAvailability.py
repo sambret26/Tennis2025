@@ -33,7 +33,7 @@ class PlayerAvailability(db.Model):
     def fromJson(cls, data):
         return cls(
             playerId=data['playerId'],
-            day=data['day'],        
-            timeSlot=data['timeSlot'],        
+            day=data['day'],
+            timeSlot=data['timeSlot'],
             available=data['available']
         )

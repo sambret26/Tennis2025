@@ -4,12 +4,12 @@ from database import db
 class User(db.Model):
     __tablename__ = 'users'
 
-    id = db.Column(db.Integer, primary_key=True, autoincrement=True)  
-    name = db.Column(db.String, nullable=False)  
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    name = db.Column(db.String, nullable=False)
     password = db.Column(db.String, nullable=False)
-    profileValue = db.Column(db.Integer, nullable=False)  
+    profileValue = db.Column(db.Integer, nullable=False)
     superAdmin = db.Column(db.Integer, nullable=False)
-    createdAt = db.Column(db.DateTime, default=datetime.utcnow)  
+    createdAt = db.Column(db.DateTime, default=datetime.utcnow)
     updatedAt = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
 
     def __init__(self, name, password):

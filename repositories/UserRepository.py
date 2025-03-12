@@ -1,6 +1,6 @@
-from models.User import User
 from sqlalchemy import func, or_
 from database import db
+from models.User import User
 
 class UserRepository:
 
@@ -19,7 +19,8 @@ class UserRepository:
 
     @staticmethod
     def getAdminWithPassword(password):
-        return User.query.filter(User.password==password, or_(User.profileValue==2, User.superAdmin==1)).first()
+        return User.query.filter(User.password==password,\
+            or_(User.profileValue==2, User.superAdmin==1)).first()
 
     #ADDERS
     @staticmethod
@@ -34,12 +35,6 @@ class UserRepository:
         db.session.commit()
         user = User.query.filter_by(id=userId).first()
         return user
-
-    @staticmethod
-    def updatePassword(userId, password):
-        User.query.filter_by(id=userId).update({"password": password})
-        db.session.commit()
-
 
     @staticmethod
     def updatePassword(userId, password):

@@ -15,24 +15,18 @@ class Player(db.Model):
     email = db.Column(db.String)
     createdAt = db.Column(db.DateTime, default=datetime.utcnow)
     updatedAt = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
-    
+
     # Relations
     ranking = db.relationship('Ranking')#, back_populates='players')
 
-    categories = db.relationship("Category", 
-                               secondary="player_categories",
-                               #backref=db.backref("players", lazy="joined"),
-                               lazy="joined")
-    #matchesAs1 = db.relationship('Match', foreign_keys=[Match.player1Id], back_populates="player1", lazy="select")
-    #matchesAs2 = db.relationship('Match', foreign_keys=[Match.player2Id], back_populates="player2", lazy="select")
-    #matchesAsWinner = db.relationship('Match', foreign_keys=[Match.winnerId], back_populates="winner", lazy="select")
+    categories = db.relationship("Category",
+                                secondary="player_categories",
+                                lazy="joined")
     payments = db.relationship("Payment", back_populates="player", lazy="joined")
     availabilities = db.relationship("PlayerAvailability", back_populates="player", lazy="joined")
     availabilitiesComments = db.relationship("PlayerAvailabilityComment", back_populates="player", lazy="joined")
     reductions = db.relationship("Reduction", back_populates="player", lazy="joined")
     balance = db.relationship("PlayerBalance", back_populates="player", uselist=False)
-    #teamAs1 = db.relationship('Team', foreign_keys=[Team.player1Id], back_populates="player1", lazy="select")
-    #teamAs2 = db.relationship('Team', foreign_keys=[Team.player2Id], back_populates="player2", lazy="select")
 
     def __init__(self, id=None, fftId=None, lastName=None,
             firstName=None, rankingId=None, club=None, phoneNumber=None, email=None):
@@ -84,7 +78,7 @@ class Player(db.Model):
             "lastName": self.lastName,
             "fullName": self.getFullName()
         }
-    
+
     def getFullName(self):
         return f"{self.lastName.upper()} {self.firstName.title()}"
 
@@ -100,10 +94,10 @@ class Player(db.Model):
     def fromJson(cls, data):
         return cls(
             fftId=data['fftId'],
-            lastName=data['lastName'],        
-            firstName=data['firstName'],        
-            rankingId=data['rankingId'],        
-            club=data['club'],        
+            lastName=data['lastName'],
+            firstName=data['firstName'],
+            rankingId=data['rankingId'],
+            club=data['club'],
             phoneNumber=data['phoneNumber'],
             email=data['email']
         )

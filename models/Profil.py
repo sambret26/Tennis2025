@@ -4,11 +4,11 @@ from database import db
 class Profil(db.Model):
     __tablename__ = 'profils'
 
-    id = db.Column(db.Integer, primary_key=True, autoincrement=True)  
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     value = db.Column(db.Integer, nullable=False)
-    label = db.Column(db.String, nullable=False)  
-    createdAt = db.Column(db.DateTime, default=datetime.utcnow)  
-    updatedAt = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)  
+    label = db.Column(db.String, nullable=False)
+    createdAt = db.Column(db.DateTime, default=datetime.utcnow)
+    updatedAt = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
 
     def __init__(self, label, value):
         self.label = label

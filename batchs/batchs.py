@@ -11,8 +11,7 @@ from repositories.RankingRepository import RankingRepository
 from repositories.MessageRepository import MessageRepository
 from repositories.PlayerBalanceRepository import PlayerBalanceRepository
 from repositories.PlayerCategoriesRepository import PlayerCategoriesRepository
-
-import moja.mojaService as mojaService
+from moja import mojaService
 
 playerRepository = PlayerRepository()
 teamRepository = TeamRepository()
@@ -24,8 +23,10 @@ playerCategoriesRepository = PlayerCategoriesRepository()
 
 def inscriptions(sendNotif):
     players, teams = getPlayersAndTeams()
-    if players : updateDBPlayers(players, sendNotif)
-    if teams : updateDBTeams(teams)
+    if players :
+        updateDBPlayers(players, sendNotif)
+    if teams :
+        updateDBTeams(teams)
 
 def updateMatch():
     return mojaService.updateAllMatches()
@@ -34,40 +35,43 @@ def updateCalendar():
     return None
 
 def getPlayersAndTeams():
+    ranksMapSimple = rankingRepository.getRankingMapSimple()
+    rankMapDouble = rankingRepository.getRankingMapDouble()
+    categories = categoryRepository.getAllCategories()
     players = []
     teams = []
-    categories = categoryRepository.getAllCategories()
     for category in categories:
         datas = mojaService.getCategoryInfos(category.fftId)
-        if not datas : return None, None
+        if not datas :
+            return None, None
         for player in datas["listJoueurInscrit"]:
-            if category.code.startswith("S"): addPlayerInPlayersList(players, player, category)
-            else : addPlayersAndTeamInLists(players, teams, player, category)
+            if category.code.startswith("S"):
+                addPlayerInPlayersList(players, player, category, ranksMapSimple)
+            else :
+                addPlayersAndTeamInLists(players, teams, player, category, ranksMapSimple, rankMapDouble)
     return players, teams
 
-def addPlayerInPlayersList(players, player, category):
-    #TODO RankingMap
+def addPlayerInPlayersList(players, player, category, ranksMapSimple):
     newPlayer = Player.fromFFT(player)
-    newPlayer.ranking = rankingRepository.getRankingBySimple(player['classementJoueur1'])
+    newPlayer.ranking = ranksMapSimple.get(player['classementJoueur1'])
     newPlayer.rankingId = newPlayer.ranking.id
     addPlayer(players, newPlayer, category)
 
-def addPlayersAndTeamInLists(players, teams, team, category):
-    #TODO RankingMap
+def addPlayersAndTeamInLists(players, teams, team, category, ranksMapSimple, rankMapDouble):
     newPlayer1 = Player.fromFFT(team)
     newPlayer2 = Player.fromFFT2(team)
-    newPlayer1.ranking = rankingRepository.getRankingBySimple(team['classementJoueur1'])
-    newPlayer2.ranking = rankingRepository.getRankingBySimple(team['classementJoueur2'])
+    newPlayer1.ranking = ranksMapSimple.get(team['classementJoueur1'])
+    newPlayer2.ranking = ranksMapSimple.get(team['classementJoueur2'])
     addPlayer(players, newPlayer1, category)
     addPlayer(players, newPlayer2, category)
-    ranking = rankingRepository.getRankingByDouble(str(team["poidsEquipe"])).id
+    rankingId = rankMapDouble.get(str(team["poidsEquipe"]))
     fftId = team["inscriptionId"]
-    newTeam = Team(fftId, newPlayer1.fftId, newPlayer2.fftId, ranking)
+    newTeam = Team(fftId, newPlayer1.fftId, newPlayer2.fftId, rankingId)
     teams.append(newTeam)
 
 def addPlayer(players, newPlayer, category):
     for player in players:
-        if newPlayer.fftId == player.fftId : 
+        if newPlayer.fftId == player.fftId:
             player.categories.append(category)
             updatePlayerBalance(player, category.amount)
             return
@@ -79,18 +83,19 @@ def updatePlayerBalance(player, amount):
     if not player.balance :
         player.balance = PlayerBalance.fromPlayer(player, amount)
         return
-    if amount == 0 : return
+    if amount == 0 :
+        return
     player.balance.remainingAmount += amount
     player.balance.finalAmount += amount
     player.balance.initialAmount += amount
 
 def updateDBPlayers(players, sendNotif):
-    playersIdToDelete = playerRepository.getAllPlayersId()
+    playersMap = playerRepository.getPlayersMap()
     newPlayers = []
     oldPlayers = []
     newRankingsPlayers = []
     for player in players:
-        playerInDB = playerRepository.getPlayerByFftId(player.fftId)
+        playerInDB = playersMap.get(player.fftId)
         if playerInDB:
             checkCategories(player, playerInDB, sendNotif)
             if player.isDifferent(playerInDB):
@@ -98,14 +103,16 @@ def updateDBPlayers(players, sendNotif):
                     newRankingsPlayers.append((player, playerInDB.rankingId))
                 player.id = playerInDB.id
                 playerRepository.updatePlayer(playerInDB.id, player)
-            playersIdToDelete.remove(playerInDB.id)
+            playersMap.pop(player.fftId)
         else:
             newPlayers.append(player)
-    for playerId in playersIdToDelete:
-        oldPlayers.append(createPlayer(playerRepository.getPlayerById(playerId)))
+    for player in playersMap.values():
+        oldPlayers.append(createPlayer(player))
     sendMessages(newPlayers, oldPlayers, newRankingsPlayers)
-    if newPlayers != []: playerRepository.addPlayers(newPlayers)
-    playerRepository.deletePlayers(playersIdToDelete)
+    if newPlayers :
+        playerRepository.addPlayers(newPlayers)
+    if oldPlayers :
+        playerRepository.deletePlayers([player.id for player in oldPlayers])
 
 def createPlayer(player):
     return {
@@ -116,38 +123,47 @@ def createPlayer(player):
     }
 
 def updateDBTeams(teams):
-    playersMap = playerRepository.getPlayersMap()
-    teamsIdToDelete = teamRepository.getAllTeamsId()
+    playersMap = playerRepository.getPlayersIdMap()
+    teamsMap = teamRepository.getTeamsMap()
     newTeams = []
     for team in teams:
-        teamInDB = teamRepository.getTeamByFftId(team.fftId)
+        teamInDB = teamsMap.get(team.fftId)
         if teamInDB:
-            teamsIdToDelete.remove(teamInDB.id)
+            teamsMap.pop(teamInDB.fftId)
         else:
             team.player1Id = playersMap[team.player1Id]
             team.player2Id = playersMap[team.player2Id]
             newTeams.append(team)
-    if newTeams != []: teamRepository.addTeams(newTeams)
-    teamRepository.deleteTeams(teamsIdToDelete)
+    if newTeams:
+        teamRepository.addTeams(newTeams)
+    if teamsMap:
+        teamRepository.deleteTeams([team.id for team in teamsMap.values()])
 
 def checkCategories(player, playerInDB, sendNotif):
     newCategories = player.categories
     oldCategories = playerInDB.categories
     messages = []
+    playerCategoriesToAdd = []
     for category in newCategories:
         if category not in oldCategories:
             playerCategory = PlayerCategories(playerInDB.id, category.id)
-            PlayerCategoriesRepository.addPlayerCategory(playerCategory)
+            playerCategoriesToAdd.append(playerCategory)
             msg = f"Nouvelle inscription : {player.getFullName()} ({player.club})"
-            if player.ranking : msg += f" classé(e) {player.ranking.simple}"
-            if sendNotif : messages.append(Message(category.code, msg))
+            if player.ranking :
+                msg += f" classé(e) {player.ranking.simple}"
+            if sendNotif :
+                messages.append(Message(category.code, msg))
+    if playerCategoriesToAdd:
+        playerCategoriesRepository.addPlayerCategories(playerCategoriesToAdd)
 
     for category in oldCategories:
         if category not in newCategories:
-            playerCategory = playerCategoriesRepository.deletePlayerCategoryByPlayerIdAndCategoryId(player.id, category.id)
+            playerCategoriesRepository.deletePlayerCategoryByPlayerIdAndCategoryId(player.id, category.id)
             msg = f"Désinscription de {player.getFullName()} ({player.club})"
-            if player.ranking : msg += f" classé(e) {player.ranking.simple}"
-            if sendNotif : messages.append(Message(category.code, msg))
+            if player.ranking :
+                msg += f" classé(e) {player.ranking.simple}"
+            if sendNotif :
+                messages.append(Message(category.code, msg))
     if sendNotif and len(messages) > 0 :
         playerBalanceRepository.updatePlayerBalanceByPlayerId(playerInDB.id, player.balance)
         messageRepository.addMessages(messages)
@@ -156,15 +172,17 @@ def sendMessages(newPlayers, oldPlayers, newRankingsPlayers):
     messages = []
     for player in newPlayers:
         msg = f"Nouvelle inscription : {player.getFullName()} ({player.club})"
-        if player.ranking : msg += f" classé(e) {player.ranking.simple}"
+        if player.ranking :
+            msg += f" classé(e) {player.ranking.simple}"
         messages.append(Message("G", msg))
         for category in player.categories:
             messages.append(Message(category.code, msg))
     for player in oldPlayers:
-        msg = f"Désinscription de {player["fullName"]} ({player["club"]})"
-        if player["ranking"] : msg += f" classé(e) {player["ranking"]}"
+        msg = f"Désinscription de {player['fullName']} ({player['club']})"
+        if player['ranking'] :
+            msg += f" classé(e) {player['ranking']}"
         messages.append(Message("G", msg))
-        for category in player["categories"]:
+        for category in player['categories']:
             messages.append(Message(category.code, msg))
     for player, rankingId in newRankingsPlayers:
         ranking = rankingRepository.getRankingById(rankingId)

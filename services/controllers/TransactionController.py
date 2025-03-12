@@ -11,12 +11,6 @@ def getTransactions():
     transactions = transactionRepository.getAllTransactions()
     return jsonify([transaction.toDict() for transaction in transactions]), 200
 
-@transactionBp.route('/', methods=['POST'])
-def addTransaction():
-    transaction = Transaction.fromJson(request.json)
-    transactionRepository.addTransaction(transaction)
-    return jsonify({'message': 'Transaction added successfully!'}), 201
-
 @transactionBp.route('/', methods=['PUT'])
 def updateTransaction():
     data = request.json

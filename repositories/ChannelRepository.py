@@ -7,7 +7,12 @@ class ChannelRepository:
     #GETTERS
     @staticmethod
     def getCategoryByChannelId(channelId):
-        return db.session.query(Category).join(Channel, Category.code == Channel.category).filter(Channel.channelId == channelId).first()
+        return db.session.query(Category).join(Channel, Category.code == Channel.category)\
+            .filter(Channel.channelId == channelId).first()
+
+    @staticmethod
+    def getChannelMap():
+        return {channel.category: channel.channelId for channel in Channel.query.all()}
 
     @staticmethod
     def getLogChannelId(category):
