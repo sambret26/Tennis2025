@@ -17,7 +17,7 @@ class CompetitionRepository:
 
     @staticmethod
     def getHomologationId():
-        competition = Competition.query.filter(Competition.isActive is True).first()
+        competition = Competition.query.filter(Competition.isActive == True).first()
         if competition is None:
             return None
         return competition.homologationId

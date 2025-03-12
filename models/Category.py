@@ -40,7 +40,7 @@ class Category(db.Model):
     def fromFFT(cls, data):
         return cls(
             fftId=data['epreuveId'],
-            code=data['libelle'][:2],
+            code=data['libelle'][:2],#TODO : Consolante, changer le code
             label=data['libelle'],
             amount=0
         )

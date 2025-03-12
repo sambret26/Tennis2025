@@ -5,7 +5,7 @@ from models.Court import Court
 from models.Grid import Grid
 from models.Ranking import Ranking
 from models.Match import Match
-from models.Competition import Competition
+from constants import constants
 
 from repositories.CategoryRepository import CategoryRepository
 from repositories.CourtRepository import CourtRepository
@@ -87,6 +87,7 @@ def updateCourts():
     updateCourtsInDB(courts)
     return 200
 
+#TODO : Update instead of delete and add
 def updateCourtsInDB(courts):
     courtsToAdd = []
     for court in courts:
@@ -95,6 +96,7 @@ def updateCourtsInDB(courts):
         courtRepository.deleteAllCourts()
         courtRepository.addCourts(courtsToAdd)
 
+#TODO : Update instead of delete and add
 def updateCategories():
     categoriesPrices = settingRepository.getCategoriesPrices()
     homologationId = competitionRepository.getHomologationId()
@@ -121,18 +123,25 @@ def updateCategories():
 
 def updateAllMatches():
     courtsMap = courtRepository.getCourtsMap()
+    playersIdMap = playerRepository.getPlayersIdMap()
     report = UpdatedMatchReport(0, 0, 0)
     result = 200
     oldCategory = None
     matchIndex = 1
+    newMatchs = []
+    matchesMap = matchRepository.getMatchesMap()
     for grid in gridRepository.getAllGrids():
         if oldCategory != grid.categoryId:
             matchIndex = 1
-        matchAdded = updateMatches(grid.category.code, grid, matchIndex, report, courtsMap)
+        matchAdded = updateMatches(newMatchs, matchesMap, grid, matchIndex, report, courtsMap, playersIdMap)
         if matchAdded == 404:
             result = 404
         matchIndex += matchAdded
         oldCategory = grid.categoryId
+    if newMatchs:
+        matchRepository.addMatches(newMatchs)
+    if matchesMap:
+        matchRepository.deleteMatches([m.id for m in matchesMap.values()])
     message = report.createMessage()
     log.info(BATCH, message)
     return result
@@ -141,6 +150,7 @@ def updateGrids():
     for category in categoryRepository.getAllCategories():
         updateGrid(category.id, category.fftId)
 
+#TODO : Update instead of delete and add
 def updateGrid(categoryId, categoryFftId):
     categoryInfos = getCategoryInfos(categoryFftId)
     if categoryInfos is None:
@@ -156,9 +166,7 @@ def updateGrid(categoryId, categoryFftId):
         gridRepository.addGrids(gridsToAdd)
     return 200
 
-def updateMatches(categoryCode, grid, matchIndex, report, courtsMap):
-    matchesMap = matchRepository.getMatchesMap()
-    newMatchs = []
+def updateMatches(newMatchs, matchesMap, grid, matchIndex, report, courtsMap, playersIdMap):
     matches = []
     if grid.type == "POU":
         url = getGridDataUrlPoule(grid.fftId)
@@ -172,7 +180,7 @@ def updateMatches(categoryCode, grid, matchIndex, report, courtsMap):
     else:
         sortedMatchs = matchesFromFFT
     for match in sortedMatchs:
-        newMatch = createMatch(match, grid, courtsMap, categoryCode, matchIndex)
+        newMatch = createMatch(match, grid, courtsMap, grid.category.code, matchIndex, playersIdMap)
         matches.append(newMatch)
         matchIndex += 1
     for match in matches:
@@ -183,16 +191,13 @@ def updateMatches(categoryCode, grid, matchIndex, report, courtsMap):
                 report.updated += 1
                 matchRepository.updateMatchFromBatch(match)
             matchesMap.pop(match.fftId)
+            report.deleted += 1
         else:
             newMatchs.append(match)
-    if newMatchs:
-        matchRepository.addMatches(newMatchs)
-    if matchesMap:
-        matchRepository.deleteMatches([m.id for m in matchesMap.values()])
-    report.added += len(newMatchs)
-    report.deleted += len(matchesMap)
+            report.added += 1
     return len(matches)
 
+#TODO : Update instead of delete and add
 def updateRankings():
     categories = categoryRepository.getAllCategories()
     rankingsToAdd = []
@@ -209,25 +214,25 @@ def updateRankings():
     rankingRepository.addRankings(rankingsToAdd)
     return 200
 
-def createMatch(match, grid, courtsMap, categoryCode, matchIndex):
+def createMatch(match, grid, courtsMap, categoryCode, matchIndex, playersIdMap):
     newMatch = Match.fromFFT(match)
     newMatch.categoryId = grid.categoryId
     newMatch.gridId = grid.id
     newMatch.double = match["nomCategorie"].startswith("D")
     newMatch.courtId = courtsMap.get(int(match['courtId'])) if match['courtId'] is not None else None
     newMatch.label = categoryCode + str(matchIndex).zfill(2)
-    setPlayersOrTeam(newMatch, match)
+    setPlayersOrTeam(newMatch, match, playersIdMap)
     setWinner(newMatch, match)
     setProgrammation(newMatch, match)
     return newMatch
 
-def setPlayersOrTeam(match, matchData):
+def setPlayersOrTeam(match, matchData, playersIdMap):
     if match.double:
-        match.team1Id = getTeamId(matchData['joueurList'], 0)
-        match.team2Id = getTeamId(matchData['joueurList'], 1)
+        match.team1Id = getTeamId(matchData['joueurList'], 0, playersIdMap)
+        match.team2Id = getTeamId(matchData['joueurList'], 1, playersIdMap)
     else:
-        match.player1Id = getPlayerId(matchData['joueurList'], 0)
-        match.player2Id = getPlayerId(matchData['joueurList'], 1)
+        match.player1Id = getPlayerId(matchData['joueurList'], 0, playersIdMap)
+        match.player2Id = getPlayerId(matchData['joueurList'], 1, playersIdMap)
 
 def setWinner(match, matchData):
     if matchData["equipeGagnante"] is None:
@@ -274,26 +279,23 @@ def addRankings(categoryCode, rankingsToAdd, rankings):
         if newRanking is not None and newRanking not in rankingsToAdd :
             rankingsToAdd.append(newRanking)
 
-def getPlayerId(playersList, i):
-    fftId = playersList[i]['joueurId'] if len(playersList) > i else None
+def getPlayerId(playersList, i, playersIdMap):
+    fftId = int(playersList[i]['joueurId']) if len(playersList) > i else None
     if fftId is None:
         return None
-    player = playerRepository.getPlayerByFftId(fftId)
-    if player is None:
-        return None
-    return player.id
+    return playersIdMap.get(fftId)
 
-def getTeamId(playersList, i):
+def getTeamId(playersList, i, playersIdMap):
     if i == 0 :
-        fftId1 = playersList[0]['joueurId'] if len(playersList) > 0 else None
-        fftId2 = playersList[1]['joueurId'] if len(playersList) > 1 else None
+        fftId1 = int(playersList[0]['joueurId']) if len(playersList) > 0 else None
+        fftId2 = int(playersList[1]['joueurId']) if len(playersList) > 1 else None
     else :
-        fftId1 = playersList[2]['joueurId'] if len(playersList) > 2 else None
-        fftId2 = playersList[3]['joueurId'] if len(playersList) > 3 else None
+        fftId1 = int(playersList[2]['joueurId']) if len(playersList) > 2 else None
+        fftId2 = int(playersList[3]['joueurId']) if len(playersList) > 3 else None
     if fftId1 is None or fftId2 is None:
         return None
-    player1Id = playerRepository.getPlayerByFftId(fftId1).id
-    player2Id = playerRepository.getPlayerByFftId(fftId2).id
+    player1Id = playersIdMap.get(fftId1)
+    player2Id = playersIdMap.get(fftId2)
     team = teamRepository.getTeamByPlayersIds(player1Id, player2Id)
     if team is None:
         return None
@@ -306,6 +308,6 @@ class UpdatedMatchReport:
         self.deleted = deleted
 
     def createMessage(self):
-        return f"Nombre de matchs mis à jour : {self.updated}\
-            | Nombre de matchs ajoutés : {self.added}\
-            | Nombre de matchs supprimés : {self.deleted}"
+        return f"{constants.ADD_MATCHES}{self.added}\
+            | {constants.UPDATE_MATCHES}{self.updated}\
+            | {constants.DELETE_MATCHES}{self.deleted}"

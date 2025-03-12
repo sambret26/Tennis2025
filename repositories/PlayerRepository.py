@@ -20,10 +20,6 @@ class PlayerRepository:
         return Player.query.get(playerId)
 
     @staticmethod
-    def getPlayerByFftId(fftId):
-        return Player.query.filter_by(fftId=fftId).first()
-
-    @staticmethod
     def getNumberPlayers():
         return Player.query.count()
 

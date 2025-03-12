@@ -1,6 +1,6 @@
 from flask import Blueprint, jsonify, request
 from repositories.TransactionRepository import TransactionRepository
-from models.Transaction import Transaction
+from services.business import TransactionBusiness
 
 transactionRepository = TransactionRepository()
 
@@ -17,20 +17,5 @@ def updateTransaction():
     transactions = data['transactions']
     if not isinstance(transactions, list):
         return jsonify({'error': 'Invalid transactions data format'}), 400
-
-    # Supprimer tous les transactions
-    transactionRepository.deleteAllTransactions()
-
-    # Ajouter les nouvelles transactions
-    newTransactions = []
-    for transactionData in transactions:
-        newTransactions.append(Transaction(
-            amount=transactionData['amount'],
-            type=transactionData['type'],
-            date=transactionData['date']
-        ))
-
-    transactionRepository.addTransactions(newTransactions)
-
-    result = [transaction.toDict() for transaction in newTransactions]
+    result = TransactionBusiness.updateTransaction(transactions)
     return jsonify(result), 200
