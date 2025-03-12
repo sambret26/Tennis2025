@@ -20,6 +20,6 @@ def addreductionSetting():
 
 @reductionSettingsBp.route('/update', methods=['PUT'])
 def updatereductionSetting():
-    reductionsSettings = request.json
+    reductionsSettings = request.json['reductions']
     ReductionSettingsBusiness.update(reductionsSettings)
     return jsonify({'message': 'Reduction setting updated successfully!'}), 200

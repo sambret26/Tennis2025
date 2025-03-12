@@ -38,7 +38,7 @@ def setCalendarSync():
 
 @settingBp.route('/updatePrices', methods=['PUT'])
 def updatePrices():
-    prices = request.json
+    prices = request.json['prices']
     settingRepository.updatePrices(prices)
     return jsonify({'message': 'Prices updated successfully!'}), 200
 

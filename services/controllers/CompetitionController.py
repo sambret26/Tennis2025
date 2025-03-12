@@ -53,7 +53,7 @@ def activeCompetition():
     isBatchActive = settingRepository.getBatchsActive()
     if (isBatchActive):
         settingRepository.setBatchsActive("0")
-    competitionId = request.json
+    competitionId = request.json['competitionId']
     competitionRepository.setInactive()
     competitionRepository.setActive(competitionId)
     return jsonify({'message': 'Competition updated successfully!', 'isBatchActive': isBatchActive}), 200

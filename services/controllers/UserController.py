@@ -101,8 +101,7 @@ def getUsers():
 
 @userBp.route('/update', methods=['PUT'])
 def updateUsers():
-    data = request.json
-    users = data
+    users = request.json['users']
     for userId, userProfile in users.items():
         userRepository.updateProfile(userId, userProfile, 0)
     return jsonify({'message': 'Users updated successfully!'}), 200
