@@ -40,30 +40,6 @@ async def pgw(ctx):
     await discordBusiness.pgw(bot)
 
 @bot.command()
-async def updateCourts(ctx):
-    await discordBusiness.updateCourts(ctx)
-
-@bot.command()
-async def updateCategories(ctx):
-    await discordBusiness.updateCategories(ctx)
-
-@bot.command()
-async def updateGrids(ctx):
-    await discordBusiness.updateGrids(ctx)
-
-@bot.command()
-async def updateRankings(ctx):
-    await discordBusiness.updateRankings(ctx)
-
-@bot.command()
-async def updateHomologation(ctx):
-    await discordBusiness.updateHomologation(ctx)
-
-@bot.command()
-async def updateMatches(ctx):
-    await discordBusiness.updateMatches(ctx)
-
-@bot.command()
 async def cmd(ctx):
     await discordBusiness.cmd(ctx)
 
