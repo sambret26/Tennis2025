@@ -24,9 +24,8 @@ def isTokenValid():
 
 def getAccessToken():
     accessToken = os.environ.get("AccessToken")
-    if accessToken is not None :
-        if isTokenValid():
-            return accessToken
+    if accessToken is not None and isTokenValid():
+        return accessToken
     if settingsRepository.getAuthError():
         return 500
     url = urlRepository.getUrlByLabel("AccessToken")

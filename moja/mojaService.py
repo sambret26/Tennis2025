@@ -67,15 +67,6 @@ def getGridDataUrlPoule(gridFftId):
 def getCompetitions():
     return mojaRequests.sendGetRequest(getCompetitionsDataUrl())
 
-def updateCompetitions():
-    competitionsToAdd = []
-    jaId = settingRepository.getJaId()
-    competitionUrl = urlRepository.getUrlByLabel("Competition").replace("JA_ID", str(jaId))
-    competitions = mojaRequests.sendGetRequest(competitionUrl)
-    for competition in competitions:
-        competitionsToAdd.append(Competition.fromFFT(competition))
-    competitionRepository.addCompetitions(competitionsToAdd)
-
 def getHomologationInfos():
     homologationId = competitionRepository.getHomologationId()
     jaId = settingRepository.getJaId()

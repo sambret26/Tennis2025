@@ -12,7 +12,7 @@ class Team(db.Model):
     createdAt = db.Column(db.DateTime, default=datetime.utcnow)
     updatedAt = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
 
-    #relashionship
+    #Relashionship
     player1 = db.relationship('Player', foreign_keys=[player1Id])
     player2 = db.relationship('Player', foreign_keys=[player2Id])
     ranking = db.relationship('Ranking')

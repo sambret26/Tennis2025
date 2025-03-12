@@ -52,14 +52,14 @@ class Player(db.Model):
         }
 
     def toDict(self):
-        dict = self.toDictForDB()
-        dict["fullName"] = self.getFullName()
-        dict["ranking"] = self.ranking.toDict() if self.ranking else None
-        dict["categories"] = [category.code for category in self.categories]
-        dict["balance"] = self.balance.toDictForPlayer() if self.balance else None
-        dict["payments"] = [payment.toDictForPlayer() for payment in self.payments] if self.payments else []
-        dict["reductions"] = [reduction.toDictForPlayer() for reduction in self.reductions] if self.reductions else []
-        return dict
+        dictionary = self.toDictForDB()
+        dictionary["fullName"] = self.getFullName()
+        dictionary["ranking"] = self.ranking.toDict() if self.ranking else None
+        dictionary["categories"] = [category.code for category in self.categories]
+        dictionary["balance"] = self.balance.toDictForPlayer() if self.balance else None
+        dictionary["payments"] = [payment.toDictForPlayer() for payment in self.payments] if self.payments else []
+        dictionary["reductions"] = [reduction.toDictForPlayer() for reduction in self.reductions] if self.reductions else []
+        return dictionary
 
     def toMiniDict(self):
         return {

@@ -29,7 +29,7 @@ class Match(db.Model):
     createdAt = db.Column(db.DateTime, default=datetime.utcnow)
     updatedAt = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
 
-    #relashionship
+    #Relationship
     category = db.relationship('Category')
     player1 = db.relationship('Player', foreign_keys=[player1Id])
     player2 = db.relationship('Player', foreign_keys=[player2Id])
@@ -88,10 +88,10 @@ class Match(db.Model):
             'score': self.score,
             'nextRound': self.nextRound,
             'calId': self.calId,
-            'player1' : self.player1.toMiniDict() if self.player1 else self.team1.toMiniDict() if self.team1 else None,
-            'player2' : self.player2.toMiniDict() if self.player2 else self.team2.toMiniDict() if self.team2 else None,
+            'player1' : self.getPlayer1ForMiniDict(),
+            'player2' : self.getPlayer2ForMiniDict(),
             'court' : self.court.toDict() if self.court else None,
-            'winner' : self.winner.toMiniDict() if self.winner else self.teamWinner.toMiniDict() if self.teamWinner else None
+            'winner' : self.getWinnerForMiniDict()
         }
 
     def getFormattedDate(self):
@@ -102,6 +102,27 @@ class Match(db.Model):
 
     def getFormattedHour(self):
         return self.hour.replace(':', 'h')
+
+    def getPlayer1ForMiniDict(self):
+        if self.player1:
+            return self.player1.toMiniDict()
+        if self.team1:
+            return self.team1.toMiniDict()
+        return None
+
+    def getPlayer2ForMiniDict(self):
+        if self.player2:
+            return self.player2.toMiniDict()
+        if self.team2:
+            return self.team2.toMiniDict()
+        return None
+
+    def getWinnerForMiniDict(self):
+        if self.winner:
+            return self.winner.toMiniDict()
+        if self.teamWinner:
+            return self.teamWinner.toMiniDict()
+        return None
 
     @classmethod
     def fromJson(cls, data):

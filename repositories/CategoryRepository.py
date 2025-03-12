@@ -10,11 +10,6 @@ class CategoryRepository:
 
     #ADDERS
     @staticmethod
-    def addCategory(category):
-        db.session.add(category)
-        db.session.commit()
-
-    @staticmethod
     def addCategories(categories):
         db.session.add_all(categories)
         db.session.commit()

@@ -5,10 +5,6 @@ class CompetitionRepository:
 
     #GETTERS
     @staticmethod
-    def getCompetitionById(competitionId):
-        return Competition.query.get(competitionId)
-
-    @staticmethod
     def getCompetitions():
         return Competition.query.order_by(Competition.label).all()
 
@@ -27,11 +23,6 @@ class CompetitionRepository:
         return competition.homologationId
 
     #ADDERS
-    @staticmethod
-    def addCompetition(competition):
-        db.session.add(competition)
-        db.session.commit()
-
     @staticmethod
     def addCompetitions(competitions):
         db.session.add_all(competitions)
@@ -54,11 +45,6 @@ class CompetitionRepository:
         db.session.commit()
 
     #DELETERS
-    @staticmethod
-    def deleteCompetition(competition):
-        db.session.delete(competition)
-        db.session.commit()
-
     @staticmethod
     def deleteCompetitions(competitionsId):
         Competition.query.filter(Competition.homologationId.in_(competitionsId)).delete()

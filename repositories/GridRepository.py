@@ -8,16 +8,7 @@ class GridRepository:
     def getAllGrids():
         return Grid.query.order_by(Grid.categoryId).all()
 
-    @staticmethod
-    def getGridById(gridId):
-        return Grid.query.get(gridId)
-
     #ADDERS
-    @staticmethod
-    def addGrid(grid):
-        db.session.add(grid)
-        db.session.commit()
-
     @staticmethod
     def addGrids(grids):
         db.session.add_all(grids)

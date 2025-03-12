@@ -9,10 +9,6 @@ class MatchRepository:
         return Match.query.get(matchId)
 
     @staticmethod
-    def getAllMatch():
-        return Match.query.all()
-
-    @staticmethod
     def getMatchesForPlanning(date):
         return Match.query.filter(Match.day == date).order_by(Match.hour, Match.courtId.asc()).all()
 
@@ -21,23 +17,10 @@ class MatchRepository:
         return Match.query.filter(Match.label == matchLabel).first()
 
     @staticmethod
-    def getAllMatchesIdByGrid(gridId):
-        return [match.id for match in Match.query.filter(Match.gridId == gridId).all()]
-
-    @staticmethod
-    def getMatchByFftId(matchFftId):
-        return Match.query.filter(Match.fftId == matchFftId).first()
-
-    @staticmethod
     def getMatchesMap():
         return {match.fftId: match for match in Match.query.all()}
 
     #ADDERS
-    @staticmethod
-    def addMatch(match):
-        db.session.add(match)
-        db.session.commit()
-
     @staticmethod
     def addMatches(matches):
         db.session.add_all(matches)
@@ -69,11 +52,6 @@ class MatchRepository:
         db.session.commit()
 
     #DELETERS
-    @staticmethod
-    def deleteAllMatchesByGrid(gridId):
-        Match.query.filter(Match.gridId == gridId).delete()
-        db.session.commit()
-
     @staticmethod
     def deleteAllMatches():
         Match.query.delete()

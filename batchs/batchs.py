@@ -143,30 +143,35 @@ def checkCategories(player, playerInDB, sendNotif):
     newCategories = player.categories
     oldCategories = playerInDB.categories
     messages = []
+    handleNewCategories(player, playerInDB, newCategories, oldCategories, messages, sendNotif)
+    handleOldCategories(player, newCategories, oldCategories, messages, sendNotif)
+    if sendNotif and len(messages) > 0 :
+        playerBalanceRepository.updatePlayerBalanceByPlayerId(playerInDB.id, player.balance)
+        messageRepository.addMessages(messages)
+
+def handleNewCategories(player, playerInDB, newCategories, oldCategories, messages, sendNotif):
     playerCategoriesToAdd = []
     for category in newCategories:
         if category not in oldCategories:
             playerCategory = PlayerCategories(playerInDB.id, category.id)
             playerCategoriesToAdd.append(playerCategory)
-            msg = f"Nouvelle inscription : {player.getFullName()} ({player.club})"
-            if player.ranking :
-                msg += f" classé(e) {player.ranking.simple}"
-            if sendNotif :
+            if sendNotif:
+                msg = f"Nouvelle inscription : {player.getFullName()} ({player.club})"
+                if player.ranking :
+                    msg += f" classé(e) {player.ranking.simple}"
                 messages.append(Message(category.code, msg))
     if playerCategoriesToAdd:
         playerCategoriesRepository.addPlayerCategories(playerCategoriesToAdd)
 
+def handleOldCategories(player, newCategories, oldCategories, messages, sendNotif):
     for category in oldCategories:
         if category not in newCategories:
             playerCategoriesRepository.deletePlayerCategoryByPlayerIdAndCategoryId(player.id, category.id)
-            msg = f"Désinscription de {player.getFullName()} ({player.club})"
-            if player.ranking :
-                msg += f" classé(e) {player.ranking.simple}"
-            if sendNotif :
+            if sendNotif:
+                msg = f"Désinscription de {player.getFullName()} ({player.club})"
+                if player.ranking :
+                    msg += f" classé(e) {player.ranking.simple}"
                 messages.append(Message(category.code, msg))
-    if sendNotif and len(messages) > 0 :
-        playerBalanceRepository.updatePlayerBalanceByPlayerId(playerInDB.id, player.balance)
-        messageRepository.addMessages(messages)
 
 def sendMessages(newPlayers, oldPlayers, newRankingsPlayers):
     messages = []

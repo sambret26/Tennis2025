@@ -12,9 +12,6 @@ class Category(db.Model):
     createdAt = db.Column(db.DateTime, default=datetime.utcnow)
     updatedAt = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
 
-    #grids = db.relationship('Grid', back_populates='category', lazy="select")
-    #matches = db.relationship('Match', back_populates='category', lazy="select")
-
     def __init__(self, fftId, code, label, amount):
         self.fftId = fftId
         self.code = code
