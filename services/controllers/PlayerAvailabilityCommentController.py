@@ -16,13 +16,12 @@ def getPlayerComment(playerId, day):
 @playerAvailabilityCommentBp.route('/player-availability-comment', methods=['POST'])
 def createOrUpdateComment():
     comment = PlayerAvailabilityComment.fromJson(request.json)
-
     commentInDB = playerAvailabilityCommentRepository.getPlayerAvailabilityComment(comment.playerId, comment.day)
-    
     if commentInDB:
         playerAvailabilityCommentRepository.updatePlayerAvailabilityComment(commentInDB, comment.comments)
     else:
         playerAvailabilityCommentRepository.addPlayerAvailabilityComment(comment)
+    return jsonify({'message': 'Comment saved successfully'})
 
 @playerAvailabilityCommentBp.route('/player-availability-comments/<string:day>', methods=['GET'])
 def getAllCommentsForDay(day):
