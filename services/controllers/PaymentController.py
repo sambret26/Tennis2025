@@ -1,41 +1,22 @@
 from flask import Blueprint, jsonify, request
-from repositories.PlayerBalanceRepository import PlayerBalanceRepository
-from repositories.PaymentRepository import PaymentRepository
 from repositories.PlayerRepository import PlayerRepository
-from models.Payment import Payment
-
-playerBalanceRepository = PlayerBalanceRepository()
-paymentRepository = PaymentRepository()
-playersRepository = PlayerRepository()
+from services.business import PaymentBusiness
 
 paymentBp = Blueprint('PaymentBp', __name__, url_prefix='/payments')
 
+playerRepository = PlayerRepository()
+
 @paymentBp.route('/<int:playerId>', methods=['PUT'])
 def updatePlayerPayments(playerId):
-    player = playersRepository.getPlayerById(playerId)
+    player = playerRepository.getPlayerById(playerId)
     if not player:
         return jsonify({'error': 'Player not found'}), 404
-
     data = request.json
     payments = data['payments']
     balance = data['balance']
     if not isinstance(payments, list):
         return jsonify({'error': 'Invalid payments data format'}), 400
-
-    paymentRepository.deleteAllPaymentsByPlayerId(playerId)
-
-    # Ajouter les nouveaux payments
-    newPayments = []
-    for paymentData in payments:
-        newPayments.append(Payment(
-            playerId=playerId,
-            amount=paymentData['amount'],
-            date=paymentData['date']
-        ))
-
-    paymentRepository.addPayments(newPayments)
-
-    playerBalanceRepository.updatePlayerBalanceForPlayerId(playerId, balance)
-
-    result = [payment.toDictForPlayer() for payment in newPayments]
+    result = PaymentBusiness.updatePayments(player, payments, balance)
+    if result is None:
+        return jsonify({'error': 'Player not found'}), 404
     return jsonify(result), 200

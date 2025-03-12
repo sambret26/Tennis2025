@@ -3,6 +3,7 @@ from repositories.PlayerRepository import PlayerRepository
 from repositories.ReductionRepository import ReductionRepository
 from repositories.PlayerBalanceRepository import PlayerBalanceRepository
 from models.Reduction import Reduction
+from services.business import ReductionBusiness
 
 playerRepository = PlayerRepository()
 reductionRepository = ReductionRepository()
@@ -32,22 +33,5 @@ def updateReduction(playerId):
     balance = data['balance']
     if not isinstance(reductions, list):
         return jsonify({'error': 'Invalid reductions data format'}), 400
-
-    reductionRepository.deleteAllReductionsByPlayerId(playerId)
-
-    # Ajouter les nouveaux reductions
-    newReductions = []
-    for reductionData in reductions:
-        newReductions.append(Reduction(
-            playerId=playerId,
-            amount=reductionData['amount'],
-            reason=reductionData['reason'],
-            default=reductionData['default']
-        ))
-
-    reductionRepository.addReductions(newReductions)
-
-    playerBalanceRepository.updatePlayerBalanceForPlayerId(playerId, balance)
-
-    result = [reduction.toDict() for reduction in newReductions]
+    result = ReductionBusiness.updateReduction(player, reductions, balance)
     return jsonify(result), 200

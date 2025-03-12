@@ -5,9 +5,9 @@ class Match(db.Model):
     __tablename__ = 'matches'
 
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    fftId = db.Column(db.BigInteger, nullable=False)
-    categoryId = db.Column(db.Integer, db.ForeignKey('categories.id'), nullable=False)
-    gridId = db.Column(db.Integer, db.ForeignKey('grids.id'), nullable=False)
+    fftId = db.Column(db.BigInteger, nullable=False, index=True)
+    categoryId = db.Column(db.Integer, db.ForeignKey('categories.id'), nullable=False, index=True)
+    gridId = db.Column(db.Integer, db.ForeignKey('grids.id'), nullable=False, index=True)
     double = db.Column(db.Boolean, nullable=False, default=False)
     label = db.Column(db.String)
     player1Id = db.Column(db.Integer, db.ForeignKey('players.id'))

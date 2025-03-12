@@ -7,9 +7,9 @@ class Player(db.Model):
 
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     fftId = db.Column(db.BigInteger, unique=True, index=True)
-    lastName = db.Column(db.String, nullable=False)
-    firstName = db.Column(db.String, nullable=False)
-    rankingId = db.Column(db.Integer, db.ForeignKey("rankings.id"))
+    lastName = db.Column(db.String, nullable=False, index=True)
+    firstName = db.Column(db.String, nullable=False, index=True)
+    rankingId = db.Column(db.Integer, db.ForeignKey("rankings.id"), index=True)
     club = db.Column(db.String)
     phoneNumber = db.Column(db.String)
     email = db.Column(db.String)

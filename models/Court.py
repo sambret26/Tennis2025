@@ -11,8 +11,6 @@ class Court(db.Model):
     createdAt = db.Column(db.DateTime, default=datetime.utcnow)
     updatedAt = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
 
-    #matches = db.relationship('Match', back_populates='court', lazy="select")
-
     def __init__(self, fftId, name, number):
         self.fftId = fftId
         self.name = name

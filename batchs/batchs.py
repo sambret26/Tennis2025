@@ -32,7 +32,7 @@ def updateMatch():
     return mojaService.updateAllMatches()
 
 def updateCalendar():
-    return None
+    return None #TODO : Implement calendar batch
 
 def getPlayersAndTeams():
     ranksMapSimple = rankingRepository.getRankingMapSimple()
@@ -145,9 +145,10 @@ def checkCategories(player, playerInDB, sendNotif):
     messages = []
     handleNewCategories(player, playerInDB, newCategories, oldCategories, messages, sendNotif)
     handleOldCategories(player, newCategories, oldCategories, messages, sendNotif)
-    if sendNotif and len(messages) > 0 :
+    if len(messages) > 0 :
         playerBalanceRepository.updatePlayerBalanceByPlayerId(playerInDB.id, player.balance)
-        messageRepository.addMessages(messages)
+        if sendNotif:
+            messageRepository.addMessages(messages)
 
 def handleNewCategories(player, playerInDB, newCategories, oldCategories, messages, sendNotif):
     playerCategoriesToAdd = []

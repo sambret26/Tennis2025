@@ -8,7 +8,7 @@ playerAvailabilityCommentBp = Blueprint('playerAvailabilityComment', __name__, u
 
 @playerAvailabilityCommentBp.route('/', methods=['POST'])
 def createOrUpdateComment():
-    comment = PlayerAvailabilityComment.fromJson(request.json)
+    comment = PlayerAvailabilityComment.fromJson(request.json['commentData'])
     commentInDB = playerAvailabilityCommentRepository.getPlayerAvailabilityComment(comment.playerId, comment.day)
     if commentInDB:
         playerAvailabilityCommentRepository.updatePlayerAvailabilityComment(commentInDB, comment.comments)

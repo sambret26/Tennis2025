@@ -60,14 +60,14 @@ def sendGetRequest(url):
     headers = createHeaders()
     if headers is None :
         return None
-    response =  requests.get(url, headers = headers, timeout=10)
+    response =  requests.get(url, headers = headers, timeout=60)
     if response.status_code != 200:
         log.error(MOJA, f"{constants.GET_ERROR} {url}: {response.status_code}")
         return None
     return response.json()
 
 def sendPostRequest(url, data):
-    response = requests.post(url, data=data, timeout=10)
+    response = requests.post(url, data=data, timeout=60)
     if response.status_code != 200:
         log.error(MOJA, f"{constants.POST_ERROR} {url}: {response.status_code} ({response.json()})")
         return None
