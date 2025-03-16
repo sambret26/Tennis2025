@@ -108,8 +108,9 @@ def updateCategories():
     categoriesToAdd = []
     for category in categories:
         newCategory = Category.fromFFT(category)
-        if "C" in newCategory.label:
+        if "(C)" in newCategory.label:
             newCategory.amount = 0
+            newCategory.code = newCategory.code.replace("S", "C")
         elif newCategory.code.startswith("D"):
             newCategory.amount = categoriesPrices['doublePrice']
         else :

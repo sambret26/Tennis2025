@@ -45,10 +45,10 @@ def getPlayersAndTeams():
         if not datas :
             return None, None
         for player in datas["listJoueurInscrit"]:
-            if category.code.startswith("S"):
-                addPlayerInPlayersList(players, player, category, ranksMapSimple)
-            else :
+            if category.code.startswith("D"):
                 addPlayersAndTeamInLists(players, teams, player, category, ranksMapSimple, rankMapDouble)
+            else:
+                addPlayerInPlayersList(players, player, category, ranksMapSimple)
     return players, teams
 
 def addPlayerInPlayersList(players, player, category, ranksMapSimple):
