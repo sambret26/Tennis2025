@@ -13,6 +13,7 @@ class Player(db.Model):
     club = db.Column(db.String)
     phoneNumber = db.Column(db.String)
     email = db.Column(db.String)
+    toDelete = db.Column(db.Boolean, default=False)
     createdAt = db.Column(db.DateTime, default=datetime.utcnow)
     updatedAt = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
 
@@ -28,8 +29,8 @@ class Player(db.Model):
     reductions = db.relationship("Reduction", back_populates="player", lazy="joined")
     balance = db.relationship("PlayerBalance", back_populates="player", uselist=False)
 
-    def __init__(self, id=None, fftId=None, lastName=None,
-            firstName=None, rankingId=None, club=None, phoneNumber=None, email=None):
+    def __init__(self, id=None, fftId=None, lastName=None, firstName=None, 
+            rankingId=None, club=None, phoneNumber=None, email=None, toDelete=False):
         self.id = id
         self.fftId = fftId
         self.lastName = lastName
@@ -38,6 +39,7 @@ class Player(db.Model):
         self.club = club
         self.phoneNumber = phoneNumber
         self.email = email
+        self.toDelete = toDelete
 
     def toDictForDB(self):
         return {
@@ -48,7 +50,8 @@ class Player(db.Model):
             "rankingId": self.rankingId,
             "club": self.club,
             "phoneNumber": self.phoneNumber,
-            "email": self.email
+            "email": self.email,
+            "toDelete": self.toDelete
         }
 
     def toDict(self):

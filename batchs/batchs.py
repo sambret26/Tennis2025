@@ -92,7 +92,7 @@ def updatePlayerBalance(player, amount):
 def updateDBPlayers(players, sendNotif):
     playersMap = playerRepository.getPlayersMap()
     newPlayers = []
-    oldPlayers = []
+    messages = []
     newRankingsPlayers = []
     for player in players:
         playerInDB = playersMap.get(player.fftId)
@@ -107,20 +107,38 @@ def updateDBPlayers(players, sendNotif):
         else:
             newPlayers.append(player)
     for player in playersMap.values():
-        oldPlayers.append(createPlayer(player))
-    sendMessages(newPlayers, oldPlayers, newRankingsPlayers)
+        deletePlayer(messages, player)
+    sendMessages(newPlayers, newRankingsPlayers)
     if newPlayers :
         playerRepository.addPlayers(newPlayers)
-    if oldPlayers :
-        playerRepository.deletePlayers([player.id for player in oldPlayers])
+    if messages :
+        messageRepository.addMessages(messages)
 
 def createPlayer(player):
     return {
+        'id' : player.id,
         'fullName' : player.getFullName(),
         'ranking' : player.ranking.simple if player.ranking else None,
         'club' : player.club,
         'categories' : player.categories
     }
+
+def deletePlayer(messages, player):
+    if(playerRepository.deletePlayer(player)):
+        msg = f"Désinscription de {player.getFullName()} ({player.club})"
+        if player.ranking :
+            msg += f" classé(e) {player.ranking.simple}"
+        messages.append(Message("G", msg))
+        for category in player.categories:
+            messages.append(Message(category.code, msg))
+    else:
+        player.toDelete = True
+        playerRepository.updatePlayer(player.id, player)
+        msg = f"Tentative de suppression de {player.getFullName()} ({player.club})"
+        if player.ranking :
+            msg += f" classé(e) {player.ranking.simple}"
+        msg += " échouée"
+        messages.append(Message("ERROR", msg))
 
 def updateDBTeams(teams):
     playersMap = playerRepository.getPlayersIdMap()
@@ -174,7 +192,7 @@ def handleOldCategories(player, newCategories, oldCategories, messages, sendNoti
                     msg += f" classé(e) {player.ranking.simple}"
                 messages.append(Message(category.code, msg))
 
-def sendMessages(newPlayers, oldPlayers, newRankingsPlayers):
+def sendMessages(newPlayers, newRankingsPlayers):
     messages = []
     for player in newPlayers:
         msg = f"Nouvelle inscription : {player.getFullName()} ({player.club})"
@@ -183,15 +201,10 @@ def sendMessages(newPlayers, oldPlayers, newRankingsPlayers):
         messages.append(Message("G", msg))
         for category in player.categories:
             messages.append(Message(category.code, msg))
-    for player in oldPlayers:
-        msg = f"Désinscription de {player['fullName']} ({player['club']})"
-        if player['ranking'] :
-            msg += f" classé(e) {player['ranking']}"
-        messages.append(Message("G", msg))
-        for category in player['categories']:
-            messages.append(Message(category.code, msg))
     for player, rankingId in newRankingsPlayers:
         ranking = rankingRepository.getRankingById(rankingId)
+        if ranking == player.ranking:
+            continue
         msg = f"Reclassement de {player.getFullName()} ({ranking.simple} => {player.ranking.simple})"
         messages.append(Message("G", msg))
     messageRepository.addMessages(messages)

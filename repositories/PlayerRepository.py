@@ -1,6 +1,8 @@
 from models.Player import Player
 from models.PlayerCategories import PlayerCategories
 from database import db
+from logger.logger import log, BATCH
+from sqlalchemy.exc import IntegrityError, PendingRollbackError
 
 class PlayerRepository:
 
@@ -41,7 +43,7 @@ class PlayerRepository:
 
     @staticmethod
     def getPlayersMap():
-        return {player.fftId: player for player in Player.query.all()}
+        return {player.fftId: player for player in Player.query.filter_by(toDelete=False).all()}
 
     #ADDERS
     @staticmethod
@@ -69,13 +71,14 @@ class PlayerRepository:
 
     @staticmethod
     def deletePlayer(player):
-        db.session.delete(player)
-        db.session.commit()
-
-    @staticmethod
-    def deletePlayers(playersIds):
-        Player.query.filter(Player.id.in_(playersIds)).delete()
-        db.session.commit()
+        try:
+            db.session.delete(player)
+            db.session.commit()
+            return True
+        except (IntegrityError, PendingRollbackError, Exception):
+            db.session.rollback()
+            log.error(BATCH, f"Error deleting player {player.id}")
+            return False
 
     @staticmethod
     def deleteAllPlayers():
