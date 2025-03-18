@@ -153,7 +153,7 @@ class Match(db.Model):
     @classmethod
     def fromFFT(cls, data):
         return cls(
-            fftId=data['matchId'],
+            fftId=int(data['matchId']),
             nextRound=data['matchsSuivants']['matchId'] if 'matchId' in data['matchsSuivants'] else None
         )
 

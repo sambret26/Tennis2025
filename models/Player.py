@@ -54,6 +54,12 @@ class Player(db.Model):
             "toDelete": self.toDelete
         }
 
+    def toDictForInfos(self):
+        return {
+            "phoneNumber": self.phoneNumber,
+            "email": self.email,
+        }
+
     def toDict(self):
         dictionary = self.toDictForDB()
         dictionary["fullName"] = self.getFullName()

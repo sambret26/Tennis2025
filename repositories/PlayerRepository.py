@@ -63,6 +63,11 @@ class PlayerRepository:
         Player.query.filter_by(id=playerId).update(player.toDictForDB())
         db.session.commit()
 
+    @staticmethod
+    def updatePlayerFromBatch(player):
+        Player.query.filter_by(fftId=player.fftId).update(player.toDictForInfos())
+        db.session.commit()
+
     #DELETERS
     @staticmethod
     def deletePlayerById(playerId):

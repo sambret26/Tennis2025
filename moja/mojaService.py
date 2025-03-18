@@ -125,16 +125,17 @@ def updateCategories():
 def updateAllMatches():
     courtsMap = courtRepository.getCourtsMap()
     playersIdMap = playerRepository.getPlayersIdMap()
+    matchesMap = matchRepository.getMatchesMap()
     report = UpdatedMatchReport(0, 0, 0)
     result = 200
     oldCategory = None
     matchIndex = 1
     newMatchs = []
-    matchesMap = matchRepository.getMatchesMap()
+    playersInfo = []
     for grid in gridRepository.getAllGrids():
         if oldCategory != grid.categoryId:
             matchIndex = 1
-        matchAdded = updateMatches(newMatchs, matchesMap, grid, matchIndex, report, courtsMap, playersIdMap)
+        matchAdded = updateMatches(newMatchs, matchesMap, grid, matchIndex, report, courtsMap, playersIdMap, playersInfo)
         if matchAdded == 404:
             result = 404
         matchIndex += matchAdded
@@ -143,7 +144,9 @@ def updateAllMatches():
         matchRepository.addMatches(newMatchs)
     if matchesMap:
         matchRepository.deleteMatches([m.id for m in matchesMap.values()])
+        report.deleted += len(matchesMap)
     message = report.createMessage()
+    updatePlayersInfos(playersInfo)
     log.info(BATCH, message)
     return result
 
@@ -167,7 +170,7 @@ def updateGrid(categoryId, categoryFftId):
         gridRepository.addGrids(gridsToAdd)
     return 200
 
-def updateMatches(newMatchs, matchesMap, grid, matchIndex, report, courtsMap, playersIdMap):
+def updateMatches(newMatchs, matchesMap, grid, matchIndex, report, courtsMap, playersIdMap, playersInfo):
     matches = []
     if grid.type == "POU":
         url = getGridDataUrlPoule(grid.fftId)
@@ -182,6 +185,7 @@ def updateMatches(newMatchs, matchesMap, grid, matchIndex, report, courtsMap, pl
         sortedMatchs = matchesFromFFT
     for match in sortedMatchs:
         newMatch = createMatch(match, grid, courtsMap, grid.category.code, matchIndex, playersIdMap)
+        getPlayersInfos(match, playersInfo)
         matches.append(newMatch)
         matchIndex += 1
     for match in matches:
@@ -192,7 +196,6 @@ def updateMatches(newMatchs, matchesMap, grid, matchIndex, report, courtsMap, pl
                 report.updated += 1
                 matchRepository.updateMatchFromBatch(match)
             matchesMap.pop(match.fftId)
-            report.deleted += 1
         else:
             newMatchs.append(match)
             report.added += 1
@@ -301,6 +304,33 @@ def getTeamId(playersList, i, playersIdMap):
     if team is None:
         return None
     return team.id
+
+def getPlayersInfos(match, playersInfo):
+    for player in match['joueurList']:
+        fftId = int(player['joueurId'])
+        if fftId is None:
+            continue
+        email = player['mail']
+        phoneNumber = player['numTel']
+        playersInfo.append(PlayersInfos(fftId, email, phoneNumber))
+
+def updatePlayersInfos(playersInfo):
+    players = playerRepository.getPlayersMap()
+    for playerInfo in playersInfo:
+        player = players.get(playerInfo.fftId)
+        if player is None :
+            continue
+        if player.email == playerInfo.email and player.phoneNumber == playerInfo.phoneNumber:
+            continue
+        player.email = playerInfo.email
+        player.phoneNumber = playerInfo.phoneNumber
+        playerRepository.updatePlayerFromBatch(player)
+
+class PlayersInfos:
+    def __init__(self, fftId, email, phoneNumber):
+        self.fftId = fftId
+        self.email = email
+        self.phoneNumber = phoneNumber
 
 class UpdatedMatchReport:
     def __init__(self, updated, added, deleted):
