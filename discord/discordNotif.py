@@ -7,7 +7,7 @@ messageRepository = MessageRepository()
 channelRepository = ChannelRepository()
 
 async def sendNotif(bot):
-    channelMap = channelRepository.getChannelMap()
+    channelMap = channelRepository.getLogsChannelMap()
     await sendNotifByCategory(bot, "G", channelMap)
     categories = categoryRepository.getAllCategories()
     for category in categories:

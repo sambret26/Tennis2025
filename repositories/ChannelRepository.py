@@ -11,8 +11,8 @@ class ChannelRepository:
             .filter(Channel.channelId == channelId).first()
 
     @staticmethod
-    def getChannelMap():
-        return {channel.category: channel.channelId for channel in Channel.query.all()}
+    def getLogsChannelMap():
+        return {channel.category: channel.channelId for channel in Channel.query.filter_by(type='Logs').all()}
 
     @staticmethod
     def getLogChannelId(category):
