@@ -21,9 +21,9 @@ def connectUser():
     data = request.json
     user = userRepository.getUserByName(data['username'])
     if not user:
-        return jsonify({'message': constants.error.USER_NOT_FOUND}), 404
+        return jsonify({'message': constants.USER_NOT_FOUND}), 404
     if user.password != data['password']:
-        return jsonify({'message': constants.error.WRONG_PASSWORD}), 401
+        return jsonify({'message': constants.WRONG_PASSWORD}), 401
     token = jwt.encode(user.toDict(), SECRET_KEY, algorithm='HS256')
     return jsonify({'token': token}), 200
 
@@ -32,7 +32,7 @@ def createAccount():
     data = request.json
     user = userRepository.getUserByName(data['username'])
     if user:
-        return jsonify({'message': constants.error.USER_ALREADY_EXISTS}), 409
+        return jsonify({'message': constants.USER_ALREADY_EXISTS}), 409
     user = User.fromJson(data)
     userRepository.addUser(user)
     message = Message("USERS", f"{user.name.title()} a creé son compte")
@@ -44,7 +44,7 @@ def createAccount():
 def updateRole(userId):
     user = userRepository.getUserById(userId)
     if not user:
-        return jsonify({'message': constants.error.USER_NOT_FOUND}), 404
+        return jsonify({'message': constants.USER_NOT_FOUND}), 404
     newRole = int(request.json['newRole'])
     if newRole < user.profileValue or user.superAdmin == 1:
         if user.profileValue == 2:
@@ -53,7 +53,7 @@ def updateRole(userId):
             user = userRepository.updateProfile(userId, newRole, user.superAdmin)
         token = jwt.encode(user.toDict(), SECRET_KEY, algorithm='HS256')
         return jsonify({'token': token}), 200
-    return jsonify({'message': constants.error.CANNOT_CHANGE_ROLE}), 403
+    return jsonify({'message': constants.CANNOT_CHANGE_ROLE}), 403
 
 @userBp.route('/admin/connect', methods=['POST'])
 def connectAdmin():
@@ -63,7 +63,7 @@ def connectAdmin():
     newRole = int(data['newRole'])
     admin = userRepository.getAdminWithPassword(password)
     if not admin:
-        return jsonify({'message': constants.error.INVALID_PASSWORD}), 401
+        return jsonify({'message': constants.INVALID_PASSWORD}), 401
     user = userRepository.updateProfile(userId, newRole, 0)
     token = jwt.encode(user.toDict(), SECRET_KEY, algorithm='HS256')
     return jsonify({'token': token}), 200
@@ -75,7 +75,7 @@ def askAccess(userId):
     user = userRepository.getUserById(userId)
     profil = profilRepository.getProfilByValue(role)
     if not user or not profil:
-        return jsonify({'message': constants.error.USER_NOT_FOUND}), 404
+        return jsonify({'message': constants.USER_NOT_FOUND}), 404
     message = Message("ASK", f"{user.name.title()} a demandé des accès {profil.label}")
     messageRepository.addMessage(message)
     return jsonify({'message': 'Message sent!'}), 200
@@ -87,12 +87,12 @@ def changePassword(userId):
     password = str(data['password'])
     user = userRepository.getUserById(userId)
     if not user:
-        return jsonify({'message': constants.error.USER_NOT_FOUND}), 404
+        return jsonify({'message': constants.USER_NOT_FOUND}), 404
     if user.password != oldPassword:
-        return jsonify({'message': constants.error.INVALID_PASSWORD}), 401
+        return jsonify({'message': constants.INVALID_PASSWORD}), 401
     user.password = password
     userRepository.updatePassword(userId, password)
-    return jsonify({'message': constants.succes.PASSWORD_CHANGED}), 200
+    return jsonify({'message': constants.PASSWORD_CHANGED}), 200
 
 @userBp.route('/users', methods=['GET'])
 def getUsers():
@@ -104,4 +104,4 @@ def updateUsers():
     users = request.json['users']
     for userId, userProfile in users.items():
         userRepository.updateProfile(userId, userProfile, 0)
-    return jsonify({'message': constants.succes.USERS_UPDATED}), 200
+    return jsonify({'message': constants.USERS_UPDATED}), 200
