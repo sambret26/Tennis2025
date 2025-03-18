@@ -46,7 +46,7 @@ def getPlayersAndTeams():
             return None, None
         for player in datas["listJoueurInscrit"]:
             if category.code.startswith("D"):
-                addPlayersAndTeamInLists(players, teams, player, category, ranksMapSimple, rankMapDouble)
+                addPlayersAndTeamInLists(players, teams, player, category, rankMapDouble)
             else:
                 addPlayerInPlayersList(players, player, category, ranksMapSimple)
     return players, teams
@@ -57,11 +57,9 @@ def addPlayerInPlayersList(players, player, category, ranksMapSimple):
     newPlayer.rankingId = newPlayer.ranking.id
     addPlayer(players, newPlayer, category)
 
-def addPlayersAndTeamInLists(players, teams, team, category, ranksMapSimple, rankMapDouble):
+def addPlayersAndTeamInLists(players, teams, team, category, rankMapDouble):
     newPlayer1 = Player.fromFFT(team)
     newPlayer2 = Player.fromFFT2(team)
-    newPlayer1.ranking = ranksMapSimple.get(team['classementJoueur1'])
-    newPlayer2.ranking = ranksMapSimple.get(team['classementJoueur2'])
     addPlayer(players, newPlayer1, category)
     addPlayer(players, newPlayer2, category)
     rankingId = rankMapDouble.get(str(team["poidsEquipe"]))
@@ -72,6 +70,8 @@ def addPlayersAndTeamInLists(players, teams, team, category, ranksMapSimple, ran
 def addPlayer(players, newPlayer, category):
     for player in players:
         if newPlayer.fftId == player.fftId:
+            if player.rankingId != newPlayer.rankingId:
+                player.rankingId = newPlayer.rankingId
             player.categories.append(category)
             updatePlayerBalance(player, category.amount)
             return
