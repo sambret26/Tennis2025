@@ -308,8 +308,6 @@ def getTeamId(playersList, i, playersIdMap):
 def getPlayersInfos(match, playersInfo):
     for player in match['joueurList']:
         fftId = int(player['joueurId'])
-        if fftId is None:
-            continue
         email = player['mail']
         phoneNumber = player['numTel']
         playersInfo.append(PlayersInfos(fftId, email, phoneNumber))
